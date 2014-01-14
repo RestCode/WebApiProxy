@@ -9,3 +9,4 @@ D:\Projects\WebApiProxy\WebApiProxy.Sample.Client\bin\Debug\Newtonsoft.Json.dll
 D:\Projects\WebApiProxy\WebApiProxy.Sample.Client\bin\Debug\System.Net.Http.Formatting.dll
 D:\Projects\WebApiProxy\WebApiProxy.Sample.Client\bin\Debug\Newtonsoft.Json.xml
 D:\Projects\WebApiProxy\WebApiProxy.Sample.Client\bin\Debug\System.Net.Http.Formatting.xml
+D:\Projects\WebApiProxy\WebApiProxy.Sample.Client\obj\Debug\WebApiProxy.Sample.Client.csprojResolveAssemblyReference.cache
