@@ -1,0 +1,113 @@
+﻿<#@ template language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+
+(function($) {
+	"use strict";
+
+	if (!$) {
+		throw "jQuery is required";
+	}
+
+	$.proxies = $.proxies || {};
+
+	function getQueryString(params, queryString) {
+		queryString = queryString || "";
+		for(var prop in params) {
+			if (params.hasOwnProperty(prop)) {
+				var val = getArgValue(params[prop]);
+				if (val === null) continue;
+
+				if ("" + val === "[object Object]") {
+					queryString = getQueryString(params[prop], queryString);
+					continue;
+				}
+
+				if (queryString.length) {
+					queryString += "&";
+				} else {
+					queryString += "?";
+				}
+				queryString = queryString + prop + "=" +val;
+			}
+		}
+		return queryString;
+	}
+
+	function getArgValue(val) {
+		if (val === undefined || val === null) return null;
+		return val;
+	}
+
+	function invoke(url, type, urlParams, body) {
+		url += getQueryString(urlParams);
+
+
+		var ajaxOptions = $.extend({}, this.defaultOptions, {
+			url: url,
+			type: type
+		});
+
+		if (body) {
+			ajaxOptions.data = body;
+		}
+
+		if (this.antiForgeryToken) {
+			var token = $.isFunction(this.antiForgeryToken) ? this.antiForgeryToken() : this.antiForgeryToken;
+			if (token) {
+				ajaxOptions.headers = ajaxOptions.headers || {};
+			}
+		}
+	
+		return $.ajax(ajaxOptions);
+	};
+
+	function defaultAntiForgeryTokenAccessor() {
+		return $("input[name=__RequestVerificationToken]").val();
+	};
+
+	/* Proxies */
+
+	<# foreach(var definition in this.Metadata.Definitions) { #>
+	$.proxies.<#= definition.Name.ToLower() #> = {
+		defaultOptions: {},
+		antiForgeryToken: defaultAntiForgeryTokenAccessor,
+<# foreach(var method in definition.ActionMethods) { #>
+
+<#
+	var allParameters = method.UrlParameters.AsEnumerable();
+	
+	if (method.BodyParameter != null) {
+		allParameters = allParameters.Concat(new [] { method.BodyParameter });
+	}
+	var parameterList = string.Join(",", allParameters.Where(m => m != null).Select(m => m.Name).ToArray());
+	
+	
+	var url = ("\"" + method.Url.Replace("{", "\" + ").Replace("}", " + \"") + "\"").Replace(" + \"\"","");
+
+#>
+
+
+	<#= method.Name.ToCamelCasing() #>: function(<#=parameterList#>) {
+		return invoke.call(this, <#= url #>, "<#= method.Type.ToString().ToLower() #>", 
+		<# if (method.UrlParameters.Any()) { #>
+			{
+			<# foreach (var parameter in method.UrlParameters) { #>
+				<#= parameter.Name #>: <#= parameter.Name #>,
+			<# } #>
+			}
+		<# } else { #>
+			{}
+		<# } #>
+		<# if (method.BodyParameter != null) { #>
+			, <#= method.BodyParameter.Name #>);
+		<# } else { #>
+			);
+		<# } #>
+	},
+<# } #>
+};
+	<# } #>
+}(jQuery));

@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiProxy.Core", "WebApiProxy.Core\WebApiProxy.Core.csproj", "{94508206-8537-4088-923B-E7FCB0539903}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiProxy.Tasks", "WebApiProxy.Tasks\WebApiProxy.Tasks.csproj", "{A635DE23-DDC1-43ED-BC5D-D49B7E8A4355}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiProxy.Server", "WebApiProxy.Server\WebApiProxy.Server.csproj", "{4E5B8C2F-9008-4A17-ABD1-A92E046C6A1E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiProxy.Sample.Client", "WebApiProxy.Sample.Client\WebApiProxy.Sample.Client.csproj", "{56938326-E72E-4AC7-814A-707658C9CB85}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiProxy.Sample.Server", "WebApiProxy.Sample.Server\WebApiProxy.Sample.Server.csproj", "{9713E5FA-FD6F-4B68-8C7C-B25AE442615F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{94508206-8537-4088-923B-E7FCB0539903}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94508206-8537-4088-923B-E7FCB0539903}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94508206-8537-4088-923B-E7FCB0539903}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94508206-8537-4088-923B-E7FCB0539903}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A635DE23-DDC1-43ED-BC5D-D49B7E8A4355}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A635DE23-DDC1-43ED-BC5D-D49B7E8A4355}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A635DE23-DDC1-43ED-BC5D-D49B7E8A4355}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A635DE23-DDC1-43ED-BC5D-D49B7E8A4355}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E5B8C2F-9008-4A17-ABD1-A92E046C6A1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E5B8C2F-9008-4A17-ABD1-A92E046C6A1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E5B8C2F-9008-4A17-ABD1-A92E046C6A1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E5B8C2F-9008-4A17-ABD1-A92E046C6A1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56938326-E72E-4AC7-814A-707658C9CB85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56938326-E72E-4AC7-814A-707658C9CB85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56938326-E72E-4AC7-814A-707658C9CB85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56938326-E72E-4AC7-814A-707658C9CB85}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9713E5FA-FD6F-4B68-8C7C-B25AE442615F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9713E5FA-FD6F-4B68-8C7C-B25AE442615F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9713E5FA-FD6F-4B68-8C7C-B25AE442615F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9713E5FA-FD6F-4B68-8C7C-B25AE442615F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,130 @@
+﻿<#@ template language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="WebApiProxy.Core.Models" #>
+<#@ import namespace="System.Collections.Generic" #>
+
+
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
+using System.Net.Http.Formatting;
+using <#= Configuration.Namespace#>.Models;
+
+// Proxies
+namespace <#= Configuration.Namespace#>
+{
+    public partial class Configuration
+	{
+		public const string <#= Configuration.Name #>BaseAddress = "<#= Configuration.Metadata.Host #>";
+		
+	}
+}
+
+namespace <#= Configuration.Namespace#>.Models
+{
+<# foreach(var model in Configuration.Metadata.Models) { #>
+	#region Models
+	public partial class <#=model.Name#>
+	{
+<# foreach(var propertyItem in model.Properties) { #>
+		public virtual <#= propertyItem.Type #> <#= propertyItem.Name #> { get; set; }
+<#}#>
+	}
+	#endregion
+<#}#>
+}
+
+
+<# foreach(var definition in Configuration.Metadata.Definitions) { #>
+namespace <#= Configuration.Namespace#>.Clients
+{
+	public partial class <#=definition.Name#><#= Configuration.ClientSuffix#> : IDisposable
+	{
+
+		public HttpClient HttpClient { get; private set; }
+
+		/// <summary>
+        /// <#= definition.Description #>
+        /// </summary>
+		public <#=definition.Name#><#= Configuration.ClientSuffix#>()
+		{
+			HttpClient = new HttpClient()
+			{
+				BaseAddress = new Uri(Configuration.<#= Configuration.Name #>BaseAddress)
+			};
+		}
+
+		/// <summary>
+        /// <#= definition.Description #>
+        /// </summary>
+		public <#=definition.Name#><#= Configuration.ClientSuffix#>(HttpMessageHandler handler, bool disposeHandler = true)
+		{
+			HttpClient = new HttpClient(handler, disposeHandler)
+			{
+				BaseAddress = new Uri(Configuration.<#= Configuration.Name #>BaseAddress)
+			};
+		}
+
+		#region Methods
+<# foreach(var method in definition.ActionMethods) { 
+		var allParameters = method.UrlParameters.AsEnumerable();
+		
+		var queryParameterString = "\"";
+		var bodyParameterString = "";
+
+
+		if (method.BodyParameter != null) {
+			allParameters = allParameters.Concat(new [] { method.BodyParameter });
+			bodyParameterString = ", " + method.BodyParameter.Name;
+		}
+
+
+		if (allParameters.Any()) {
+			queryParameterString = "?";
+
+			queryParameterString += string.Join(" + \"&", allParameters.Where(m => m != null).Select(m => m.Name + "=\" + " + m.Name).ToArray());
+		
+
+		}
+
+		var parameterList = "";
+
+		if (allParameters.Any())
+		{
+		var q = allParameters.Where(m => m != null).Select(m => m.Type + " " + m.Name);
+
+		if (q != null)
+			parameterList = string.Join(",", q.ToArray());
+		}
+
+		var postOrPut =  method.Type.ToTitle() == "Post" || method.Type.ToTitle() == "Put";
+		var url = ("\"" + method.Url.Replace("{", "\" + ").Replace("}", " + \"") + "\"").Replace(" + \"\"","");
+#>
+        /// <summary>
+        /// <#= method.Description #>
+        /// </summary>
+<# foreach(var p in method.UrlParameters) { #>
+		/// <param name="<#= p.Name #>"><#= p.Description #></param>
+<# } #>
+        /// <returns></returns>
+		public virtual async Task<HttpResponseMessage> <#= method.Name #>Async(<#= parameterList#>)
+		{
+			return await HttpClient.<#=method.Type.ToTitle()#><#= postOrPut ? "AsJson" : "" #>Async<#= postOrPut && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "" #>(<#=url#><#=bodyParameterString#>);
+		}
+
+<#}#>
+		#endregion
+
+		public void Dispose()
+        {
+            HttpClient.Dispose();
+        }
+	}
+
+}
+<# } #>
+

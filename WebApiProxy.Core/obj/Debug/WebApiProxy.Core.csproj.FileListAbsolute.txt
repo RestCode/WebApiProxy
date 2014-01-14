@@ -1,0 +1,4 @@
+D:\Projects\WebApiProxy\WebApiProxy.Core\bin\Debug\WebApiProxy.Core.dll
+D:\Projects\WebApiProxy\WebApiProxy.Core\bin\Debug\WebApiProxy.Core.pdb
+D:\Projects\WebApiProxy\WebApiProxy.Core\obj\Debug\WebApiProxy.Core.dll
+D:\Projects\WebApiProxy\WebApiProxy.Core\obj\Debug\WebApiProxy.Core.pdb

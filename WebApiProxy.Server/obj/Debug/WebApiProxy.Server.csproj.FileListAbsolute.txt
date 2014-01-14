@@ -1,0 +1,15 @@
+D:\Projects\WebApiProxy\WebApiProxy.Server\obj\Debug\WebApiProxy.Server.csprojResolveAssemblyReference.cache
+D:\Projects\WebApiProxy\WebApiProxy.Server\bin\Debug\WebApiProxy.Server.dll
+D:\Projects\WebApiProxy\WebApiProxy.Server\bin\Debug\WebApiProxy.Server.pdb
+D:\Projects\WebApiProxy\WebApiProxy.Server\bin\Debug\Newtonsoft.Json.dll
+D:\Projects\WebApiProxy\WebApiProxy.Server\bin\Debug\System.Net.Http.Formatting.dll
+D:\Projects\WebApiProxy\WebApiProxy.Server\bin\Debug\System.Web.Http.dll
+D:\Projects\WebApiProxy\WebApiProxy.Server\bin\Debug\System.Web.Http.WebHost.dll
+D:\Projects\WebApiProxy\WebApiProxy.Server\bin\Debug\WebApiProxy.Core.dll
+D:\Projects\WebApiProxy\WebApiProxy.Server\bin\Debug\WebApiProxy.Core.pdb
+D:\Projects\WebApiProxy\WebApiProxy.Server\bin\Debug\Newtonsoft.Json.xml
+D:\Projects\WebApiProxy\WebApiProxy.Server\bin\Debug\System.Net.Http.Formatting.xml
+D:\Projects\WebApiProxy\WebApiProxy.Server\bin\Debug\System.Web.Http.xml
+D:\Projects\WebApiProxy\WebApiProxy.Server\bin\Debug\System.Web.Http.WebHost.xml
+D:\Projects\WebApiProxy\WebApiProxy.Server\obj\Debug\WebApiProxy.Server.dll
+D:\Projects\WebApiProxy\WebApiProxy.Server\obj\Debug\WebApiProxy.Server.pdb
