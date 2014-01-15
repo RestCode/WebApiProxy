@@ -72,6 +72,9 @@ namespace WebApiProxy.Server
         {
             string res;
 
+            if (type == null)
+                return "";
+
             //If the type is a generic type format to correct class name
             if (type.IsGenericType)
             {
