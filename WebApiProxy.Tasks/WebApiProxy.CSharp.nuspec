@@ -3,6 +3,7 @@
   <metadata>
     <id>WebApiProxy.CSharp</id>
     <title>WebApi C# Proxy Generator</title>
+    <projectUrl>https://github.com/faniereynders/WebApiProxy</projectUrl>
     <version>$version$</version>
     <authors>Fanie Reynders</authors>
     <owners>Fanie Reynders</owners>

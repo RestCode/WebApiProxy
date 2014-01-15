@@ -4,6 +4,7 @@
     <id>WebApiProxy</id>
     <version>$version$</version>
     <title>WebApi Proxy Provider</title>
+    <projectUrl>https://github.com/faniereynders/WebApiProxy</projectUrl>
     <authors>Fanie Reynders</authors>
     <owners>Fanie Reynders</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
