@@ -21,6 +21,7 @@ namespace WebApiProxy.Core.Models
 
         public string Description { get; set; }
 
+        public string ReturnType { get; set; }
 
 	}
 }

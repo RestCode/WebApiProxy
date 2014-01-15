@@ -13,6 +13,19 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiProxy.Sample.Client",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiProxy.Sample.Server", "WebApiProxy.Sample.Server\WebApiProxy.Sample.Server.csproj", "{9713E5FA-FD6F-4B68-8C7C-B25AE442615F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{C3B525D0-5AC0-4267-AD47-09D8A05CE549}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{CC09190C-3038-49F9-ABD1-3C2F4FA81698}"
+	ProjectSection(SolutionItems) = preProject
+		Nuget\build-nuget-csharp.bat = Nuget\build-nuget-csharp.bat
+		Nuget\build-nuget-server.bat = Nuget\build-nuget-server.bat
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

@@ -30,7 +30,7 @@ namespace WebApiProxy.Server
                               select new ControllerDefinition
                               {
                                   Name = d.Key.ControllerName,
-                                  Description = documentationProvider.GetDocumentation(d.Key) ?? "",
+                                  Description = documentationProvider == null ? "" : documentationProvider.GetDocumentation(d.Key) ?? "",
                                   ActionMethods = from a in descriptions
                                                   where !a.ActionDescriptor.ControllerDescriptor.ControllerType.IsExcluded()
                                                   && a.ActionDescriptor.ControllerDescriptor.ControllerName == d.Key.ControllerName
@@ -56,7 +56,7 @@ namespace WebApiProxy.Server
                                                       Url = a.RelativePath,
 
                                                       Description = a.Documentation ?? "",
-                                                      //ReturnType = ParseType(a.ActionDescriptor.ReturnType),
+                                                      ReturnType = ParseType(a.ActionDescriptor.ReturnType),
                                                       Type = a.HttpMethod.Method
                                                   }
                               },
@@ -108,7 +108,7 @@ namespace WebApiProxy.Server
                 {
                     res = type.Name;
 
-                    if (!models.Any(c => c.Name.Equals(type.Name)))
+                    if (!models.Any(c => c.Name.Equals(type.Name)) && !type.IsInterface)
                         AddModelDefinition(type);
                 }
             }

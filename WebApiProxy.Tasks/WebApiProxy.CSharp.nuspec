@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>WebApiProxy.CSharp</id>
+    <title>WebApi C# Proxy Generator</title>
+    <version>$version$</version>
+    <authors>Fanie Reynders</authors>
+    <owners>Fanie Reynders</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Generates a C# proxy for communicating to a RESTful Web Api that implements the WebApiProxy provider</description>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright 2014</copyright>
+    <tags>AspNet WebAPI Proxy JavaScript CSharp</tags>
+    <dependencies>
+      <dependency id="Microsoft.AspNet.WebApi.Client" version="5.0.0" />
+    </dependencies>
+  </metadata>
+  <files>
+	<file src="bin\Release\*.dll" target="build" />
+  <file src="bin\Release\*.targets" target="build" />
+   <file src="bin\Release\WebApiProxy.config" target="content" />
+  </files>
+</package>
