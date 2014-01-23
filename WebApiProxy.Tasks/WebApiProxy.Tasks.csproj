@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="webapiproxy.snippet" />
     <None Include="WebApiProxy.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

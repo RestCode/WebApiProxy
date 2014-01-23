@@ -41,9 +41,6 @@
   <Target Name="BeforeCompile" DependsOnTargets="ProxyTarget" />
   <Target Name="CreateConfigurationProperties">
 
-    <Import Project="$(ProjectDir)\WebApiProxy.CSharp.targets" />
-
-
   </Target>
 </Project>
 

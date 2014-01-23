@@ -19,6 +19,7 @@
   <files>
 	<file src="bin\Release\*.dll" target="build" />
   <file src="bin\Release\*.targets" target="build" />
-   <file src="bin\Release\WebApiProxy.config" target="content" />
+  <file src="bin\Release\WebApiProxy.config" target="content" />
+  <file src="webapiproxy.snippet" target="tools" />
   </files>
 </package>
