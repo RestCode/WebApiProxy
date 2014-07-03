@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace WebApiProxy.Core.Models
 {
@@ -10,9 +6,10 @@ namespace WebApiProxy.Core.Models
     {
         public string Name { get; set; }
 
+        public IEnumerable<ConstantDefinition> Constants { get; set; }
         public IEnumerable<ModelProperty> Properties { get; set; }
 
-       
+
     }
 
     public class ModelProperty

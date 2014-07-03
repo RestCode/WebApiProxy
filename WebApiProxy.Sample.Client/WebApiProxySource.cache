@@ -34,6 +34,93 @@ namespace ProxyApi.Proxies.Models
 
 namespace ProxyApi.Proxies.Clients
 {
+	public partial class ValuesClient : IDisposable
+	{
+
+		public HttpClient HttpClient { get; private set; }
+
+		/// <summary>
+        /// 
+        /// </summary>
+		public ValuesClient()
+		{
+			HttpClient = new HttpClient()
+			{
+				BaseAddress = new Uri(Configuration.TestApiBaseAddress)
+			};
+		}
+
+		/// <summary>
+        /// 
+        /// </summary>
+		public ValuesClient(HttpMessageHandler handler, bool disposeHandler = true)
+		{
+			HttpClient = new HttpClient(handler, disposeHandler)
+			{
+				BaseAddress = new Uri(Configuration.TestApiBaseAddress)
+			};
+		}
+
+		#region Methods
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+		public virtual async Task<HttpResponseMessage> GetAsync()
+		{
+			return await HttpClient.GetAsync("api/Values");
+		}
+
+        /// <summary>
+        /// 
+        /// </summary>
+		/// <param name="id"></param>
+        /// <returns></returns>
+		public virtual async Task<HttpResponseMessage> GetAsync(Int32 id)
+		{
+			return await HttpClient.GetAsync("api/Values/" + id);
+		}
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+		public virtual async Task<HttpResponseMessage> PostAsync(String value)
+		{
+			return await HttpClient.PostAsJsonAsync<String>("api/Values", value);
+		}
+
+        /// <summary>
+        /// 
+        /// </summary>
+		/// <param name="id"></param>
+        /// <returns></returns>
+		public virtual async Task<HttpResponseMessage> PutAsync(Int32 id,String value)
+		{
+			return await HttpClient.PutAsJsonAsync<String>("api/Values/" + id, value);
+		}
+
+        /// <summary>
+        /// 
+        /// </summary>
+		/// <param name="id"></param>
+        /// <returns></returns>
+		public virtual async Task<HttpResponseMessage> DeleteAsync(Int32 id)
+		{
+			return await HttpClient.DeleteAsync("api/Values/" + id);
+		}
+
+		#endregion
+
+		public void Dispose()
+        {
+            HttpClient.Dispose();
+        }
+	}
+
+}
+namespace ProxyApi.Proxies.Clients
+{
 	public partial class PeopleClient : IDisposable
 	{
 
@@ -110,93 +197,6 @@ namespace ProxyApi.Proxies.Clients
 		public virtual async Task<HttpResponseMessage> PutAsync(Int32 id,Person person)
 		{
 			return await HttpClient.PutAsJsonAsync<Person>("api/People/" + id, person);
-		}
-
-		#endregion
-
-		public void Dispose()
-        {
-            HttpClient.Dispose();
-        }
-	}
-
-}
-namespace ProxyApi.Proxies.Clients
-{
-	public partial class ValuesClient : IDisposable
-	{
-
-		public HttpClient HttpClient { get; private set; }
-
-		/// <summary>
-        /// 
-        /// </summary>
-		public ValuesClient()
-		{
-			HttpClient = new HttpClient()
-			{
-				BaseAddress = new Uri(Configuration.TestApiBaseAddress)
-			};
-		}
-
-		/// <summary>
-        /// 
-        /// </summary>
-		public ValuesClient(HttpMessageHandler handler, bool disposeHandler = true)
-		{
-			HttpClient = new HttpClient(handler, disposeHandler)
-			{
-				BaseAddress = new Uri(Configuration.TestApiBaseAddress)
-			};
-		}
-
-		#region Methods
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-		public virtual async Task<HttpResponseMessage> GetAsync()
-		{
-			return await HttpClient.GetAsync("api/Values");
-		}
-
-        /// <summary>
-        /// 
-        /// </summary>
-		/// <param name="id"></param>
-        /// <returns></returns>
-		public virtual async Task<HttpResponseMessage> GetAsync(Int32 id)
-		{
-			return await HttpClient.GetAsync("api/Values/" + id);
-		}
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-		public virtual async Task<HttpResponseMessage> PostAsync(String value)
-		{
-			return await HttpClient.PostAsJsonAsync<String>("api/Values", value);
-		}
-
-        /// <summary>
-        /// 
-        /// </summary>
-		/// <param name="id"></param>
-        /// <returns></returns>
-		public virtual async Task<HttpResponseMessage> PutAsync(Int32 id,String value)
-		{
-			return await HttpClient.PutAsJsonAsync<String>("api/Values/" + id, value);
-		}
-
-        /// <summary>
-        /// 
-        /// </summary>
-		/// <param name="id"></param>
-        /// <returns></returns>
-		public virtual async Task<HttpResponseMessage> DeleteAsync(Int32 id)
-		{
-			return await HttpClient.DeleteAsync("api/Values/" + id);
 		}
 
 		#endregion

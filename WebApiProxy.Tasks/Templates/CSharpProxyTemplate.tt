@@ -19,7 +19,7 @@ namespace <#= Configuration.Namespace#>
 {
     public partial class Configuration
 	{
-		public const string <#= Configuration.Name #>BaseAddress = "<#= Configuration.Metadata.Host #>";
+		public static string <#= Configuration.Name #>BaseAddress = "<#= Configuration.Metadata.Host #>";
 		
 	}
 }
@@ -30,14 +30,22 @@ namespace <#= Configuration.Namespace#>.Models
 	#region Models
 	public partial class <#=model.Name#>
 	{
+		#region Constants
+<# foreach(var constantItem in model.Constants) { #>
+		public const <#= constantItem.Type #> <#= constantItem.Name #> = <#= constantItem.Value #>;
+<#}#>
+		#endregion
+
+		#region Properties
 <# foreach(var propertyItem in model.Properties) { #>
 		public virtual <#= propertyItem.Type #> <#= propertyItem.Name #> { get; set; }
 <#}#>
+		#endregion
 	}
 	#endregion
 <#}#>
 }
-
+ 
 
 <# foreach(var definition in Configuration.Metadata.Definitions) { #>
 namespace <#= Configuration.Namespace#>.Clients
@@ -48,7 +56,7 @@ namespace <#= Configuration.Namespace#>.Clients
 		public HttpClient HttpClient { get; private set; }
 
 		/// <summary>
-        /// <#= definition.Description #>
+        /// <#= definition.Description.ToSummary() #>
         /// </summary>
 		public <#=definition.Name#><#= Configuration.ClientSuffix#>()
 		{
@@ -59,7 +67,7 @@ namespace <#= Configuration.Namespace#>.Clients
 		}
 
 		/// <summary>
-        /// <#= definition.Description #>
+        /// <#= definition.Description.ToSummary() #>
         /// </summary>
 		public <#=definition.Name#><#= Configuration.ClientSuffix#>(HttpMessageHandler handler, bool disposeHandler = true)
 		{
@@ -105,7 +113,7 @@ namespace <#= Configuration.Namespace#>.Clients
 		var url = ("\"" + method.Url.Replace("{", "\" + ").Replace("}", " + \"") + "\"").Replace(" + \"\"","");
 #>
         /// <summary>
-        /// <#= method.Description #>
+        /// <#= method.Description.ToSummary() #>
         /// </summary>
 <# foreach(var p in method.UrlParameters) { #>
 		/// <param name="<#= p.Name #>"><#= p.Description #></param>
@@ -114,6 +122,27 @@ namespace <#= Configuration.Namespace#>.Clients
 		public virtual async Task<HttpResponseMessage> <#= method.Name #>Async(<#= parameterList#>)
 		{
 			return await HttpClient.<#=method.Type.ToTitle()#><#= postOrPut ? "AsJson" : "" #>Async<#= postOrPut && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "" #>(<#=url#><#=bodyParameterString#>);
+		}
+
+		/// <summary>
+        /// <#= method.Description.ToSummary() #>
+        /// </summary>
+<# foreach(var p in method.UrlParameters) {#>
+		/// <param name="<#= p.Name #>"><#= p.Description #></param>
+<# } #>
+        /// <returns></returns>
+		public virtual <#= String.IsNullOrEmpty(method.ReturnType) ? "void" : method.ReturnType #> <#= method.Name #>(<#= parameterList#>)
+		{
+			<#
+			var parametersValues = String.IsNullOrEmpty(bodyParameterString) ? (url.IndexOf("+") > -1 ? url.Substring(url.IndexOf("+") + 1) : "") : bodyParameterString.Substring(2);
+			#>
+			 <# if(String.IsNullOrEmpty(method.ReturnType)) { #>
+			 Task.Run(() => <#= method.Name #>Async(<#=parametersValues#>)).Wait();
+			 <# } else { #>
+			 var result = Task.Run(() => <#= method.Name #>Async(<#=parametersValues#>)).Result;
+			 
+             return result.Content.ReadAsAsync<<#= method.ReturnType #>>().Result;
+			 <# } #>
 		}
 
 <#}#>

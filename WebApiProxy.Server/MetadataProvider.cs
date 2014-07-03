@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Description;
+using DocsByReflection;
 using WebApiProxy.Core.Models;
 
 namespace WebApiProxy.Server
@@ -21,7 +21,9 @@ namespace WebApiProxy.Server
             var descriptions = GlobalConfiguration.Configuration.Services.GetApiExplorer().ApiDescriptions;
             var documentationProvider = GlobalConfiguration.Configuration.Services.GetDocumentationProvider();
 
-            ILookup<HttpControllerDescriptor, ApiDescription> apiGroups = descriptions.ToLookup(api => api.ActionDescriptor.ControllerDescriptor);
+            ILookup<HttpControllerDescriptor, ApiDescription> apiGroups = descriptions
+                .Where(a => !a.RelativePath.Contains("Swagger") && !a.RelativePath.Contains("docs"))
+                .ToLookup(a => a.ActionDescriptor.ControllerDescriptor);
 
             var metadata = new Metadata
             {
@@ -33,6 +35,8 @@ namespace WebApiProxy.Server
                                   Description = documentationProvider == null ? "" : documentationProvider.GetDocumentation(d.Key) ?? "",
                                   ActionMethods = from a in descriptions
                                                   where !a.ActionDescriptor.ControllerDescriptor.ControllerType.IsExcluded()
+                                                  && !a.RelativePath.Contains("Swagger")
+                                                  && !a.RelativePath.Contains("docs")
                                                   && a.ActionDescriptor.ControllerDescriptor.ControllerName == d.Key.ControllerName
                                                   select new ActionMethodDefinition
                                                   {
@@ -132,10 +136,23 @@ namespace WebApiProxy.Server
 
                 ModelDefinition model = new ModelDefinition();
 
-                var properties = classToDef.GetProperties();
-
                 model.Name = classToDef.Name;
 
+                var constants = classToDef
+                    .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
+                    .Where(f => f.IsLiteral && !f.IsInitOnly)
+                    .ToList();
+
+                model.Constants = from constant in constants
+                                  select new ConstantDefinition
+                                  {
+                                      Name = constant.Name,
+                                      Type = ParseType(constant.FieldType),
+                                      Value = constant.GetRawConstantValue().ToString(),
+                                      Description = GetDescription(constant)
+                                  };
+
+                var properties = classToDef.GetProperties();
                 model.Properties = from property in properties
                                    select new ModelProperty
                                    {
@@ -143,9 +160,20 @@ namespace WebApiProxy.Server
                                        Type = ParseType(property.PropertyType)
                                    };
 
-
                 models.Add(model);
             }
+        }
+
+        private static string GetDescription(FieldInfo constant)
+        {
+            var xml = DocsService.GetXmlFromMember(constant, false);
+
+            if (xml != null)
+            {
+                return xml.InnerText;
+            }
+
+            return String.Empty;
         }
     }
 }
