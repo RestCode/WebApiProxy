@@ -1,1 +1,12 @@
 packages/
+WebApiProxy.Core/bin/
+WebApiProxy.Core/obj/
+WebApiProxy.Sample.Client/bin/
+WebApiProxy.Sample.Client/obj/
+WebApiProxy.Sample.Server/bin/
+WebApiProxy.Sample.Server/obj/
+WebApiProxy.Server/bin/
+WebApiProxy.Server/obj/Debug/WebApiProxy.Server.csproj.FileListAbsolute.txt
+WebApiProxy.Server/obj/
+WebApiProxy.Tasks/bin/
+WebApiProxy.Tasks/obj/
