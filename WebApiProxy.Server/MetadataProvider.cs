@@ -89,7 +89,7 @@ namespace WebApiProxy.Server
                 res = GetGenericRepresentation(type, (t) => ParseType(t, model), model);
 
                 // Is is not a .NET Framework generic, then add to the models collection.
-                if (!type.Namespace.StartsWith("System.", StringComparison.OrdinalIgnoreCase))
+                if (!type.Namespace.StartsWith("System", StringComparison.OrdinalIgnoreCase))
                 {
                     AddModelDefinition(type);
                 }
