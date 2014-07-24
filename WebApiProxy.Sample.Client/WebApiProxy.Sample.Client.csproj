@@ -61,6 +61,7 @@
     <None Include="packages.config" />
     <None Include="WebApiProxy.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
@@ -71,6 +72,6 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <Import Project="..\task\WebApiProxy.CSharp.targets" Condition="Exists('..\task\WebApiProxy.CSharp.targets')" />
+  <Import Project="..\WebApiProxy.Tasks\WebApiProxy.CSharp.targets" Condition="Exists('..\WebApiProxy.Tasks\WebApiProxy.CSharp.targets')" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
 </Project>

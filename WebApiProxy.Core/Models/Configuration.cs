@@ -95,6 +95,16 @@ namespace WebApiProxy.Core.Models
         /// </value>
         [XmlIgnore]
         public Metadata Metadata { get; set; }
+
+
+        /// <summary>
+        /// Gets or sets the remove from URL.
+        /// </summary>
+        /// <value>
+        /// The remove from URL.
+        /// </value>
+        [XmlAttribute("removeFromUrl")]
+        public string RemoveFromUrl { get; set; }
         #endregion
 
         #region Methods

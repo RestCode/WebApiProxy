@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Web.Http;
 
 namespace WebApiProxy.Sample.Server.Controllers
@@ -13,6 +11,7 @@ namespace WebApiProxy.Sample.Server.Controllers
         public virtual String FirstName { get; set; }
         public virtual String LastName { get; set; }
         public virtual String PetName { get; set; }
+        public IList<string> Preferences { get; set; }
     }
 
     /// <summary>

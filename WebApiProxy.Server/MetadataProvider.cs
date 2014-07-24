@@ -22,7 +22,9 @@ namespace WebApiProxy.Server
             var documentationProvider = GlobalConfiguration.Configuration.Services.GetDocumentationProvider();
 
             ILookup<HttpControllerDescriptor, ApiDescription> apiGroups = descriptions
-                .Where(a => !a.RelativePath.Contains("Swagger") && !a.RelativePath.Contains("docs"))
+                .Where(a => !a.ActionDescriptor.ControllerDescriptor.ControllerType.IsAbstract
+                    && !a.RelativePath.Contains("Swagger")
+                    && !a.RelativePath.Contains("docs"))
                 .ToLookup(a => a.ActionDescriptor.ControllerDescriptor);
 
             var metadata = new Metadata
@@ -49,7 +51,7 @@ namespace WebApiProxy.Server
                                                                            Type = ParseType(b.ParameterDescriptor.ParameterType),
                                                                            Description = b.Documentation ?? ""
                                                                        }).FirstOrDefault(),
-                                                      UrlParameters = from b in a.ParameterDescriptions
+                                                      UrlParameters = from b in a.ParameterDescriptions.Where(p => p.ParameterDescriptor != null)
                                                                       where b.Source == ApiParameterSource.FromUri
                                                                       select new ParameterDefinition
                                                                       {
@@ -68,39 +70,29 @@ namespace WebApiProxy.Server
                 Host = host
             };
 
+            metadata.Definitions = metadata.Definitions.Distinct().OrderBy(d => d.Name);
+            metadata.Models = metadata.Models.Distinct(new ModelDefinitionEqualityComparer()).OrderBy(d => d.Name);
             return metadata;
 
         }
 
-        private string ParseType(Type type)
+        private string ParseType(Type type, ModelDefinition model = null)
         {
             string res;
 
             if (type == null)
                 return "";
 
-            //If the type is a generic type format to correct class name
+            // If the type is a generic type format to correct class name.
             if (type.IsGenericType)
             {
-                res = type.Name;
+                res = GetGenericRepresentation(type, (t) => ParseType(t, model), model);
 
-                int index = res.IndexOf('`');
-
-                if (index > -1)
-                    res = res.Substring(0, index);
-
-                Type[] args = type.GetGenericArguments();
-
-                res += "<";
-
-                for (int i = 0; i < args.Length; i++)
+                // Is is not a .NET Framework generic, then add to the models collection.
+                if (!type.Namespace.StartsWith("System.", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (i > 0)
-                        res += ", ";
-                    //Recursivly find nested arguments
-                    res += ParseType(args[i]);
+                    AddModelDefinition(type);
                 }
-                res += ">";
             }
             else
             {
@@ -123,6 +115,40 @@ namespace WebApiProxy.Server
             return res;
         }
 
+        private string GetGenericRepresentation(Type type, Func<Type, string> getTypedParameterRepresentation, ModelDefinition model = null)
+        {
+            string res;
+            res = type.Name;
+
+            int index = res.IndexOf('`');
+
+            if (index > -1)
+                res = res.Substring(0, index);
+
+            Type[] args = type.GetGenericArguments();
+
+            res += "<";
+
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (i > 0)
+                    res += ", ";
+                //Recursivly find nested arguments
+
+                var arg = args[i];
+                if (model != null && model.IsGenericArgument(arg.Name))
+                {
+                    res += model.GetGenericArgument(arg.Name);
+                }
+                else
+                {
+                    res += getTypedParameterRepresentation(arg);
+                }
+            }
+            res += ">";
+            return res;
+        }
+
         private void AddModelDefinition(Type classToDef)
         {
             //When the class is an array redefine the classToDef as the array type
@@ -133,10 +159,16 @@ namespace WebApiProxy.Server
             //If the class has not been mapped then map into metadata
             if (!models.Any(c => c.Name.Equals(classToDef.Name)))
             {
-
                 ModelDefinition model = new ModelDefinition();
-
                 model.Name = classToDef.Name;
+                model.Description = GetDescription(classToDef);
+
+                if (classToDef.IsGenericType)
+                {
+                    model.Name = GetGenericRepresentation(classToDef, (t) => model.AddGenericArgument(t.Name), model);
+                }
+
+                model.Type = classToDef.IsEnum ? "enum" : "class";
 
                 var constants = classToDef
                     .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
@@ -148,7 +180,7 @@ namespace WebApiProxy.Server
                                   {
                                       Name = constant.Name,
                                       Type = ParseType(constant.FieldType),
-                                      Value = constant.GetRawConstantValue().ToString(),
+                                      Value = GetConstantValue(constant),
                                       Description = GetDescription(constant)
                                   };
 
@@ -157,16 +189,45 @@ namespace WebApiProxy.Server
                                    select new ModelProperty
                                    {
                                        Name = property.Name,
-                                       Type = ParseType(property.PropertyType)
+                                       Type = ParseType(property.PropertyType, model),
+                                       Description = GetDescription(property)
                                    };
+
+                foreach (var p in properties)
+                {
+                    var type = p.PropertyType;
+
+                    if (!models.Any(c => c.Name.Equals(type.Name)) && !type.IsInterface)
+                    {
+                        ParseType(type);
+                    }
+                }
 
                 models.Add(model);
             }
         }
 
-        private static string GetDescription(FieldInfo constant)
+        private string GetConstantValue(FieldInfo constant)
         {
-            var xml = DocsService.GetXmlFromMember(constant, false);
+            var value = constant.GetRawConstantValue().ToString();
+            return value;
+        }
+
+        private static string GetDescription(MemberInfo member)
+        {
+            var xml = DocsService.GetXmlFromMember(member, false);
+
+            if (xml != null)
+            {
+                return xml.InnerText;
+            }
+
+            return String.Empty;
+        }
+
+        private static string GetDescription(Type type)
+        {
+            var xml = DocsService.GetXmlFromType(type, false);
 
             if (xml != null)
             {

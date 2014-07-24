@@ -9,6 +9,7 @@ namespace WebApiProxy.Sample.Client
     {
         public static Task<T> ContentAsAsync<T>(this HttpResponseMessage message)
         {
+            
             return message.Content.ReadAsAsync<T>();
         }
 

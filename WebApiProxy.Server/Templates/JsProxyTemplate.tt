@@ -11,7 +11,9 @@
 		throw "jQuery is required";
 	}
 
-	$.proxies = $.proxies || {};
+	$.proxies = $.proxies || { 
+		baseUrl: location.origin
+	};
 
 	function getQueryString(params, queryString) {
 		queryString = queryString || "";
@@ -42,11 +44,10 @@
 	}
 
 	function invoke(url, type, urlParams, body) {
-		url += getQueryString(urlParams);
-
+		//url += getQueryString(urlParams);
 
 		var ajaxOptions = $.extend({}, this.defaultOptions, {
-			url: url,
+			url: $.proxies.baseUrl + "/" + url,
 			type: type
 		});
 
@@ -60,7 +61,7 @@
 				ajaxOptions.headers = ajaxOptions.headers || {};
 			}
 		}
-	
+		    
 		return $.ajax(ajaxOptions);
 	};
 
@@ -82,7 +83,11 @@
 	if (method.BodyParameter != null) {
 		allParameters = allParameters.Concat(new [] { method.BodyParameter });
 	}
-	var parameterList = string.Join(",", allParameters.Where(m => m != null).Select(m => m.Name).ToArray());
+	var selectedParameters = allParameters.Where(m => m != null).Select(m => m.Name).ToList();
+	selectedParameters.Add("options");
+
+	var parameterList = string.Join(",", selectedParameters);
+
 	
 	
 	var url = ("\"" + method.Url.Replace("{", "\" + ").Replace("}", " + \"") + "\"").Replace(" + \"\"","");
@@ -91,7 +96,16 @@
 
 
 	<#= method.Name.ToCamelCasing() #>: function(<#=parameterList#>) {
-		return invoke.call(this, <#= url #>, "<#= method.Type.ToString().ToLower() #>", 
+		 var defaults = { fields: [] };
+         var settings = $.extend({}, defaults, options || {});
+		 var url = <#= url #>;
+
+		 if(settings.fields.length > 0) {
+		    url +=  url.indexOf("?") == -1 ? "?" : "&";
+			url += "fields=" + settings.fields.join();
+		 }
+
+		return invoke.call(this, url, "<#= method.Type.ToString().ToLower() #>", 
 		<# if (method.UrlParameters.Any()) { #>
 			{
 			<# foreach (var parameter in method.UrlParameters) { #>

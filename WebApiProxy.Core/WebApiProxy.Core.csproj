@@ -52,6 +52,8 @@
     <Compile Include="ExcludeProxy.cs" />
     <Compile Include="Models\Metadata.cs" />
     <Compile Include="Models\ModelDefinition.cs" />
+    <Compile Include="Models\ModelDefinitionEqualityComparer.cs" />
+    <Compile Include="Models\ModelProperty.cs" />
     <Compile Include="Models\ParameterDefinition.cs" />
     <Compile Include="StringExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
