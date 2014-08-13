@@ -193,6 +193,8 @@ namespace WebApiProxy.Server
                                        Description = GetDescription(property)
                                    };
 
+                models.Add(model);
+
                 foreach (var p in properties)
                 {
                     var type = p.PropertyType;
@@ -202,8 +204,6 @@ namespace WebApiProxy.Server
                         ParseType(type);
                     }
                 }
-
-                models.Add(model);
             }
         }
 
