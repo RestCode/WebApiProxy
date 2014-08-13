@@ -175,3 +175,4 @@ FakesAssemblies/
 
 # Xml Comments
 XmlDocument.xml
+*.cache
