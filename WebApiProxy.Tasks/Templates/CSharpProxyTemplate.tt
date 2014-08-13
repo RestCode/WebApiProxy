@@ -32,9 +32,9 @@ namespace <#= Configuration.Namespace#>
 	}
 }
 
+#region Models
 namespace <#= Configuration.Namespace#>.Models
 {
-#region Models
 <# foreach(var model in Configuration.Metadata.Models.Where(m => m.Type.Equals("class"))) { #>	
 	/// <summary>
     /// <#= model.Description.ToSummary() #>
