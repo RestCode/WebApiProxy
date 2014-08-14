@@ -4,8 +4,6 @@
 <#@ import namespace="System.Text" #>
 <#@ import namespace="WebApiProxy.Core.Models" #>
 <#@ import namespace="System.Collections.Generic" #>
-
-
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -14,10 +12,20 @@ using System.Threading.Tasks;
 using System.Net.Http.Formatting;
 using System.Linq;
 using System.Net;
-using <#= Configuration.Namespace#>.Models;
+using <#= Configuration.Namespace #>.Models;
+<# 
+if(!String.IsNullOrWhiteSpace(Configuration.NamespacesToInclude))
+{
+	foreach(var ns in Configuration.NamespacesToInclude.Split(','))
+	{
+	#>using <#= ns #>;
+	<#
+	}
+}
+#>
 
 // Proxies
-namespace <#= Configuration.Namespace#>
+namespace <#= Configuration.Namespace #>
 {
 	/// <summary>
     /// Client configuration.
@@ -33,8 +41,11 @@ namespace <#= Configuration.Namespace#>
 }
 
 #region Models
-namespace <#= Configuration.Namespace#>.Models
+namespace <#= Configuration.Namespace #>.Models
 {
+	public class ApiException : Exception {}
+
+<# if(Configuration.GenerateModels) { #>
 <# foreach(var model in Configuration.Metadata.Models.Where(m => m.Type.Equals("class"))) { #>	
 	/// <summary>
     /// <#= model.Description.ToSummary() #>
@@ -69,13 +80,25 @@ namespace <#= Configuration.Namespace#>.Models
 <#}#>		
 	}
 <#}#>
-	
+<#}#>
 }
 #endregion
  
+<# 	
+	// Initialize clients namespace
 
+	if(Configuration.ClientsNamespaceSuffix == null)
+	{
+		Configuration.ClientsNamespaceSuffix = ".Clients";
+	}
+	else if(!String.IsNullOrEmpty(Configuration.ClientsNamespaceSuffix) && 
+			!Configuration.ClientsNamespaceSuffix.StartsWith("."))
+	{
+		Configuration.ClientsNamespaceSuffix = "." + Configuration.ClientsNamespaceSuffix;
+	}
+#>
 <# foreach(var definition in Configuration.Metadata.Definitions) { #>
-namespace <#= Configuration.Namespace#>.Clients
+namespace <#= Configuration.Namespace #><#= Configuration.ClientsNamespaceSuffix #>
 {
 	/// <summary>
     /// <#= definition.Description.ToSummary() #>

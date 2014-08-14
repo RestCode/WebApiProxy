@@ -96,7 +96,6 @@ namespace WebApiProxy.Core.Models
         [XmlIgnore]
         public Metadata Metadata { get; set; }
 
-
         /// <summary>
         /// Gets or sets the remove from URL.
         /// </summary>
@@ -105,6 +104,28 @@ namespace WebApiProxy.Core.Models
         /// </value>
         [XmlAttribute("removeFromUrl")]
         public string RemoveFromUrl { get; set; }
+
+        /// <summary>
+        /// Indicates if task must generate models.
+        /// </summary>
+        [XmlAttribute("generateModels")]
+        public bool GenerateModels { get; set; }
+
+        /// <summary>
+        /// A comma-separated list of namespaces to include
+        /// </summary>
+        [XmlAttribute("namespacesToInclude")]
+        public string NamespacesToInclude { get; set; }
+
+        /// <summary>
+        /// Gets or sets the clients namespace suffix.
+        /// Default is ".Clients".
+        /// </summary>
+        /// <value>
+        /// The clients namespace suffix.
+        /// </value>
+        [XmlAttribute("clientsNamespaceSuffix")]
+        public string ClientsNamespaceSuffix { get; set; }
         #endregion
 
         #region Methods
