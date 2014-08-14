@@ -31,7 +31,7 @@ namespace WebApiProxy
         /// <returns>The xml documentation format.</returns>
         public static string ToSummary(this string description)
         {
-            return description.Replace("\n", "\n\t\t///");
+            return Regex.Replace(description, "\n\\s*", "\n\t\t/// ");
         }
 
         public static string Format(this string pattern, object template)

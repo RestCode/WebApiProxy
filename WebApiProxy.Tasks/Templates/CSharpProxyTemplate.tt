@@ -97,23 +97,16 @@ namespace <#= Configuration.Namespace #>.Models
 		Configuration.ClientsNamespaceSuffix = "." + Configuration.ClientsNamespaceSuffix;
 	}
 #>
-<# foreach(var definition in Configuration.Metadata.Definitions) { #>
 namespace <#= Configuration.Namespace #><#= Configuration.ClientsNamespaceSuffix #>
 {
-	/// <summary>
-    /// <#= definition.Description.ToSummary() #>
-    /// </summary>
-	public partial class <#=definition.Name#><#= Configuration.ClientSuffix#> : IDisposable
-	{
-		/// <summary>
-		/// Gests the HttpClient.
-		/// </summary>
-		public HttpClient HttpClient { get; private set; }
-
-		/// <summary>
-        /// <#= definition.Description.ToSummary() #>
+    public abstract partial class BaseClient : IDisposable
+    {
+        /// <summary>
+        /// Gests the HttpClient.
         /// </summary>
-		public <#=definition.Name#><#= Configuration.ClientSuffix#>()
+        public HttpClient HttpClient { get; private set; }
+
+		public BaseClient()
 		{
 			HttpClient = new HttpClient()
 			{
@@ -121,10 +114,7 @@ namespace <#= Configuration.Namespace #><#= Configuration.ClientsNamespaceSuffix
 			};
 		}
 
-		/// <summary>
-        /// <#= definition.Description.ToSummary() #>
-        /// </summary>
-		public <#=definition.Name#><#= Configuration.ClientSuffix#>(HttpMessageHandler handler, bool disposeHandler = true)
+        public BaseClient(HttpMessageHandler handler, bool disposeHandler = true)
 		{
 			HttpClient = new HttpClient(handler, disposeHandler)
 			{
@@ -132,6 +122,48 @@ namespace <#= Configuration.Namespace #><#= Configuration.ClientsNamespaceSuffix
 			};
 		}
 
+        protected async Task EnsureSuccess(HttpResponseMessage response)
+		{
+            if (!response.IsSuccessStatusCode)
+            {
+                throw await response.Content.ReadAsAsync<ApiException>();
+            }
+		}
+
+        protected async Task<T> ProcessResponse<T>(HttpResponseMessage response)
+        {
+            await EnsureSuccess(response);
+            return await response.Content.ReadAsAsync<T>();
+        }
+
+        protected async Task ProcessResponse(HttpResponseMessage response)
+        {
+            await EnsureSuccess(response);
+        }
+
+        public void Dispose()
+        {
+            HttpClient.Dispose();
+        }
+    }
+
+<# foreach(var definition in Configuration.Metadata.Definitions) { #>
+	/// <summary>
+    /// <#= definition.Description.ToSummary() #>
+    /// </summary>
+	public partial class <#=definition.Name#><#= Configuration.ClientSuffix#> : BaseClient
+	{
+		/// <summary>
+        /// <#= definition.Description.ToSummary() #>
+        /// </summary>
+        public <#=definition.Name#><#= Configuration.ClientSuffix#>() : base() { }
+		
+		/// <summary>
+        /// <#= definition.Description.ToSummary() #>
+        /// </summary>
+        public <#=definition.Name#><#= Configuration.ClientSuffix#>(HttpMessageHandler handler, bool disposeHandler = true) 
+            : base(handler, disposeHandler) { }
+			
 		#region Methods
 <# foreach(var method in definition.ActionMethods) { 
 		var allParameters = method.UrlParameters.AsEnumerable().Where(m => m != null);
@@ -139,12 +171,10 @@ namespace <#= Configuration.Namespace #><#= Configuration.ClientsNamespaceSuffix
 		var queryParameterString = "\"";
 		var bodyParameterString = "";
 
-
 		if (method.BodyParameter != null) {
 			allParameters = allParameters.Concat(new [] { method.BodyParameter });
 			bodyParameterString = ", " + method.BodyParameter.Name;
 		}
-
 
 		if (allParameters.Any()) {
 			queryParameterString = "?";
@@ -165,7 +195,6 @@ namespace <#= Configuration.Namespace #><#= Configuration.ClientsNamespaceSuffix
 			parameterNameList =  string.Join(", ", allParameters.Select(m => m.Name));
 		}
 
-
 		var postOrPut =  method.Type.ToTitle() == "Post" || method.Type.ToTitle() == "Put";
 		var url = method.Url;
 		
@@ -176,16 +205,22 @@ namespace <#= Configuration.Namespace #><#= Configuration.ClientsNamespaceSuffix
 		url = ("\"" + url.Replace("{", "\" + ").Replace("}", " + \"") + "\"").Replace(" + \"\"","");
 		
 #>
-        /// <summary>
+		/// <summary>
         /// <#= method.Description.ToSummary() #>
         /// </summary>
-<# foreach(var p in method.UrlParameters) { #>
+<# foreach(var p in method.UrlParameters) {#>
 		/// <param name="<#= p.Name #>"><#= p.Description #></param>
 <# } #>
-        /// <returns></returns>
-		public virtual async Task<HttpResponseMessage> <#= method.Name #>Async(<#= parameterList#>)
+		public virtual async Task<#= String.IsNullOrEmpty(method.ReturnType) ? String.Empty : ("<" + method.ReturnType + ">") #> <#= method.Name #>Async(<#= parameterList#>)
 		{
-			return await HttpClient.<#=method.Type.ToTitle()#><#= postOrPut ? "AsJson" : "" #>Async<#= postOrPut && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "" #>(<#=url#><#=bodyParameterString#>);
+			<# var httpCall = "await HttpClient." + method.Type.ToTitle() + (postOrPut ? "AsJson" : "") + "Async" + (postOrPut && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "") + "(" + url + bodyParameterString + ")"; #>
+<# if(!String.IsNullOrEmpty(method.ReturnType)) { #>
+			return await ProcessResponse<<#= method.ReturnType #>>(
+                <#= httpCall #>);
+<# } else { #>
+			await ProcessResponse(
+                <#= httpCall #>);
+<# } #>
 		}
 
 		/// <summary>
@@ -194,42 +229,16 @@ namespace <#= Configuration.Namespace #><#= Configuration.ClientsNamespaceSuffix
 <# foreach(var p in method.UrlParameters) {#>
 		/// <param name="<#= p.Name #>"><#= p.Description #></param>
 <# } #>
-        /// <returns></returns>
 		public virtual <#= String.IsNullOrEmpty(method.ReturnType) ? "void" : method.ReturnType #> <#= method.Name #>(<#= parameterList#>)
 		{
-			<#
-			var parametersValues = String.IsNullOrEmpty(bodyParameterString) ? (url.IndexOf("+") > -1 ? url.Substring(url.IndexOf("+") + 1) : "") : bodyParameterString.Substring(2);
-			#>
-			 var result = Task.Run(() => <#= method.Name #>Async(<#=parameterNameList#>)).Result;
-			 EnsureSuccess(result);			 
-			 <# if(!String.IsNullOrEmpty(method.ReturnType)) { #>			 			 
-             return result.Content.ReadAsAsync<<#= method.ReturnType #>>().Result;
-			 <# } #>
+		    return Task.Run(() => <#= method.Name #>Async(<#=parameterNameList#>)).Result;
 		}
 
-<#}#>	    
-		/// <summary>
-        /// Releases the unmanaged resources and disposes of the managed resources.       
-        /// </summary>
-		public void Dispose()
-        {
-            HttpClient.Dispose();
-        }
-
+<# } /* Client methods */ #>
+		
 		#endregion
 
-		#region Private methods
-		private void EnsureSuccess(HttpResponseMessage result)
-		{
-			if (!result.IsSuccessStatusCode)
-            {
-				throw result.Content.ReadAsAsync<ApiException>().Result;
-            }
-		}
-		#endregion
-				
 	}
 
+<# } /* Clients */ #>	 
 }
-<# } #>
-
