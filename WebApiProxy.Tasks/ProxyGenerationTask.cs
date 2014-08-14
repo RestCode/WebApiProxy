@@ -12,6 +12,8 @@ namespace WebApiProxy.Tasks
     {
         private Configuration config;
 
+        private const string DefaultFilePath = "WebApiProxySource.cs";
+
         [Output]
         public string Filename { get; set; }
 
@@ -21,36 +23,35 @@ namespace WebApiProxy.Tasks
 
         public bool Execute()
         {
+            config = Configuration.Load();
+            config.FilePath = config.FilePath ?? DefaultFilePath;
+            var fileDirectory = new FileInfo(config.FilePath).Directory.FullName;
+            if (!Directory.Exists(fileDirectory))
+            {
+                Directory.CreateDirectory(fileDirectory);
+            }
+            var cacheFilePath = config.FilePath + ".cache";
 
-
+            string source;
             try
             {
-
-                config = Configuration.Load();
-
                 config.Metadata = GetProxy();
-
                 var template = new CSharpProxyTemplate(config);
+                source = template.TransformText();
 
-                var source = template.TransformText();
-
-                File.WriteAllText(Filename, source);
-                File.WriteAllText(Configuration.CacheFile, source);
+                File.WriteAllText(cacheFilePath, source);
             }
-            catch (InvalidOperationException ex)
+            catch (InvalidOperationException)
             {
-                TryReadFromCache(ex);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
+                source = File.ReadAllText(cacheFilePath);
             }
 
+            File.WriteAllText(config.FilePath, source);
+
+            this.Filename = config.FilePath;
 
             return true;
         }
-
-
 
         private Metadata GetProxy()
         {
@@ -60,7 +61,6 @@ namespace WebApiProxy.Tasks
             {
                 using (var client = new HttpClient())
                 {
-
                     client.DefaultRequestHeaders.Add("X-Proxy-Type", "metadata");
 
                     var response = Task.Run(() => client.GetAsync(config.Endpoint)).Result;
@@ -76,22 +76,6 @@ namespace WebApiProxy.Tasks
                 throw new InvalidOperationException(config.Endpoint, ex);
             }
         }
-
-        private void TryReadFromCache(Exception ex)
-        {
-
-            if (!File.Exists(Configuration.CacheFile))
-            {
-                throw ex;
-            }
-
-            var source = File.ReadAllText(Configuration.CacheFile);
-            File.WriteAllText(Filename, source);
-
-
-        }
-
-
     }
 }
 

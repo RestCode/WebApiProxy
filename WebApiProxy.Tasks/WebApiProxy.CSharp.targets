@@ -6,32 +6,18 @@
     <WebApiProxyBinDir Condition="'$(WebApiProxyBinDir)' == ''">.</WebApiProxyBinDir>
   </PropertyGroup>
 
-
-  <UsingTask TaskName="ProxyGenerationTask" AssemblyFile="$(WebApiProxyBinDir)\bin\$(configuration)\WebApiProxy.Tasks.dll"/>
+  <UsingTask TaskName="ProxyGenerationTask" AssemblyFile="$(WebApiProxyBinDir)bin\$(configuration)\WebApiProxy.Tasks.dll"/>
 
 
   <!-- This Target does the work of converting XSD files into the output C# file. -->
   <!-- Inputs and Outputs ensure that dependency checking happens-->
-  <Target Name="ProxyTarget"
-          Outputs="$(IntermediateOutputPath)WebApiProxySource.cs"
-          >
+  <Target Name="ProxyTarget" Outputs="$(Filename)">
 
-    <ProxyGenerationTask
-              Filename="$(IntermediateOutputPath)WebApiProxySource.cs">
+    <ProxyGenerationTask>
 
       <!-- This Output element takes the filename of the generated file from the XOTask.Filename property and adds it to the list of files to compile-->
-      <Output TaskParameter="Filename" ItemName="Compile" />
+      <Output TaskParameter="Filename" ItemName="Content" />
     </ProxyGenerationTask>
-
-
-    <!-- Need to record the temporary files we write out so that they can be cleaned 
-        These are recorded as Items of Type FileWrites.
-        The rules for dealing with these types of temporary files is in Microsoft.Common.targets
-    -->
-    <CreateItem Include="$(IntermediateOutputPath)WebApiProxySource.cs" >
-      <Output TaskParameter="Include" ItemName="FileWrites"/>
-    </CreateItem>
-
 
   </Target>
 
@@ -42,6 +28,13 @@
   <Target Name="CreateConfigurationProperties">
 
   </Target>
+
+  <!--<Target Name="BeforeBuild">
+	  <ItemGroup>
+		<Compile Include="WebApiProxySource.cs">
+		  <Link>WebApiProxySource.cs</Link>
+		</Compile>
+	  </ItemGroup>
+	</Target>-->
+
 </Project>
-
-
