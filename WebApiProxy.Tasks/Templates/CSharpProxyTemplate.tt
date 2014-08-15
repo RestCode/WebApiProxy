@@ -132,7 +132,28 @@ namespace <#= Configuration.Namespace #><#= Configuration.ClientsNamespaceSuffix
 
         protected virtual string SerializeParam(object value)
         {
+			var date = value as DateTime?;
+			if(date != null)
+			{
+				return SerializeDate(date.Value);
+			}
             return (value ?? "").ToString();
+        }
+
+        protected virtual string SerializeDate(DateTime date)
+        {
+            switch (date.Kind)
+            {
+                case DateTimeKind.Unspecified:
+                case DateTimeKind.Utc:
+                    return date.ToString("o", System.Globalization.CultureInfo.InvariantCulture);
+
+                case DateTimeKind.Local:
+                    return new DateTimeOffset(date, TimeZoneInfo.Local.GetUtcOffset(date)).ToString("o");
+
+                default:
+                    throw new NotImplementedException(string.Format("DateTimeKind: {0}", date.Kind));
+            }
         }
 
         protected async Task EnsureSuccess(HttpResponseMessage response)

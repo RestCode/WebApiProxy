@@ -339,103 +339,88 @@ if(!String.IsNullOrWhiteSpace(Configuration.NamespacesToInclude))
             
             #line default
             #line hidden
-            this.Write(@"BaseAddress)
-			};
-		}
-
-        protected virtual string SerializeParam(object value)
-        {
-            return (value ?? """").ToString();
-        }
-
-        protected async Task EnsureSuccess(HttpResponseMessage response)
-		{
-            if (!response.IsSuccessStatusCode)
-            {
-                throw await response.Content.ReadAsAsync<ApiException>();
-            }
-		}
-
-        protected async Task<T> ProcessResponse<T>(HttpResponseMessage response)
-        {
-            await EnsureSuccess(response);
-            return await response.Content.ReadAsAsync<T>();
-        }
-
-        protected async Task ProcessResponse(HttpResponseMessage response)
-        {
-            await EnsureSuccess(response);
-        }
-
-        public void Dispose()
-        {
-            HttpClient.Dispose();
-        }
-    }
-
-");
+            this.Write("BaseAddress)\r\n\t\t\t};\r\n\t\t}\r\n\r\n        protected virtual string SerializeParam(objec" +
+                    "t value)\r\n        {\r\n\t\t\tvar date = value as DateTime?;\r\n\t\t\tif(date != null)\r\n\t\t\t" +
+                    "{\r\n\t\t\t\treturn SerializeDate(date.Value);\r\n\t\t\t}\r\n            return (value ?? \"\")" +
+                    ".ToString();\r\n        }\r\n\r\n        protected virtual string SerializeDate(DateTi" +
+                    "me date)\r\n        {\r\n            switch (date.Kind)\r\n            {\r\n            " +
+                    "    case DateTimeKind.Unspecified:\r\n                case DateTimeKind.Utc:\r\n    " +
+                    "                return date.ToString(\"o\", System.Globalization.CultureInfo.Invar" +
+                    "iantCulture);\r\n\r\n                case DateTimeKind.Local:\r\n                    r" +
+                    "eturn new DateTimeOffset(date, TimeZoneInfo.Local.GetUtcOffset(date)).ToString(\"" +
+                    "o\");\r\n\r\n                default:\r\n                    throw new NotImplementedEx" +
+                    "ception(string.Format(\"DateTimeKind: {0}\", date.Kind));\r\n            }\r\n        " +
+                    "}\r\n\r\n        protected async Task EnsureSuccess(HttpResponseMessage response)\r\n\t" +
+                    "\t{\r\n            if (!response.IsSuccessStatusCode)\r\n            {\r\n             " +
+                    "   throw await response.Content.ReadAsAsync<ApiException>();\r\n            }\r\n\t\t}" +
+                    "\r\n\r\n        protected async Task<T> ProcessResponse<T>(HttpResponseMessage respo" +
+                    "nse)\r\n        {\r\n            await EnsureSuccess(response);\r\n            return " +
+                    "await response.Content.ReadAsAsync<T>();\r\n        }\r\n\r\n        protected async T" +
+                    "ask ProcessResponse(HttpResponseMessage response)\r\n        {\r\n            await " +
+                    "EnsureSuccess(response);\r\n        }\r\n\r\n        public void Dispose()\r\n        {\r" +
+                    "\n            HttpClient.Dispose();\r\n        }\r\n    }\r\n\r\n");
             
-            #line 163 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 184 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  foreach(var definition in Configuration.Metadata.Definitions) { 
             
             #line default
             #line hidden
             this.Write("\t/// <summary>\r\n    /// ");
             
-            #line 165 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 186 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(definition.Description.ToSummary()));
             
             #line default
             #line hidden
             this.Write("\r\n    /// </summary>\r\n\tpublic partial class ");
             
-            #line 167 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 188 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(definition.Name));
             
             #line default
             #line hidden
             
-            #line 167 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 188 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Configuration.ClientSuffix));
             
             #line default
             #line hidden
             this.Write(" : BaseClient\r\n\t{\r\n\t\t/// <summary>\r\n        /// ");
             
-            #line 170 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 191 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(definition.Description.ToSummary()));
             
             #line default
             #line hidden
             this.Write("\r\n        /// </summary>\r\n        public ");
             
-            #line 172 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 193 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(definition.Name));
             
             #line default
             #line hidden
             
-            #line 172 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 193 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Configuration.ClientSuffix));
             
             #line default
             #line hidden
             this.Write("() : base() { }\r\n\t\t\r\n\t\t/// <summary>\r\n        /// ");
             
-            #line 175 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 196 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(definition.Description.ToSummary()));
             
             #line default
             #line hidden
             this.Write("\r\n        /// </summary>\r\n        public ");
             
-            #line 177 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 198 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(definition.Name));
             
             #line default
             #line hidden
             
-            #line 177 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 198 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Configuration.ClientSuffix));
             
             #line default
@@ -443,7 +428,7 @@ if(!String.IsNullOrWhiteSpace(Configuration.NamespacesToInclude))
             this.Write("(HttpMessageHandler handler, bool disposeHandler = true) \r\n            : base(han" +
                     "dler, disposeHandler) { }\r\n\t\t\t\r\n\t\t#region Methods\r\n");
             
-            #line 181 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 202 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  foreach(var method in definition.ActionMethods) { 
 		var allParameters = method.UrlParameters.AsEnumerable().Where(m => m != null);
 		
@@ -489,63 +474,63 @@ if(!String.IsNullOrWhiteSpace(Configuration.NamespacesToInclude))
             #line hidden
             this.Write("\t\t/// <summary>\r\n        /// ");
             
-            #line 222 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 243 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(method.Description.ToSummary()));
             
             #line default
             #line hidden
             this.Write("\r\n        /// </summary>\r\n");
             
-            #line 224 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 245 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  foreach(var p in method.UrlParameters) {
             
             #line default
             #line hidden
             this.Write("\t\t/// <param name=\"");
             
-            #line 225 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 246 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(p.Name));
             
             #line default
             #line hidden
             this.Write("\">");
             
-            #line 225 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 246 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(p.Description));
             
             #line default
             #line hidden
             this.Write("</param>\r\n");
             
-            #line 226 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 247 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  } 
             
             #line default
             #line hidden
             this.Write("\t\tpublic virtual async Task");
             
-            #line 227 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 248 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(String.IsNullOrEmpty(method.ReturnType) ? String.Empty : ("<" + method.ReturnType + ">")));
             
             #line default
             #line hidden
             this.Write(" ");
             
-            #line 227 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 248 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(method.Name));
             
             #line default
             #line hidden
             this.Write("Async(");
             
-            #line 227 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 248 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(parameterList));
             
             #line default
             #line hidden
             this.Write(")\r\n\t\t{\r\n");
             
-            #line 229 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 250 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  
 string queryString;
 if(!method.UrlParameters.Any())
@@ -560,7 +545,7 @@ else
             #line hidden
             this.Write("\t\t    var qs = HttpUtility.ParseQueryString(String.Empty);\r\n");
             
-            #line 239 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 260 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
 
 	foreach(var param in method.UrlParameters)
 	{ 
@@ -569,21 +554,21 @@ else
             #line hidden
             this.Write("\t\t    qs[\"");
             
-            #line 242 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 263 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(param.Name));
             
             #line default
             #line hidden
             this.Write("\"] = SerializeParam(");
             
-            #line 242 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 263 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(param.Name));
             
             #line default
             #line hidden
             this.Write(");\r\n\t");
             
-            #line 243 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 264 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  
 	}
 	queryString = " + qs.ToString()";
@@ -594,132 +579,132 @@ else
             #line hidden
             this.Write("\t\t\t");
             
-            #line 248 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 269 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  var httpCall = "await HttpClient." + method.Type.ToTitle() + (postOrPut ? "AsJson" : "") + "Async" + (postOrPut && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "") + "(\"" + actionUrl + "?\"" + queryString + bodyParameterString + ")"; 
             
             #line default
             #line hidden
             
-            #line 249 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 270 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  if(!String.IsNullOrEmpty(method.ReturnType)) { 
             
             #line default
             #line hidden
             this.Write("\t\t    return await ProcessResponse<");
             
-            #line 250 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 271 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(method.ReturnType));
             
             #line default
             #line hidden
             this.Write(">(\r\n                ");
             
-            #line 251 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 272 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(httpCall));
             
             #line default
             #line hidden
             this.Write(");\r\n");
             
-            #line 252 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 273 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  } else { 
             
             #line default
             #line hidden
             this.Write("\t\t    await ProcessResponse(\r\n                ");
             
-            #line 254 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 275 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(httpCall));
             
             #line default
             #line hidden
             this.Write(");\r\n");
             
-            #line 255 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 276 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  } 
             
             #line default
             #line hidden
             this.Write("\t\t}\r\n\r\n\t\t/// <summary>\r\n        /// ");
             
-            #line 259 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 280 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(method.Description.ToSummary()));
             
             #line default
             #line hidden
             this.Write("\r\n        /// </summary>\r\n");
             
-            #line 261 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 282 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  foreach(var p in method.UrlParameters) {
             
             #line default
             #line hidden
             this.Write("\t\t/// <param name=\"");
             
-            #line 262 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 283 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(p.Name));
             
             #line default
             #line hidden
             this.Write("\">");
             
-            #line 262 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 283 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(p.Description));
             
             #line default
             #line hidden
             this.Write("</param>\r\n");
             
-            #line 263 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 284 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  } 
             
             #line default
             #line hidden
             this.Write("\t\tpublic virtual ");
             
-            #line 264 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 285 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(String.IsNullOrEmpty(method.ReturnType) ? "void" : method.ReturnType));
             
             #line default
             #line hidden
             this.Write(" ");
             
-            #line 264 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 285 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(method.Name));
             
             #line default
             #line hidden
             this.Write("(");
             
-            #line 264 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 285 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(parameterList));
             
             #line default
             #line hidden
             this.Write(")\r\n\t\t{\r\n\t\t    return Task.Run(() => ");
             
-            #line 266 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 287 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(method.Name));
             
             #line default
             #line hidden
             this.Write("Async(");
             
-            #line 266 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 287 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(parameterNameList));
             
             #line default
             #line hidden
             this.Write(")).Result;\r\n\t\t}\r\n\r\n");
             
-            #line 269 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 290 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  } /* Client methods */ 
             
             #line default
             #line hidden
             this.Write("\t\t\r\n\t\t#endregion\r\n\r\n\t}\r\n\r\n");
             
-            #line 275 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 296 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  } /* Clients */ 
             
             #line default
