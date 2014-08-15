@@ -14,12 +14,13 @@
 // ---------------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Threading.Tasks;
 using System.Net.Http.Formatting;
-using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
+using System.Web;
 using <#= Configuration.Namespace #>.Models;
 <# 
 if(!String.IsNullOrWhiteSpace(Configuration.NamespacesToInclude))
@@ -129,6 +130,11 @@ namespace <#= Configuration.Namespace #><#= Configuration.ClientsNamespaceSuffix
 			};
 		}
 
+        protected virtual string SerializeParam(object value)
+        {
+            return (value ?? "").ToString();
+        }
+
         protected async Task EnsureSuccess(HttpResponseMessage response)
 		{
             if (!response.IsSuccessStatusCode)
@@ -209,7 +215,7 @@ namespace <#= Configuration.Namespace #><#= Configuration.ClientsNamespaceSuffix
 			url = url.Replace(Configuration.RemoveFromUrl, "");
 		}
 		
-		url = ("\"" + url.Replace("{", "\" + ").Replace("}", " + \"") + "\"").Replace(" + \"\"","");
+		var actionUrl = url.Split('?').First();
 		
 #>
 		/// <summary>
@@ -220,12 +226,31 @@ namespace <#= Configuration.Namespace #><#= Configuration.ClientsNamespaceSuffix
 <# } #>
 		public virtual async Task<#= String.IsNullOrEmpty(method.ReturnType) ? String.Empty : ("<" + method.ReturnType + ">") #> <#= method.Name #>Async(<#= parameterList#>)
 		{
-			<# var httpCall = "await HttpClient." + method.Type.ToTitle() + (postOrPut ? "AsJson" : "") + "Async" + (postOrPut && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "") + "(" + url + bodyParameterString + ")"; #>
+<# 
+string queryString;
+if(!method.UrlParameters.Any())
+{
+	queryString = "";
+}
+else
+{
+			#>
+		    var qs = HttpUtility.ParseQueryString(String.Empty);
+<#
+	foreach(var param in method.UrlParameters)
+	{ #>
+		    qs["<#= param.Name #>"] = SerializeParam(<#= param.Name #>);
+	<# 
+	}
+	queryString = " + qs.ToString()";
+}
+#>
+			<# var httpCall = "await HttpClient." + method.Type.ToTitle() + (postOrPut ? "AsJson" : "") + "Async" + (postOrPut && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "") + "(\"" + actionUrl + "?\"" + queryString + bodyParameterString + ")"; #>
 <# if(!String.IsNullOrEmpty(method.ReturnType)) { #>
-			return await ProcessResponse<<#= method.ReturnType #>>(
+		    return await ProcessResponse<<#= method.ReturnType #>>(
                 <#= httpCall #>);
 <# } else { #>
-			await ProcessResponse(
+		    await ProcessResponse(
                 <#= httpCall #>);
 <# } #>
 		}
