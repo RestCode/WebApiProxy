@@ -245,7 +245,13 @@ namespace <#= Configuration.Namespace #><#= Configuration.ClientsNamespaceSuffix
 		}
 		
 		var actionUrl = url.Split('?').First();
-		
+
+		var pathOrQueryParameters = method.UrlParameters
+			.GroupBy(x => actionUrl.Contains(String.Format("{{{0}}}", x.Name)))
+			.ToDictionary(x => x.Key, x => x.ToList());
+		var pathParameters = pathOrQueryParameters.ContainsKey(true) ? pathOrQueryParameters[true] : null;
+		var queryParameters = pathOrQueryParameters.ContainsKey(false) ? pathOrQueryParameters[false] : null;
+
 #>
 		/// <summary>
         /// <#= method.Description.ToSummary() #>
@@ -256,25 +262,43 @@ namespace <#= Configuration.Namespace #><#= Configuration.ClientsNamespaceSuffix
 		public virtual async Task<#= String.IsNullOrEmpty(method.ReturnType) ? String.Empty : ("<" + method.ReturnType + ">") #> <#= method.Name #>Async(<#= parameterList#>)
 		{
 <# 
-string queryString;
-if(!method.UrlParameters.Any())
+var urlBuilder = "\""+actionUrl+"\"";
+
+var pathParametersCount = 0;
+var pathParamsListBuilder = new StringBuilder();
+// Replace params in url path
+if(pathParameters != null)
+{ 
+	foreach(var param in pathParameters) 
+	{ 
+		actionUrl = actionUrl.Replace("{"+param.Name+"}", "{" + pathParametersCount + "}");
+		pathParamsListBuilder.Append(", ").Append("SerializeParam(").Append(param.Name).Append(")");
+		pathParametersCount++;
+	};
+}
+#>;
+<#
+if(queryParameters == null)
 {
-	queryString = "";
+	if(pathParameters != null)
+	{
+		urlBuilder = "String.Format(\"" + actionUrl + "\"" + pathParamsListBuilder.ToString() + ")";
+	}
 }
 else
 {
 			#>
 		    var qs = HttpUtility.ParseQueryString(String.Empty);
 <#
-	foreach(var param in method.UrlParameters)
+	foreach(var param in queryParameters)
 	{ #>
 		    qs["<#= param.Name #>"] = SerializeParam(<#= param.Name #>);
 	<# 
 	}
-	queryString = " + qs.ToString()";
+	urlBuilder = "String.Format(\"" + actionUrl + "?{" + pathParametersCount + "}\"" + pathParamsListBuilder.ToString() + ", qs.ToString())";
 }
 #>
-			<# var httpCall = "await HttpClient." + method.Type.ToTitle() + (postOrPut ? "AsJson" : "") + "Async" + (postOrPut && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "") + "(\"" + actionUrl + "?\"" + queryString + bodyParameterString + ")"; #>
+			<# var httpCall = "await HttpClient." + method.Type.ToTitle() + (postOrPut ? "AsJson" : "") + "Async" + (postOrPut && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "") + "(" + urlBuilder + bodyParameterString + ")"; #>
 <# if(!String.IsNullOrEmpty(method.ReturnType)) { #>
 		    return await ProcessResponse<<#= method.ReturnType #>>(
                 <#= httpCall #>);
