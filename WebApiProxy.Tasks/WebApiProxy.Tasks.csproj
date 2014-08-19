@@ -63,12 +63,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="webapiproxy.snippet" />
     <None Include="WebApiProxy.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </None>
-    <None Include="WebApiProxy.CSharp.nuspec" />
+    <None Include="WebApiProxy.Tasks.nuspec" />
     <None Include="WebApiProxy.CSharp.targets">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

@@ -6,7 +6,7 @@
     <WebApiProxyBinDir Condition="'$(WebApiProxyBinDir)' == ''">.</WebApiProxyBinDir>
   </PropertyGroup>
 
-  <UsingTask TaskName="ProxyGenerationTask" AssemblyFile="$(WebApiProxyBinDir)bin\$(configuration)\WebApiProxy.Tasks.dll"/>
+  <UsingTask TaskName="ProxyGenerationTask" AssemblyFile="$(WebApiProxyBinDir)\WebApiProxy.Tasks.dll"/>
 
 
   <!-- This Target does the work of converting XSD files into the output C# file. -->
