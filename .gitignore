@@ -176,3 +176,4 @@ FakesAssemblies/
 # Xml Comments
 XmlDocument.xml
 *.cache
+/Nuget/Packages
