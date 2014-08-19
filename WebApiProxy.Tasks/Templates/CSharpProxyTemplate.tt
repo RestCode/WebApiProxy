@@ -132,12 +132,16 @@ namespace <#= Configuration.Namespace #><#= Configuration.ClientsNamespaceSuffix
 
         protected virtual string SerializeParam(object value)
         {
+			if(value == null)
+			{
+				return String.Empty;
+			}
 			var date = value as DateTime?;
 			if(date != null)
 			{
 				return SerializeDate(date.Value);
 			}
-            return (value ?? "").ToString();
+            return String.Format(System.Globalization.CultureInfo.InvariantCulture, "{0}", value);
         }
 
         protected virtual string SerializeDate(DateTime date)
