@@ -221,10 +221,14 @@ namespace <#= Configuration.Namespace #><#= Configuration.ClientsNamespaceSuffix
 
 		if (allParameters.Any())
 		{
-		var q = allParameters.Select(m => m.Type + " " + m.Name);
+		var q = allParameters.Select(
+			m => m.Type 
+				+ " " 
+				+ m.Name 
+				+ (m.IsOptional ? " = " + (m.DefaultValue == null ? "null" : String.Format(System.Globalization.CultureInfo.InvariantCulture, "{0}", m.DefaultValue)) : ""));
 
 		if (q != null)
-			parameterList = string.Join(",", q.ToArray());
+			parameterList = string.Join(", ", q.ToArray());
 
 			parameterNameList =  string.Join(", ", allParameters.Select(m => m.Name));
 		}

@@ -57,7 +57,9 @@ namespace WebApiProxy.Server
                                                                       {
                                                                           Name = b.ParameterDescriptor.ParameterName,
                                                                           Type = ParseType(b.ParameterDescriptor.ParameterType),
-                                                                          Description = b.Documentation ?? ""
+                                                                          Description = b.Documentation ?? "",
+                                                                          IsOptional = b.ParameterDescriptor.IsOptional,
+                                                                          DefaultValue = b.ParameterDescriptor.DefaultValue
                                                                       },
                                                       Url = a.RelativePath,
 
