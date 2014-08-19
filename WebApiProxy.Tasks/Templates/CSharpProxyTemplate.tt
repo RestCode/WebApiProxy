@@ -51,7 +51,10 @@ namespace <#= Configuration.Namespace #>
 #region Models
 namespace <#= Configuration.Namespace #>.Models
 {
-	public class ApiException : Exception {}
+	public class ApiException : Exception 
+	{
+		public ApiException(string message) : base(message) { }
+	}
 
 <# if(Configuration.GenerateModels) { #>
 <# foreach(var model in Configuration.Metadata.Models.Where(m => m.Type.Equals("class"))) { #>	
@@ -164,7 +167,7 @@ namespace <#= Configuration.Namespace #><#= Configuration.ClientsNamespaceSuffix
 		{
             if (!response.IsSuccessStatusCode)
             {
-                throw await response.Content.ReadAsAsync<ApiException>();
+                throw new ApiException(await response.Content.ReadAsStringAsync());
             }
 		}
 
