@@ -14,6 +14,7 @@ namespace WebApiProxy.Server
     public class MetadataProvider
     {
         List<ModelDefinition> models = new List<ModelDefinition>();
+        List<string> typesToIgnore = new List<string>();
 
         public Metadata GetMetadata(HttpRequestMessage request)
         {
@@ -37,6 +38,7 @@ namespace WebApiProxy.Server
                                   Description = documentationProvider == null ? "" : documentationProvider.GetDocumentation(d.Key) ?? "",
                                   ActionMethods = from a in descriptions
                                                   where !a.ActionDescriptor.ControllerDescriptor.ControllerType.IsExcluded()
+                                                  && !a.ActionDescriptor.IsExcluded()
                                                   && !a.RelativePath.Contains("Swagger")
                                                   && !a.RelativePath.Contains("docs")
                                                   && a.ActionDescriptor.ControllerDescriptor.ControllerName == d.Key.ControllerName
@@ -88,11 +90,7 @@ namespace WebApiProxy.Server
             {
                 res = GetGenericRepresentation(type, (t) => ParseType(t, model), model);
 
-                // Is is not a .NET Framework generic, then add to the models collection.
-                if (!type.Namespace.StartsWith("System", StringComparison.OrdinalIgnoreCase))
-                {
-                    AddModelDefinition(type);
-                }
+                AddModelDefinition(type);
             }
             else
             {
@@ -107,8 +105,7 @@ namespace WebApiProxy.Server
                 {
                     res = type.Name;
 
-                    if (!models.Any(c => c.Name.Equals(type.Name)) && !type.IsInterface)
-                        AddModelDefinition(type);
+                    AddModelDefinition(type);
                 }
             }
 
@@ -156,8 +153,16 @@ namespace WebApiProxy.Server
             {
                 classToDef = classToDef.GetElementType();
             }
+
+            // Is is not a .NET Framework generic, then add to the models collection.
+            if (classToDef.Namespace.StartsWith("System", StringComparison.OrdinalIgnoreCase))
+            {
+                AddTypeToIgnore(classToDef.Name);
+                return;
+            }
+
             //If the class has not been mapped then map into metadata
-            if (!models.Any(c => c.Name.Equals(classToDef.Name)))
+            if (!typesToIgnore.Contains(classToDef.Name))
             {
                 ModelDefinition model = new ModelDefinition();
                 model.Name = classToDef.Name;
@@ -193,17 +198,28 @@ namespace WebApiProxy.Server
                                        Description = GetDescription(property)
                                    };
 
+                AddTypeToIgnore(model.Name);
+
                 foreach (var p in properties)
                 {
                     var type = p.PropertyType;
 
-                    if (!models.Any(c => c.Name.Equals(type.Name)) && !type.IsInterface)
+                    if (!models.Any(c => c.Name.Equals(type.Name)))// && !type.IsInterface)
                     {
                         ParseType(type);
                     }
                 }
 
+
                 models.Add(model);
+            }
+        }
+
+        private void AddTypeToIgnore(string name)
+        {
+            if (!typesToIgnore.Contains(name))
+            {
+                typesToIgnore.Add(name);
             }
         }
 

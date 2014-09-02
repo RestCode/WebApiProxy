@@ -51,6 +51,9 @@
     <Compile Include="ProxyGenerationTaskTest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <None Include="WebApiProxy.config">
       <SubType>Designer</SubType>

@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System.Net.Http.Formatting;
 using System.Linq;
 using System.Net;
+using System.Web;
 using <#= Configuration.Namespace#>.Models;
 
 // Proxies
@@ -73,40 +74,70 @@ namespace <#= Configuration.Namespace#>.Models
 }
 #endregion
  
-
-<# foreach(var definition in Configuration.Metadata.Definitions) { #>
 namespace <#= Configuration.Namespace#>.Clients
 {
-	/// <summary>
-    /// <#= definition.Description.ToSummary() #>
+/// <summary>
+    /// Client base class.
     /// </summary>
-	public partial class <#=definition.Name#><#= Configuration.ClientSuffix#> : IDisposable
+	public abstract partial class ClientBase : IDisposable
 	{
-		/// <summary>
+	    /// <summary>
 		/// Gests the HttpClient.
 		/// </summary>
 		public HttpClient HttpClient { get; private set; }
 
-		/// <summary>
-        /// <#= definition.Description.ToSummary() #>
-        /// </summary>
-		public <#=definition.Name#><#= Configuration.ClientSuffix#>()
+		protected ClientBase()
 		{
 			HttpClient = new HttpClient()
 			{
 				BaseAddress = new Uri(Configuration.<#= Configuration.Name #>BaseAddress)
 			};
+
+			OnCreated();
 		}
 
-		/// <summary>
-        /// <#= definition.Description.ToSummary() #>
-        /// </summary>
-		public <#=definition.Name#><#= Configuration.ClientSuffix#>(HttpMessageHandler handler, bool disposeHandler = true)
+		protected ClientBase(HttpMessageHandler handler, bool disposeHandler = true)
 		{
 			HttpClient = new HttpClient(handler, disposeHandler)
 			{
 				BaseAddress = new Uri(Configuration.<#= Configuration.Name #>BaseAddress)
 			};
+
+			OnCreated();
+		}
+
+		/// <summary>
+		/// Called when client is created.
+		/// </summary>
+		partial void OnCreated();
+
+		/// <summary>
+        /// Releases the unmanaged resources and disposes of the managed resources.       
+        /// </summary>
+		public void Dispose()
+        {
+            HttpClient.Dispose();
+        }
+	}
+<# foreach(var definition in Configuration.Metadata.Definitions) { #>
+	/// <summary>
+    /// <#= definition.Description.ToSummary() #>
+    /// </summary>
+	public partial class <#=definition.Name#><#= Configuration.ClientSuffix#> : ClientBase
+	{		
+
+		/// <summary>
+        /// <#= definition.Description.ToSummary() #>
+        /// </summary>
+		public <#=definition.Name#><#= Configuration.ClientSuffix#>() : base()
+		{
+		}
+
+		/// <summary>
+        /// <#= definition.Description.ToSummary() #>
+        /// </summary>
+		public <#=definition.Name#><#= Configuration.ClientSuffix#>(HttpMessageHandler handler, bool disposeHandler = true) : base(handler, disposeHandler)
+		{
 		}
 
 		#region Methods
@@ -121,16 +152,10 @@ namespace <#= Configuration.Namespace#>.Clients
 			allParameters = allParameters.Concat(new [] { method.BodyParameter });
 			bodyParameterString = ", " + method.BodyParameter.Name;
 		}
-
-
-		if (allParameters.Any()) {
-			queryParameterString = "?";
-
-			queryParameterString += string.Join(" + \"&", allParameters.Where(m => m != null).Select(m => m.Name + "=\" + " + m.Name).ToArray());		
-		}
-
+	
 		var parameterList = "";
 		var parameterNameList = "";
+		var parametersEncodeList = "";
 
 		if (allParameters.Any())
 		{
@@ -142,7 +167,9 @@ namespace <#= Configuration.Namespace#>.Clients
 			parameterNameList =  string.Join(", ", allParameters.Select(m => m.Name));
 		}
 
-
+		var stringParameters = allParameters.Where(t => t.Type.Equals("String", StringComparison.OrdinalIgnoreCase));
+		parametersEncodeList = string.Join("\n", stringParameters.Select(t => t.Name + " = HttpUtility.UrlEncode(" + t.Name + ");"));
+		
 		var postOrPut =  method.Type.ToTitle() == "Post" || method.Type.ToTitle() == "Put";
 		var url = method.Url;
 		
@@ -162,6 +189,7 @@ namespace <#= Configuration.Namespace#>.Clients
         /// <returns></returns>
 		public virtual async Task<HttpResponseMessage> <#= method.Name #>Async(<#= parameterList#>)
 		{
+			<#=parametersEncodeList#>
 			return await HttpClient.<#=method.Type.ToTitle()#><#= postOrPut ? "AsJson" : "" #>Async<#= postOrPut && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "" #>(<#=url#><#=bodyParameterString#>);
 		}
 
@@ -185,14 +213,6 @@ namespace <#= Configuration.Namespace#>.Clients
 		}
 
 <#}#>	    
-		/// <summary>
-        /// Releases the unmanaged resources and disposes of the managed resources.       
-        /// </summary>
-		public void Dispose()
-        {
-            HttpClient.Dispose();
-        }
-
 		#endregion
 
 		#region Private methods
@@ -206,7 +226,6 @@ namespace <#= Configuration.Namespace#>.Clients
 		#endregion
 				
 	}
-
-}
 <# } #>
+}
 
