@@ -279,7 +279,7 @@ if(pathParameters != null)
 		pathParametersCount++;
 	};
 }
-#>;
+#>
 <#
 if(queryParameters == null)
 {

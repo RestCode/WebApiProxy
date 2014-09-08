@@ -563,7 +563,6 @@ if(pathParameters != null)
             
             #line default
             #line hidden
-            this.Write(";\r\n");
             
             #line 283 "D:\WorkGit\ThirdParties\WebApiProxy-Bardock\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
 
