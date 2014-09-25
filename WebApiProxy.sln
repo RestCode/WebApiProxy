@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiProxy.Core", "WebApiProxy.Core\WebApiProxy.Core.csproj", "{94508206-8537-4088-923B-E7FCB0539903}"
 EndProject
@@ -24,6 +24,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{CC09190C
 	ProjectSection(SolutionItems) = preProject
 		Nuget\build-nuget-csharp.bat = Nuget\build-nuget-csharp.bat
 		Nuget\build-nuget-server.bat = Nuget\build-nuget-server.bat
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4CF27B5F-0B9C-43A1-950C-7514A4577ADF}"
+	ProjectSection(SolutionItems) = preProject
+		build.bat = build.bat
 	EndProjectSection
 EndProject
 Global
