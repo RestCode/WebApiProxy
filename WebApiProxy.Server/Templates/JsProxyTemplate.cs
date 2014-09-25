@@ -18,7 +18,7 @@ namespace WebApiProxy.Server.Templates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "D:\Projects\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+    #line 1 "E:\Downloads\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "12.0.0.0")]
     public partial class JsProxyTemplate : JsProxyTemplateBase
     {
@@ -97,14 +97,14 @@ namespace WebApiProxy.Server.Templates
 
 	");
             
-            #line 73 "D:\Projects\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 73 "E:\Downloads\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
  foreach(var definition in this.Metadata.Definitions) { 
             
             #line default
             #line hidden
             this.Write("\t$.proxies.");
             
-            #line 74 "D:\Projects\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 74 "E:\Downloads\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(definition.Name.ToLower()));
             
             #line default
@@ -112,14 +112,14 @@ namespace WebApiProxy.Server.Templates
             this.Write(" = {\r\n\t\tdefaultOptions: {},\r\n\t\tantiForgeryToken: defaultAntiForgeryTokenAccessor," +
                     "\r\n");
             
-            #line 77 "D:\Projects\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 77 "E:\Downloads\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
  foreach(var method in definition.ActionMethods) { 
             
             #line default
             #line hidden
             this.Write("\r\n");
             
-            #line 79 "D:\Projects\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 79 "E:\Downloads\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
 
 	var allParameters = method.UrlParameters.AsEnumerable();
 	
@@ -137,119 +137,125 @@ namespace WebApiProxy.Server.Templates
             #line hidden
             this.Write("\r\n\r\n\t");
             
-            #line 93 "D:\Projects\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 93 "E:\Downloads\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(method.Name.ToCamelCasing()));
             
             #line default
             #line hidden
             this.Write(": function(");
             
-            #line 93 "D:\Projects\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 93 "E:\Downloads\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(parameterList));
             
             #line default
             #line hidden
             this.Write(") {\r\n\t\treturn invoke.call(this, ");
             
-            #line 94 "D:\Projects\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 94 "E:\Downloads\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(this.Metadata.Host));
+            
+            #line default
+            #line hidden
+            
+            #line 94 "E:\Downloads\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(url));
             
             #line default
             #line hidden
             this.Write(", \"");
             
-            #line 94 "D:\Projects\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 94 "E:\Downloads\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(method.Type.ToString().ToLower()));
             
             #line default
             #line hidden
             this.Write("\", \r\n\t\t");
             
-            #line 95 "D:\Projects\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 95 "E:\Downloads\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
  if (method.UrlParameters.Any()) { 
             
             #line default
             #line hidden
             this.Write("\t\t\t{\r\n\t\t\t");
             
-            #line 97 "D:\Projects\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 97 "E:\Downloads\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
  foreach (var parameter in method.UrlParameters) { 
             
             #line default
             #line hidden
             this.Write("\t\t\t\t");
             
-            #line 98 "D:\Projects\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 98 "E:\Downloads\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(parameter.Name));
             
             #line default
             #line hidden
             this.Write(": ");
             
-            #line 98 "D:\Projects\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 98 "E:\Downloads\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(parameter.Name));
             
             #line default
             #line hidden
             this.Write(",\r\n\t\t\t");
             
-            #line 99 "D:\Projects\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 99 "E:\Downloads\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
  } 
             
             #line default
             #line hidden
             this.Write("\t\t\t}\r\n\t\t");
             
-            #line 101 "D:\Projects\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 101 "E:\Downloads\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
  } else { 
             
             #line default
             #line hidden
             this.Write("\t\t\t{}\r\n\t\t");
             
-            #line 103 "D:\Projects\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 103 "E:\Downloads\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
  } 
             
             #line default
             #line hidden
             this.Write("\t\t");
             
-            #line 104 "D:\Projects\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 104 "E:\Downloads\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
  if (method.BodyParameter != null) { 
             
             #line default
             #line hidden
             this.Write("\t\t\t, ");
             
-            #line 105 "D:\Projects\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 105 "E:\Downloads\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(method.BodyParameter.Name));
             
             #line default
             #line hidden
             this.Write(");\r\n\t\t");
             
-            #line 106 "D:\Projects\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 106 "E:\Downloads\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
  } else { 
             
             #line default
             #line hidden
             this.Write("\t\t\t);\r\n\t\t");
             
-            #line 108 "D:\Projects\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 108 "E:\Downloads\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
  } 
             
             #line default
             #line hidden
             this.Write("\t},\r\n");
             
-            #line 110 "D:\Projects\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 110 "E:\Downloads\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
  } 
             
             #line default
             #line hidden
             this.Write("};\r\n\t");
             
-            #line 112 "D:\Projects\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 112 "E:\Downloads\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
  } 
             
             #line default

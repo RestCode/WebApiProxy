@@ -91,7 +91,7 @@
 
 
 	<#= method.Name.ToCamelCasing() #>: function(<#=parameterList#>) {
-		return invoke.call(this, <#= url #>, "<#= method.Type.ToString().ToLower() #>", 
+		return invoke.call(this, <#= this.Metadata.Host #><#= url #>, "<#= method.Type.ToString().ToLower() #>", 
 		<# if (method.UrlParameters.Any()) { #>
 			{
 			<# foreach (var parameter in method.UrlParameters) { #>
