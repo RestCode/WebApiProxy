@@ -129,7 +129,7 @@ namespace WebApiProxy.Server.Templates
 	var parameterList = string.Join(",", allParameters.Where(m => m != null).Select(m => m.Name).ToArray());
 	
 	
-	var url = ("\"" + this.Metadata.Host + method.Url.Replace("{", "\" + ").Replace("}", " + \"") + "\"").Replace(" + \"\"","");
+	var url = ("\"" + this.Metadata.Host + "/" + method.Url.Replace("{", "\" + ").Replace("}", " + \"") + "\"").Replace(" + \"\"","");
 
 
             
