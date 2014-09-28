@@ -44,10 +44,13 @@
 	function invoke(url, type, urlParams, body) {
 		url += getQueryString(urlParams);
 
-
 		var ajaxOptions = $.extend({}, this.defaultOptions, {
-			url: url,
-			type: type
+			url: "<#= this.Metadata.Host #>/" + url,
+			type: type,
+			beforeSend : function(xhr) {
+				if (typeof(webApiAuthToken) != "undefined" && webApiAuthToken.length > 0)
+					xhr.setRequestHeader("Authorization", "Bearer " + webApiAuthToken);
+			},
 		});
 
 		if (body) {
@@ -85,7 +88,7 @@
 	var parameterList = string.Join(",", allParameters.Where(m => m != null).Select(m => m.Name).ToArray());
 	
 	
-	var url = ("\"" + this.Metadata.Host + "/" + method.Url.Replace("{", "\" + ").Replace("}", " + \"") + "\"").Replace(" + \"\"","");
+	var url = ("\"" + method.Url.Replace("{", "\" + ").Replace("}", " + \"") + "\"").Replace(" + \"\"","");
 
 #>
 
