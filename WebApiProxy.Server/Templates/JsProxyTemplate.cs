@@ -129,7 +129,7 @@ namespace WebApiProxy.Server.Templates
 	var parameterList = string.Join(",", allParameters.Where(m => m != null).Select(m => m.Name).ToArray());
 	
 	
-	var url = ("\"" + method.Url.Replace("{", "\" + ").Replace("}", " + \"") + "\"").Replace(" + \"\"","");
+	var url = ("\"" + this.Metadata.Host + method.Url.Replace("{", "\" + ").Replace("}", " + \"") + "\"").Replace(" + \"\"","");
 
 
             
@@ -150,12 +150,6 @@ namespace WebApiProxy.Server.Templates
             #line default
             #line hidden
             this.Write(") {\r\n\t\treturn invoke.call(this, ");
-            
-            #line 94 "E:\Downloads\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(this.Metadata.Host));
-            
-            #line default
-            #line hidden
             
             #line 94 "E:\Downloads\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(url));

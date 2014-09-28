@@ -85,13 +85,13 @@
 	var parameterList = string.Join(",", allParameters.Where(m => m != null).Select(m => m.Name).ToArray());
 	
 	
-	var url = ("\"" + method.Url.Replace("{", "\" + ").Replace("}", " + \"") + "\"").Replace(" + \"\"","");
+	var url = ("\"" + this.Metadata.Host + method.Url.Replace("{", "\" + ").Replace("}", " + \"") + "\"").Replace(" + \"\"","");
 
 #>
 
 
 	<#= method.Name.ToCamelCasing() #>: function(<#=parameterList#>) {
-		return invoke.call(this, <#= this.Metadata.Host #><#= url #>, "<#= method.Type.ToString().ToLower() #>", 
+		return invoke.call(this, <#= url #>, "<#= method.Type.ToString().ToLower() #>", 
 		<# if (method.UrlParameters.Any()) { #>
 			{
 			<# foreach (var parameter in method.UrlParameters) { #>
