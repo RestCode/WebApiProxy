@@ -319,7 +319,14 @@ else
 <# } #>
 		public virtual <#= String.IsNullOrEmpty(method.ReturnType) ? "void" : method.ReturnType #> <#= method.Name #>(<#= parameterList#>)
 		{
-		    return Task.Run(() => <#= method.Name #>Async(<#=parameterNameList#>)).Result;
+            try
+            {
+				return Task.Run(() => <#= method.Name #>Async(<#=parameterNameList#>)).Result;
+            }
+            catch (AggregateException ex)
+            {
+                throw ex.InnerExceptions.First();
+            }
 		}
 
 <# } /* Client methods */ #>
