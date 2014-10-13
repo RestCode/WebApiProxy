@@ -63,9 +63,16 @@ namespace <#= Configuration.Namespace#>.Models
 <#}#>
 
 <# foreach(var model in Configuration.Metadata.Models.Where(m => m.Type.Equals("enum"))) { #>	
+	/// <summary>
+    /// <#= model.Description.ToSummary() #>
+    /// </summary>
 	public enum <#=model.Name#>
 	{
 <# foreach(var constantItem in model.Constants) { #>
+
+		/// <summary>
+		/// <#= constantItem.Description.ToSummary() #>
+		/// </summary>
 		<#= constantItem.Name #> = <#= constantItem.Value #>,
 <#}#>		
 	}
@@ -86,6 +93,9 @@ namespace <#= Configuration.Namespace#>.Clients
 		/// </summary>
 		public HttpClient HttpClient { get; private set; }
 
+		/// <summary>
+        /// Initializes a new instance of the <see cref="ClientBase"/> class.
+        /// </summary>
 		protected ClientBase()
 		{
 			HttpClient = new HttpClient()
@@ -96,6 +106,11 @@ namespace <#= Configuration.Namespace#>.Clients
 			OnCreated();
 		}
 
+		/// <summary>
+        /// Initializes a new instance of the <see cref="ClientBase"/> class.
+        /// </summary>
+        /// <param name="handler">The handler.</param>
+        /// <param name="disposeHandler">if set to <c>true</c> [dispose handler].</param>
 		protected ClientBase(HttpMessageHandler handler, bool disposeHandler = true)
 		{
 			HttpClient = new HttpClient(handler, disposeHandler)
