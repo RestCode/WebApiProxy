@@ -56,7 +56,7 @@ namespace WebApiProxy.Server
                                                       Url = a.RelativePath,
 
                                                       Description = a.Documentation ?? "",
-                                                      ReturnType = ParseType(a.ActionDescriptor.ReturnType),
+                                                      ReturnType = ParseType(a.ResponseDescription.ResponseType ?? a.ResponseDescription.DeclaredType),
                                                       Type = a.HttpMethod.Method
                                                   }
                               },
