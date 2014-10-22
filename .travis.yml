@@ -1,0 +1,9 @@
+language: c
+ 
+install:
+  - sudo apt-get install mono-devel mono-gmcs nunit-console
+  - mozroots --import --sync
+ 
+script:
+  - xbuild ./WebApiProxy.sln /property:"Configuration=Debug;Platform=Any CPU" /p:"DefineConstants=TRAVIS_CI"
+  

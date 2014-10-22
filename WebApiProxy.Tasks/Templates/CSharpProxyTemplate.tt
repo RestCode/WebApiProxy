@@ -12,66 +12,152 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Net.Http.Formatting;
+using System.Linq;
+using System.Net;
+using System.Web;
 using <#= Configuration.Namespace#>.Models;
 
 // Proxies
 namespace <#= Configuration.Namespace#>
 {
+	/// <summary>
+    /// Client configuration.
+    /// </summary>
     public partial class Configuration
 	{
-		public const string <#= Configuration.Name #>BaseAddress = "<#= Configuration.Metadata.Host #>";
+		/// <summary>
+        /// Web Api Base Address.
+        /// </summary>
+		public static string <#= Configuration.Name #>BaseAddress = "<#= Configuration.Metadata.Host #>";
 		
 	}
 }
 
 namespace <#= Configuration.Namespace#>.Models
 {
-<# foreach(var model in Configuration.Metadata.Models) { #>
-	#region Models
+#region Models
+<# foreach(var model in Configuration.Metadata.Models.Where(m => m.Type.Equals("class"))) { #>	
+	/// <summary>
+    /// <#= model.Description.ToSummary() #>
+    /// </summary>
 	public partial class <#=model.Name#>
 	{
+		#region Constants
+<# foreach(var constantItem in model.Constants) { #>
+		/// <summary>
+        /// <#= constantItem.Description.ToSummary() #>
+        /// </summary>
+		public const <#= constantItem.Type #> <#= constantItem.Name #> = <#= constantItem.Value #>;
+<#}#>
+		#endregion
+
+		#region Properties
 <# foreach(var propertyItem in model.Properties) { #>
+		/// <summary>
+        /// <#= propertyItem.Description.ToSummary() #>
+        /// </summary>
 		public virtual <#= propertyItem.Type #> <#= propertyItem.Name #> { get; set; }
 <#}#>
-	}
-	#endregion
+		#endregion
+	}	
 <#}#>
+
+<# foreach(var model in Configuration.Metadata.Models.Where(m => m.Type.Equals("enum"))) { #>	
+	/// <summary>
+    /// <#= model.Description.ToSummary() #>
+    /// </summary>
+	public enum <#=model.Name#>
+	{
+<# foreach(var constantItem in model.Constants) { #>
+
+		/// <summary>
+		/// <#= constantItem.Description.ToSummary() #>
+		/// </summary>
+		<#= constantItem.Name #> = <#= constantItem.Value #>,
+<#}#>		
+	}
+<#}#>
+	
 }
-
-
-<# foreach(var definition in Configuration.Metadata.Definitions) { #>
+#endregion
+ 
 namespace <#= Configuration.Namespace#>.Clients
 {
-	public partial class <#=definition.Name#><#= Configuration.ClientSuffix#> : IDisposable
+/// <summary>
+    /// Client base class.
+    /// </summary>
+	public abstract partial class ClientBase : IDisposable
 	{
-
+	    /// <summary>
+		/// Gests the HttpClient.
+		/// </summary>
 		public HttpClient HttpClient { get; private set; }
 
 		/// <summary>
-        /// <#= definition.Description #>
+        /// Initializes a new instance of the <see cref="ClientBase"/> class.
         /// </summary>
-		public <#=definition.Name#><#= Configuration.ClientSuffix#>()
+		protected ClientBase()
 		{
 			HttpClient = new HttpClient()
 			{
 				BaseAddress = new Uri(Configuration.<#= Configuration.Name #>BaseAddress)
 			};
+
+			OnCreated();
 		}
 
 		/// <summary>
-        /// <#= definition.Description #>
+        /// Initializes a new instance of the <see cref="ClientBase"/> class.
         /// </summary>
-		public <#=definition.Name#><#= Configuration.ClientSuffix#>(HttpMessageHandler handler, bool disposeHandler = true)
+        /// <param name="handler">The handler.</param>
+        /// <param name="disposeHandler">if set to <c>true</c> [dispose handler].</param>
+		protected ClientBase(HttpMessageHandler handler, bool disposeHandler = true)
 		{
 			HttpClient = new HttpClient(handler, disposeHandler)
 			{
 				BaseAddress = new Uri(Configuration.<#= Configuration.Name #>BaseAddress)
 			};
+
+			OnCreated();
+		}
+
+		/// <summary>
+		/// Called when client is created.
+		/// </summary>
+		partial void OnCreated();
+
+		/// <summary>
+        /// Releases the unmanaged resources and disposes of the managed resources.       
+        /// </summary>
+		public void Dispose()
+        {
+            HttpClient.Dispose();
+        }
+	}
+<# foreach(var definition in Configuration.Metadata.Definitions) { #>
+	/// <summary>
+    /// <#= definition.Description.ToSummary() #>
+    /// </summary>
+	public partial class <#=definition.Name#><#= Configuration.ClientSuffix#> : ClientBase
+	{		
+
+		/// <summary>
+        /// <#= definition.Description.ToSummary() #>
+        /// </summary>
+		public <#=definition.Name#><#= Configuration.ClientSuffix#>() : base()
+		{
+		}
+
+		/// <summary>
+        /// <#= definition.Description.ToSummary() #>
+        /// </summary>
+		public <#=definition.Name#><#= Configuration.ClientSuffix#>(HttpMessageHandler handler, bool disposeHandler = true) : base(handler, disposeHandler)
+		{
 		}
 
 		#region Methods
 <# foreach(var method in definition.ActionMethods) { 
-		var allParameters = method.UrlParameters.AsEnumerable();
+		var allParameters = method.UrlParameters.AsEnumerable().Where(m => m != null);
 		
 		var queryParameterString = "\"";
 		var bodyParameterString = "";
@@ -81,31 +167,36 @@ namespace <#= Configuration.Namespace#>.Clients
 			allParameters = allParameters.Concat(new [] { method.BodyParameter });
 			bodyParameterString = ", " + method.BodyParameter.Name;
 		}
-
-
-		if (allParameters.Any()) {
-			queryParameterString = "?";
-
-			queryParameterString += string.Join(" + \"&", allParameters.Where(m => m != null).Select(m => m.Name + "=\" + " + m.Name).ToArray());
-		
-
-		}
-
+	
 		var parameterList = "";
+		var parameterNameList = "";
+		var parametersEncodeList = "";
 
 		if (allParameters.Any())
 		{
-		var q = allParameters.Where(m => m != null).Select(m => m.Type + " " + m.Name);
+		var q = allParameters.Select(m => m.Type + " " + m.Name);
 
 		if (q != null)
 			parameterList = string.Join(",", q.ToArray());
+
+			parameterNameList =  string.Join(", ", allParameters.Select(m => m.Name));
 		}
 
+		var stringParameters = allParameters.Where(t => t.Type.Equals("String", StringComparison.OrdinalIgnoreCase));
+		parametersEncodeList = string.Join("\n", stringParameters.Select(t => t.Name + " = HttpUtility.UrlEncode(" + t.Name + ");"));
+		
 		var postOrPut =  method.Type.ToTitle() == "Post" || method.Type.ToTitle() == "Put";
-		var url = ("\"" + method.Url.Replace("{", "\" + ").Replace("}", " + \"") + "\"").Replace(" + \"\"","");
+		var url = method.Url;
+		
+		if(!String.IsNullOrEmpty(Configuration.RemoveFromUrl)) {
+			url = url.Replace(Configuration.RemoveFromUrl, "");
+		}
+		
+		url = ("\"" + url.Replace("{", "\" + ").Replace("}", " + \"") + "\"").Replace(" + \"\"","");
+		
 #>
         /// <summary>
-        /// <#= method.Description #>
+        /// <#= method.Description.ToSummary() #>
         /// </summary>
 <# foreach(var p in method.UrlParameters) { #>
 		/// <param name="<#= p.Name #>"><#= p.Description #></param>
@@ -113,18 +204,43 @@ namespace <#= Configuration.Namespace#>.Clients
         /// <returns></returns>
 		public virtual async Task<HttpResponseMessage> <#= method.Name #>Async(<#= parameterList#>)
 		{
+			<#=parametersEncodeList#>
 			return await HttpClient.<#=method.Type.ToTitle()#><#= postOrPut ? "AsJson" : "" #>Async<#= postOrPut && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "" #>(<#=url#><#=bodyParameterString#>);
 		}
 
-<#}#>
+		/// <summary>
+        /// <#= method.Description.ToSummary() #>
+        /// </summary>
+<# foreach(var p in method.UrlParameters) {#>
+		/// <param name="<#= p.Name #>"><#= p.Description #></param>
+<# } #>
+        /// <returns></returns>
+		public virtual <#= String.IsNullOrEmpty(method.ReturnType) ? "void" : method.ReturnType #> <#= method.Name #>(<#= parameterList#>)
+		{
+			<#
+			var parametersValues = String.IsNullOrEmpty(bodyParameterString) ? (url.IndexOf("+") > -1 ? url.Substring(url.IndexOf("+") + 1) : "") : bodyParameterString.Substring(2);
+			#>
+			 var result = Task.Run(() => <#= method.Name #>Async(<#=parameterNameList#>)).Result;
+			 EnsureSuccess(result);			 
+			 <# if(!String.IsNullOrEmpty(method.ReturnType)) { #>			 			 
+             return result.Content.ReadAsAsync<<#= method.ReturnType #>>().Result;
+			 <# } #>
+		}
+
+<#}#>	    
 		#endregion
 
-		public void Dispose()
-        {
-            HttpClient.Dispose();
-        }
+		#region Private methods
+		private void EnsureSuccess(HttpResponseMessage result)
+		{
+			if (!result.IsSuccessStatusCode)
+            {
+				throw result.Content.ReadAsAsync<ApiException>().Result;
+            }
+		}
+		#endregion
+				
 	}
-
-}
 <# } #>
+}
 

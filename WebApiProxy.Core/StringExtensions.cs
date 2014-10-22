@@ -1,10 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Globalization;
-using System.Threading;
 using System.Text.RegularExpressions;
 namespace WebApiProxy
 {
@@ -29,6 +24,15 @@ namespace WebApiProxy
             return helper.Replace(helper[0].ToString(), helper[0].ToString().ToLower());
         }
 
+        /// <summary>
+        /// Transform the string to the XML documentation expected format respecting the new lines.
+        /// </summary>
+        /// <param name="description">The description.</param>
+        /// <returns>The xml documentation format.</returns>
+        public static string ToSummary(this string description)
+        {
+            return description.Replace("\n", "\n\t\t///");
+        }
 
         public static string Format(this string pattern, object template)
         {

@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Net.Http.Formatting;
+using System.Linq;
 using ProxyApi.Proxies.Models;
 
 // Proxies
@@ -13,24 +14,31 @@ namespace ProxyApi.Proxies
 {
     public partial class Configuration
 	{
-		public const string TestApiBaseAddress = "http://localhost:59717";
+		public static string TestApiBaseAddress = "http://localhost:59717";
 		
 	}
 }
 
 namespace ProxyApi.Proxies.Models
 {
-	#region Models
+#region Models
+	
 	public partial class Person
 	{
+		#region Constants
+		#endregion
+
+		#region Properties
 		public virtual Int32 Id { get; set; }
 		public virtual String FirstName { get; set; }
 		public virtual String LastName { get; set; }
 		public virtual String PetName { get; set; }
-	}
-	#endregion
+		public virtual IList<String> Preferences { get; set; }
+		#endregion
+	}	
 }
-
+#endregion
+ 
 
 namespace ProxyApi.Proxies.Clients
 {
@@ -71,6 +79,17 @@ namespace ProxyApi.Proxies.Clients
 			return await HttpClient.GetAsync("api/People");
 		}
 
+		/// <summary>
+        /// Gets all people in this API
+        /// </summary>
+        /// <returns></returns>
+		public virtual Person[] Get()
+		{
+						 			 var result = Task.Run(() => GetAsync()).Result;
+			 
+             return result.Content.ReadAsAsync<Person[]>().Result;
+			 		}
+
         /// <summary>
         /// Searches for people with a given name
         /// </summary>
@@ -83,6 +102,20 @@ namespace ProxyApi.Proxies.Clients
 			return await HttpClient.GetAsync("api/People/" + id + "?name=" + name + "&other=" + other);
 		}
 
+		/// <summary>
+        /// Searches for people with a given name
+        /// </summary>
+		/// <param name="name">the search criteria</param>
+		/// <param name="id"></param>
+		/// <param name="other"></param>
+        /// <returns></returns>
+		public virtual Person[] Get(String name,Int32 id,String other)
+		{
+						 			 var result = Task.Run(() => GetAsync( id + "?name=" + name + "&other=" + other)).Result;
+			 
+             return result.Content.ReadAsAsync<Person[]>().Result;
+			 		}
+
         /// <summary>
         /// 
         /// </summary>
@@ -93,6 +126,18 @@ namespace ProxyApi.Proxies.Clients
 			return await HttpClient.GetAsync("api/People/" + id);
 		}
 
+		/// <summary>
+        /// 
+        /// </summary>
+		/// <param name="id"></param>
+        /// <returns></returns>
+		public virtual IHttpActionResult Get(Int32 id)
+		{
+						 			 var result = Task.Run(() => GetAsync( id)).Result;
+			 
+             return result.Content.ReadAsAsync<IHttpActionResult>().Result;
+			 		}
+
         /// <summary>
         /// Creates a new person
         /// </summary>
@@ -101,6 +146,17 @@ namespace ProxyApi.Proxies.Clients
 		{
 			return await HttpClient.PostAsJsonAsync<Person>("api/People", person);
 		}
+
+		/// <summary>
+        /// Creates a new person
+        /// </summary>
+        /// <returns></returns>
+		public virtual IHttpActionResult Post(Person person)
+		{
+						 			 var result = Task.Run(() => PostAsync(person)).Result;
+			 
+             return result.Content.ReadAsAsync<IHttpActionResult>().Result;
+			 		}
 
         /// <summary>
         /// Update a person
@@ -111,6 +167,18 @@ namespace ProxyApi.Proxies.Clients
 		{
 			return await HttpClient.PutAsJsonAsync<Person>("api/People/" + id, person);
 		}
+
+		/// <summary>
+        /// Update a person
+        /// </summary>
+		/// <param name="id">id of the guy</param>
+        /// <returns></returns>
+		public virtual IHttpActionResult Put(Int32 id,Person person)
+		{
+						 			 var result = Task.Run(() => PutAsync(person)).Result;
+			 
+             return result.Content.ReadAsAsync<IHttpActionResult>().Result;
+			 		}
 
 		#endregion
 
@@ -160,6 +228,17 @@ namespace ProxyApi.Proxies.Clients
 			return await HttpClient.GetAsync("api/Values");
 		}
 
+		/// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+		public virtual IEnumerable<String> Get()
+		{
+						 			 var result = Task.Run(() => GetAsync()).Result;
+			 
+             return result.Content.ReadAsAsync<IEnumerable<String>>().Result;
+			 		}
+
         /// <summary>
         /// 
         /// </summary>
@@ -170,6 +249,18 @@ namespace ProxyApi.Proxies.Clients
 			return await HttpClient.GetAsync("api/Values/" + id);
 		}
 
+		/// <summary>
+        /// 
+        /// </summary>
+		/// <param name="id"></param>
+        /// <returns></returns>
+		public virtual String Get(Int32 id)
+		{
+						 			 var result = Task.Run(() => GetAsync( id)).Result;
+			 
+             return result.Content.ReadAsAsync<String>().Result;
+			 		}
+
         /// <summary>
         /// 
         /// </summary>
@@ -178,6 +269,15 @@ namespace ProxyApi.Proxies.Clients
 		{
 			return await HttpClient.PostAsJsonAsync<String>("api/Values", value);
 		}
+
+		/// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+		public virtual void Post(String value)
+		{
+						 			 Task.Run(() => PostAsync(value)).Wait();
+			 		}
 
         /// <summary>
         /// 
@@ -189,6 +289,16 @@ namespace ProxyApi.Proxies.Clients
 			return await HttpClient.PutAsJsonAsync<String>("api/Values/" + id, value);
 		}
 
+		/// <summary>
+        /// 
+        /// </summary>
+		/// <param name="id"></param>
+        /// <returns></returns>
+		public virtual void Put(Int32 id,String value)
+		{
+						 			 Task.Run(() => PutAsync(value)).Wait();
+			 		}
+
         /// <summary>
         /// 
         /// </summary>
@@ -198,6 +308,16 @@ namespace ProxyApi.Proxies.Clients
 		{
 			return await HttpClient.DeleteAsync("api/Values/" + id);
 		}
+
+		/// <summary>
+        /// 
+        /// </summary>
+		/// <param name="id"></param>
+        /// <returns></returns>
+		public virtual void Delete(Int32 id)
+		{
+						 			 Task.Run(() => DeleteAsync( id)).Wait();
+			 		}
 
 		#endregion
 
