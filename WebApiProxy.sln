@@ -1,15 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30723.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiProxy.Core", "WebApiProxy.Core\WebApiProxy.Core.csproj", "{94508206-8537-4088-923B-E7FCB0539903}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiProxy.Tasks", "WebApiProxy.Tasks\WebApiProxy.Tasks.csproj", "{A635DE23-DDC1-43ED-BC5D-D49B7E8A4355}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiProxy.Server", "WebApiProxy.Server\WebApiProxy.Server.csproj", "{4E5B8C2F-9008-4A17-ABD1-A92E046C6A1E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiProxy.Sample.Client", "WebApiProxy.Sample.Client\WebApiProxy.Sample.Client.csproj", "{56938326-E72E-4AC7-814A-707658C9CB85}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiProxy.Sample.Server", "WebApiProxy.Sample.Server\WebApiProxy.Sample.Server.csproj", "{9713E5FA-FD6F-4B68-8C7C-B25AE442615F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{C3B525D0-5AC0-4267-AD47-09D8A05CE549}"
 	ProjectSection(SolutionItems) = preProject
@@ -23,8 +21,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{CC09190C
 		Nuget\build-nuget-csharp.bat = Nuget\build-nuget-csharp.bat
 		Nuget\build-nuget-server.bat = Nuget\build-nuget-server.bat
 	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{99C8E51D-722A-4618-8E1A-F5318C281C81}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiProxy.Tasks.FunctionalTests", "WebApiProxy.Tasks.FunctionalTests\WebApiProxy.Tasks.FunctionalTests.csproj", "{2749EDE4-3E01-4BB0-8AA0-8524BFECA8D3}"
 EndProject
@@ -46,14 +42,6 @@ Global
 		{4E5B8C2F-9008-4A17-ABD1-A92E046C6A1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4E5B8C2F-9008-4A17-ABD1-A92E046C6A1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4E5B8C2F-9008-4A17-ABD1-A92E046C6A1E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{56938326-E72E-4AC7-814A-707658C9CB85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{56938326-E72E-4AC7-814A-707658C9CB85}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{56938326-E72E-4AC7-814A-707658C9CB85}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{56938326-E72E-4AC7-814A-707658C9CB85}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9713E5FA-FD6F-4B68-8C7C-B25AE442615F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9713E5FA-FD6F-4B68-8C7C-B25AE442615F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9713E5FA-FD6F-4B68-8C7C-B25AE442615F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9713E5FA-FD6F-4B68-8C7C-B25AE442615F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2749EDE4-3E01-4BB0-8AA0-8524BFECA8D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2749EDE4-3E01-4BB0-8AA0-8524BFECA8D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2749EDE4-3E01-4BB0-8AA0-8524BFECA8D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -61,9 +49,5 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{9713E5FA-FD6F-4B68-8C7C-B25AE442615F} = {99C8E51D-722A-4618-8E1A-F5318C281C81}
-		{56938326-E72E-4AC7-814A-707658C9CB85} = {99C8E51D-722A-4618-8E1A-F5318C281C81}
 	EndGlobalSection
 EndGlobal
