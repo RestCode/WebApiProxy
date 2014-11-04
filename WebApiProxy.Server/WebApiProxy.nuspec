@@ -4,9 +4,9 @@
     <id>WebApiProxy</id>
     <version>$version$</version>
     <title>WebApi Proxy Provider</title>
-    <projectUrl>https://github.com/faniereynders/WebApiProxy</projectUrl>
-    <authors>Fanie Reynders</authors>
-    <owners>Fanie Reynders</owners>
+    <projectUrl>https://github.com/travisrussi/WebApiProxy</projectUrl>
+    <authors>Fanie Reynders, Travis Russi</authors>
+    <owners>Fanie Reynders, Travis Russi</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>This package exposes an endpoint for ASP.NET Web Api services to serve a JavaScript proxy and metadata</description>
     <releaseNotes></releaseNotes>

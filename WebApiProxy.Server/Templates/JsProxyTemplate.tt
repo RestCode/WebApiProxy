@@ -47,8 +47,12 @@
 		//url += getQueryString(urlParams);
 
 		var ajaxOptions = $.extend({}, this.defaultOptions, {
-			url: $.proxies.baseUrl + "/" + url,
-			type: type
+			url: "<#= this.Metadata.Host #>/" + url,
+			type: type,
+			beforeSend : function(xhr) {
+				if (typeof(webApiAuthToken) != "undefined" && webApiAuthToken.length > 0)
+					xhr.setRequestHeader("Authorization", "Bearer " + webApiAuthToken);
+			},
 		});
 
 		if (body) {
@@ -61,7 +65,7 @@
 				ajaxOptions.headers = ajaxOptions.headers || {};
 			}
 		}
-		    
+	
 		return $.ajax(ajaxOptions);
 	};
 

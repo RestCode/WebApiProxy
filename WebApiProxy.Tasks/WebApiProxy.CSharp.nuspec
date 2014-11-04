@@ -3,10 +3,10 @@
   <metadata>
     <id>WebApiProxy.CSharp</id>
     <title>WebApi C# Proxy Generator</title>
-    <projectUrl>https://github.com/faniereynders/WebApiProxy</projectUrl>
+    <projectUrl>https://github.com/travisrussi/WebApiProxy</projectUrl>
     <version>$version$</version>
-    <authors>Fanie Reynders</authors>
-    <owners>Fanie Reynders</owners>
+    <authors>Fanie Reynders, Travis Russi</authors>
+    <owners>Fanie Reynders, Travis Russi</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Generates a C# proxy for communicating to a RESTful Web Api that implements the WebApiProxy provider</description>
     <releaseNotes></releaseNotes>
