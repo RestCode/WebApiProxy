@@ -59,7 +59,9 @@ namespace WebApiProxy.Server
                                                                       {
                                                                           Name = b.ParameterDescriptor.ParameterName,
                                                                           Type = ParseType(b.ParameterDescriptor.ParameterType),
-                                                                          Description = b.Documentation ?? ""
+                                                                          Description = b.Documentation ?? "",
+                                                                          IsOptional = b.ParameterDescriptor.IsOptional,
+                                                                          DefaultValue = b.ParameterDescriptor.DefaultValue
                                                                       },
                                                       Url = a.RelativePath,
 
@@ -90,8 +92,8 @@ namespace WebApiProxy.Server
             {
                 res = GetGenericRepresentation(type, (t) => ParseType(t, model), model);
 
-                AddModelDefinition(type);
-            }
+                    AddModelDefinition(type);
+                }
             else
             {
                 if (type.ToString().StartsWith("System."))
@@ -105,7 +107,7 @@ namespace WebApiProxy.Server
                 {
                     res = type.Name;
 
-                    AddModelDefinition(type);
+                        AddModelDefinition(type);
                 }
             }
 

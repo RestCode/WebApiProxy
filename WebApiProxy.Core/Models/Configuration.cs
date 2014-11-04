@@ -15,14 +15,6 @@ namespace WebApiProxy.Core.Models
         /// The proxy configuration file.
         /// </summary>
         public const string FileName = "WebApiProxy.config";
-
-        /// <summary>
-        /// The proxy cache file.
-        /// <remarks>
-        /// Used when the api is not available due some connection problem.
-        /// </remarks>
-        /// </summary>
-        public const string CacheFile = "WebApiProxySource.cache";
         #endregion
 
         #region Fields
@@ -96,7 +88,6 @@ namespace WebApiProxy.Core.Models
         [XmlIgnore]
         public Metadata Metadata { get; set; }
 
-
         /// <summary>
         /// Gets or sets the remove from URL.
         /// </summary>
@@ -105,6 +96,31 @@ namespace WebApiProxy.Core.Models
         /// </value>
         [XmlAttribute("removeFromUrl")]
         public string RemoveFromUrl { get; set; }
+
+        /// <summary>
+        /// Indicates if task must generate models.
+        /// </summary>
+        [XmlAttribute("generateModels")]
+        public bool GenerateModels { get; set; }
+
+        /// <summary>
+        /// A comma-separated list of namespaces to include
+        /// </summary>
+        [XmlAttribute("namespacesToInclude")]
+        public string NamespacesToInclude { get; set; }
+
+        /// <summary>
+        /// Gets or sets the clients namespace suffix.
+        /// Default is ".Clients".
+        /// </summary>
+        [XmlAttribute("clientsNamespaceSuffix")]
+        public string ClientsNamespaceSuffix { get; set; }
+
+        /// <summary>
+        /// Gets or sets the full path of the generated file.
+        /// </summary>
+        [XmlAttribute("filePath")]
+        public string FilePath { get; set; }
         #endregion
 
         #region Methods
