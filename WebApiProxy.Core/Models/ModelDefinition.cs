@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
-using HelperSharp;
 
 namespace WebApiProxy.Core.Models
 {
@@ -29,9 +28,8 @@ namespace WebApiProxy.Core.Models
         #region Methods
         public string AddGenericArgument(string argument)
         {
-            var result = "T{0}".With(GenericArgumentsMap.Count + 1);
+            var result = System.String.Format(System.Globalization.CultureInfo.InvariantCulture, "T{0}", GenericArgumentsMap.Count + 1);
             GenericArgumentsMap.Add(argument, result);
-
             return result;
         }
 
