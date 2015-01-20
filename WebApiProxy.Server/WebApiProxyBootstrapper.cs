@@ -3,8 +3,8 @@ using System.Web.Http;
 using System.Web.Http.Dispatcher;
 using WebApiProxy.Server;
 
-[assembly: PreApplicationStartMethod(typeof(WebApiProxyBootstrapper), "RegisterProxyRoutes")]
-
+//[assembly: PreApplicationStartMethod(typeof(WebApiProxyBootstrapper), "RegisterProxyRoutes")]
+//from now, this method need to call explicite
 namespace WebApiProxy.Server
 {
     public static class WebApiProxyBootstrapper
