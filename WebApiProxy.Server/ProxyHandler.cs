@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using System.Web.Http;
 using WebApiProxy.Server.Templates;
 //testing ci 1
 namespace WebApiProxy.Server
@@ -10,16 +11,18 @@ namespace WebApiProxy.Server
     public class ProxyHandler : DelegatingHandler
     {
         private MetadataProvider _metadataProvider;
-        public ProxyHandler()
+        HttpConfiguration _config;
+        public ProxyHandler(HttpConfiguration config)
         {
             _metadataProvider = new MetadataProvider();
+            _config = config;
         }
 
         protected async override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, System.Threading.CancellationToken cancellationToken)
         {
             return await Task.Run(() =>
             {
-                var metadata = _metadataProvider.GetMetadata(request);
+                var metadata = _metadataProvider.GetMetadata(request, _config);
 
                 if (request.Headers.Any(h => h.Key == "X-Proxy-Type" && h.Value.Contains("metadata")))
                 {
