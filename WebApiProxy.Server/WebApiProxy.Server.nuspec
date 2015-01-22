@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>WebApiProxy</id>
-    <version>1.0.1.0</version>
+    <version>1.0.2.0</version>
     <title>WebApi Proxy Provider</title>
     <authors>Fanie Reynders</authors>
     <owners>Fanie Reynders</owners>
