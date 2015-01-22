@@ -16,11 +16,11 @@ namespace WebApiProxy.Server
         List<ModelDefinition> models = new List<ModelDefinition>();
         List<string> typesToIgnore = new List<string>();
 
-        public Metadata GetMetadata(HttpRequestMessage request)
+        public Metadata GetMetadata(HttpRequestMessage request, HttpConfiguration config)
         {
             var host = request.RequestUri.Scheme + "://" + request.RequestUri.Authority;
-            var descriptions = GlobalConfiguration.Configuration.Services.GetApiExplorer().ApiDescriptions;
-            var documentationProvider = GlobalConfiguration.Configuration.Services.GetDocumentationProvider();
+            var descriptions = config.Services.GetApiExplorer().ApiDescriptions;
+            var documentationProvider = config.Services.GetDocumentationProvider();
 
             ILookup<HttpControllerDescriptor, ApiDescription> apiGroups = descriptions
                 .Where(a => !a.ActionDescriptor.ControllerDescriptor.ControllerType.IsAbstract

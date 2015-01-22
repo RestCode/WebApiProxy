@@ -3,8 +3,8 @@ using System.Web.Http;
 using System.Web.Http.Dispatcher;
 using WebApiProxy.Server;
 
-[assembly: PreApplicationStartMethod(typeof(WebApiProxyBootstrapper), "RegisterProxyRoutes")]
-
+//[assembly: PreApplicationStartMethod(typeof(WebApiProxyBootstrapper), "RegisterProxyRoutes")]
+//from now, this method need to call explicite
 namespace WebApiProxy.Server
 {
     public static class WebApiProxyBootstrapper
@@ -12,14 +12,14 @@ namespace WebApiProxy.Server
         /// <summary>
         /// Sets up the proxy route table entries.
         /// </summary>
-        public static void RegisterProxyRoutes()
+        public static void RegisterProxyRoutes(HttpConfiguration config)
         {
-            GlobalConfiguration.Configuration.Routes.MapHttpRoute(
+            config.Routes.MapHttpRoute(
             name: "WebApiProxy",
             routeTemplate: "api/proxies",
             defaults: new { id = RouteParameter.Optional },
             constraints: null,
-            handler: new ProxyHandler() { InnerHandler = new HttpControllerDispatcher(GlobalConfiguration.Configuration) }
+            handler: new ProxyHandler(config) { InnerHandler = new HttpControllerDispatcher(config) }
         );
 
 
