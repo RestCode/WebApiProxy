@@ -15,8 +15,6 @@ namespace WebApiProxy.Tasks.Templates
             
             this.Configuration = config;
 		}
-
-        public bool renderNamespaces { get; set; }
         public Configuration Configuration { get; set; }
 
     }

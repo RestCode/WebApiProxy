@@ -36,7 +36,7 @@ namespace WebApiProxy
         {
             get
             {
-                return "ProxyApi: Configuration file not found. Please make sure 'ProxyApiConfig.json' exists within your project root.";
+                return "WebApiProxy: Configuration file not found. Please make sure 'WebApiProxy.config' exists within your project root.";
             }
         }
     }

@@ -12,8 +12,6 @@ namespace WebApiProxy.Tasks
     {
         private Configuration config;
 
-        private const string DefaultFilePath = "WebApiProxySource.cs";
-
         [Output]
         public string Filename { get; set; }
 
@@ -23,35 +21,37 @@ namespace WebApiProxy.Tasks
 
         public bool Execute()
         {
-            config = Configuration.Load();
-            config.FilePath = config.FilePath ?? DefaultFilePath;
-            var fileDirectory = new FileInfo(config.FilePath).Directory.FullName;
-            if (!Directory.Exists(fileDirectory))
-            {
-                Directory.CreateDirectory(fileDirectory);
-            }
-            var cacheFilePath = config.FilePath + ".cache";
 
-            string source;
+
             try
             {
+
+                config = Configuration.Load();
+
                 config.Metadata = GetProxy();
+
                 var template = new CSharpProxyTemplate(config);
-                source = template.TransformText();
 
-                File.WriteAllText(cacheFilePath, source);
+                var source = template.TransformText();
+
+                File.WriteAllText(Filename, source);
+                File.WriteAllText(Configuration.CacheFile, source);
             }
-            catch (InvalidOperationException)
+            catch (ConnectionException)
             {
-                source = File.ReadAllText(cacheFilePath);
+                tryReadFromCache();
+                // throw ex;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
 
-            File.WriteAllText(config.FilePath, source);
-
-            this.Filename = config.FilePath;
 
             return true;
         }
+
+
 
         private Metadata GetProxy()
         {
@@ -61,21 +61,44 @@ namespace WebApiProxy.Tasks
             {
                 using (var client = new HttpClient())
                 {
+
                     client.DefaultRequestHeaders.Add("X-Proxy-Type", "metadata");
 
-                    var response = Task.Run(() => client.GetAsync(config.Endpoint)).Result;
+                    var response = client.GetAsync(config.Endpoint).Result;
+
                     response.EnsureSuccessStatusCode();
 
                     var metadata = response.Content.ReadAsAsync<Metadata>().Result;
+
+
 
                     return metadata;
                 }
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException(config.Endpoint, ex);
+
+                throw new ConnectionException(config.Endpoint);
             }
+
+
+
         }
+
+        private void tryReadFromCache()
+        {
+
+            if (!File.Exists(Configuration.CacheFile))
+            {
+                throw new ConnectionException(config.Endpoint);
+            }
+            var source = File.ReadAllText(Configuration.CacheFile);
+            File.WriteAllText(Filename, source);
+
+
+        }
+
+
     }
 }
 
