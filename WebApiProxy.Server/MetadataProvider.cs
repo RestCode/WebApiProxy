@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DocsByReflection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -6,17 +7,25 @@ using System.Reflection;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Description;
-using DocsByReflection;
 using WebApiProxy.Core.Models;
 
 namespace WebApiProxy.Server
 {
     public class MetadataProvider
     {
-        List<ModelDefinition> models = new List<ModelDefinition>();
-        List<string> typesToIgnore = new List<string>();
+        private readonly List<ModelDefinition> models;
+        private readonly List<string> typesToIgnore = new List<string>();
+        private readonly HttpConfiguration config;
 
-        public Metadata GetMetadata(HttpRequestMessage request, HttpConfiguration config)
+        public MetadataProvider(HttpConfiguration config)
+        {
+            
+            this.models = new List<ModelDefinition>();
+            this.typesToIgnore = new List<string>();
+            this.config = config;
+        }
+
+        public Metadata GetMetadata(HttpRequestMessage request)
         {
             var host = request.RequestUri.Scheme + "://" + request.RequestUri.Authority;
             var descriptions = config.Services.GetApiExplorer().ApiDescriptions;
@@ -116,11 +125,8 @@ namespace WebApiProxy.Server
 
         private string GetGenericRepresentation(Type type, Func<Type, string> getTypedParameterRepresentation, ModelDefinition model = null)
         {
-            string res;
-            res = type.Name;
-
+            string res = type.Name;
             int index = res.IndexOf('`');
-
             if (index > -1)
                 res = res.Substring(0, index);
 
@@ -150,38 +156,33 @@ namespace WebApiProxy.Server
 
         private void AddModelDefinition(Type classToDef)
         {
+            var documentationProvider = config.Services.GetDocumentationProvider();
             //When the class is an array redefine the classToDef as the array type
             if (classToDef.IsArray)
             {
                 classToDef = classToDef.GetElementType();
             }
-
             // Is is not a .NET Framework generic, then add to the models collection.
             if (classToDef.Namespace.StartsWith("System", StringComparison.OrdinalIgnoreCase))
             {
                 AddTypeToIgnore(classToDef.Name);
                 return;
             }
-
             //If the class has not been mapped then map into metadata
             if (!typesToIgnore.Contains(classToDef.Name))
             {
                 ModelDefinition model = new ModelDefinition();
                 model.Name = classToDef.Name;
                 model.Description = GetDescription(classToDef);
-
                 if (classToDef.IsGenericType)
                 {
                     model.Name = GetGenericRepresentation(classToDef, (t) => model.AddGenericArgument(t.Name), model);
                 }
-
                 model.Type = classToDef.IsEnum ? "enum" : "class";
-
                 var constants = classToDef
                     .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
                     .Where(f => f.IsLiteral && !f.IsInitOnly)
                     .ToList();
-
                 model.Constants = from constant in constants
                                   select new ConstantDefinition
                                   {
@@ -199,9 +200,7 @@ namespace WebApiProxy.Server
                                        Type = ParseType(property.PropertyType, model),
                                        Description = GetDescription(property)
                                    };
-
                 AddTypeToIgnore(model.Name);
-
                 foreach (var p in properties)
                 {
                     var type = p.PropertyType;
@@ -211,8 +210,6 @@ namespace WebApiProxy.Server
                         ParseType(type);
                     }
                 }
-
-
                 models.Add(model);
             }
         }
@@ -234,12 +231,10 @@ namespace WebApiProxy.Server
         private static string GetDescription(MemberInfo member)
         {
             var xml = DocsService.GetXmlFromMember(member, false);
-
             if (xml != null)
             {
-                return xml.InnerText;
+                return xml.InnerText.Trim();
             }
-
             return String.Empty;
         }
 
@@ -249,9 +244,8 @@ namespace WebApiProxy.Server
 
             if (xml != null)
             {
-                return xml.InnerText;
+                return xml.InnerText.Trim();
             }
-
             return String.Empty;
         }
     }

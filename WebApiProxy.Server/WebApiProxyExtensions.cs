@@ -1,7 +1,5 @@
-﻿using System.Web;
-using System.Web.Http;
+﻿using System.Web.Http;
 using System.Web.Http.Dispatcher;
-using WebApiProxy.Server;
 
 namespace WebApiProxy.Server
 {
@@ -17,10 +15,7 @@ namespace WebApiProxy.Server
             routeTemplate: routeTemplate,
             defaults: new { id = RouteParameter.Optional },
             constraints: null,
-            handler: new ProxyHandler(config) { InnerHandler = new HttpControllerDispatcher(config) }
-        );
-
-
+            handler: new ProxyHandler(config) { InnerHandler = new HttpControllerDispatcher(config) });
         }
     }
 }

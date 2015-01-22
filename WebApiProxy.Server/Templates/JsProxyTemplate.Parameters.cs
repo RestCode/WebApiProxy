@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using WebApiProxy.Core.Models;
 
-
 namespace WebApiProxy.Server.Templates
 {
 	/// <summary>
@@ -13,16 +12,10 @@ namespace WebApiProxy.Server.Templates
 	/// </summary>
 	public partial class JsProxyTemplate
 	{
-		
-
 		public JsProxyTemplate(Metadata metadata)
 		{
             this.Metadata = metadata;
 		}
-
 		public Metadata Metadata { get; set; }
-
-      
-
     }
 }

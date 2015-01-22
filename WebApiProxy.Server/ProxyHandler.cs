@@ -14,7 +14,7 @@ namespace WebApiProxy.Server
         HttpConfiguration _config;
         public ProxyHandler(HttpConfiguration config)
         {
-            _metadataProvider = new MetadataProvider();
+            _metadataProvider = new MetadataProvider(config);
             _config = config;
         }
 
@@ -22,7 +22,7 @@ namespace WebApiProxy.Server
         {
             return await Task.Run(() =>
             {
-                var metadata = _metadataProvider.GetMetadata(request, _config);
+                var metadata = _metadataProvider.GetMetadata(request);
 
                 if (request.Headers.Any(h => h.Key == "X-Proxy-Type" && h.Value.Contains("metadata")))
                 {

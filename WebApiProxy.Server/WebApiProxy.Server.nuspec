@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>WebApiProxy</id>
-    <version>1.0.2.0</version>
+    <version>1.0.2.4</version>
     <title>WebApi Proxy Provider</title>
     <authors>Fanie Reynders</authors>
     <owners>Fanie Reynders</owners>
@@ -13,9 +13,8 @@
     <copyright>Copyright 2014</copyright>
     <tags>AspNet WebAPI Proxy JavaScript CSharp</tags>
     <dependencies>
-      <dependency id="Microsoft.AspNet.WebApi.Core" version="5.0.0" />
+      <dependency id="Microsoft.AspNet.WebApi.Core" version="5.2.2" />
       <dependency id="DocsByReflection" version="1.0.8.0" />
-      <dependency id="HelperSharp" version="0.0.4.1" />
     </dependencies>
   </metadata>
 </package>
