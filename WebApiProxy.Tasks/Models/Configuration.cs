@@ -13,8 +13,8 @@ namespace WebApiProxy.Tasks.Models
     [XmlRoot("proxy")]
     public class Configuration
     {
-        public const string FileName = "WebApiProxy.config";
-        public const string CacheFile = "WebApiProxySource.cache";
+        public const string ConfigFileName = "WebApiProxy.config";
+        public const string CacheFile = "WebApiProxy.generated.cache";
 
         private string _clientSuffix = "Client";
         private string _name = "MyWebApiProxy";
@@ -81,21 +81,18 @@ namespace WebApiProxy.Tasks.Models
         [XmlIgnore]
         public Metadata Metadata { get; set; }
 
-        public static Configuration Load()
+        public static Configuration Load(string root)
         {
-            if (!File.Exists(Configuration.FileName))
-                throw new ConfigFileNotFoundException();
+            var fileName = root + Configuration.ConfigFileName;
 
-            var xml = File.ReadAllText(Configuration.FileName);
+            if (!File.Exists(fileName))
+                throw new ConfigFileNotFoundException(root);
+
+            var xml = File.ReadAllText(fileName);
             var serializer = new XmlSerializer(typeof(Configuration), new XmlRootAttribute("proxy"));
-
-
-
-            var reader = new StreamReader(Configuration.FileName);
+            var reader = new StreamReader(fileName);
             var config = (Configuration)serializer.Deserialize(reader);
             reader.Close();
-
-
             return config;
 
         }

@@ -64,6 +64,9 @@
       <DependentUpon>CSharpProxyTemplate.tt</DependentUpon>
     </Compile>
     <Compile Include="Templates\CSharpProxyTemplate.Parameters.cs" />
+    <Compile Include="WebApiProxy.generated.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="install.ps1" />

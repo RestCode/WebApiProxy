@@ -22,6 +22,11 @@ namespace WebApiProxy
 
     public class ConfigFileNotFoundException : Exception
     {
+        private readonly string path;
+        public ConfigFileNotFoundException(string path)
+        {
+            this.path = path;
+        }
         public override string StackTrace
         {
             get
@@ -36,7 +41,7 @@ namespace WebApiProxy
         {
             get
             {
-                return "WebApiProxy: Configuration file not found. Please make sure 'WebApiProxy.config' exists within your project root.";
+                return "WebApiProxy: Configuration file not found. Please make sure 'WebApiProxy.config' exists within " + path;
             }
         }
     }
