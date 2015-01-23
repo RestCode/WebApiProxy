@@ -1,10 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Net.Http;
-using System.Threading.Tasks;
 using Microsoft.Build.Framework;
 using WebApiProxy.Core.Models;
 using WebApiProxy.Tasks.Templates;
+using WebApiProxy.Tasks.Models;
 
 namespace WebApiProxy.Tasks
 {
