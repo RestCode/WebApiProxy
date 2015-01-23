@@ -21,33 +21,32 @@ namespace WebApiProxy.Tasks
 
         public bool Execute()
         {
-
-
             try
             {
+                if (!File.Exists(Filename))
+                {
+                    File.WriteAllText(Filename, "//WebApiProxy generation is disabled");
+                }
 
                 config = Configuration.Load();
 
-                config.Metadata = GetProxy();
-
-                var template = new CSharpProxyTemplate(config);
-
-                var source = template.TransformText();
-
-                File.WriteAllText(Filename, source);
-                File.WriteAllText(Configuration.CacheFile, source);
+                if (config.GenerateOnBuild)
+                {
+                    config.Metadata = GetProxy();
+                    var template = new CSharpProxyTemplate(config);
+                    var source = template.TransformText();
+                    File.WriteAllText(Filename, source);
+                    File.WriteAllText(Configuration.CacheFile, source);
+                }
             }
             catch (ConnectionException)
             {
                 tryReadFromCache();
-                // throw ex;
             }
             catch (Exception ex)
             {
                 throw ex;
             }
-
-
             return true;
         }
 
@@ -80,22 +79,16 @@ namespace WebApiProxy.Tasks
 
                 throw new ConnectionException(config.Endpoint);
             }
-
-
-
         }
 
         private void tryReadFromCache()
         {
-
             if (!File.Exists(Configuration.CacheFile))
             {
                 throw new ConnectionException(config.Endpoint);
             }
             var source = File.ReadAllText(Configuration.CacheFile);
             File.WriteAllText(Filename, source);
-
-
         }
 
 

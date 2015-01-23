@@ -16,7 +16,23 @@ namespace WebApiProxy.Tasks.Models
         public const string FileName = "WebApiProxy.config";
         public const string CacheFile = "WebApiProxySource.cache";
 
-        private string _clientSuffix;
+        private string _clientSuffix = "Client";
+        private string _name = "MyWebApiProxy";
+        private bool _generateOnBuild = false;
+        private string _namespace = "WebApi.Proxies";
+
+        [XmlAttribute("generateOnBuild")]
+        public bool GenerateOnBuild
+        {
+            get
+            {
+                return this._generateOnBuild;
+            }
+            set
+            {
+                this._generateOnBuild = value;
+            }
+        }
 
         [XmlAttribute("clientSuffix")]
         public string ClientSuffix
@@ -31,23 +47,33 @@ namespace WebApiProxy.Tasks.Models
             }
         }
 
-        private string _namespace;
+        
 
         [XmlAttribute("namespace")]
         public string Namespace
         {
             get
             {
-                return _namespace.DefaultIfEmpty("ProxyApi.Proxies");
+                return this._namespace;
             }
             set
             {
-                _namespace = value;
+                this._namespace = value;
             }
         }
 
         [XmlAttribute("name")]
-        public string Name { get; set; }
+        public string Name
+        {
+            get
+            {
+                return this._name;
+            }
+            set
+            {
+                this._name = value;
+            }
+        }
 
         [XmlAttribute("endpoint")]
         public string Endpoint { get; set; }
