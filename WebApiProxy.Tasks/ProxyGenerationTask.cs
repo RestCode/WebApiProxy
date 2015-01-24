@@ -7,6 +7,7 @@ using WebApiProxy.Tasks.Templates;
 using WebApiProxy.Tasks.Models;
 using Microsoft.Build.Evaluation;
 using System.Linq;
+using WebApiProxy.Tasks.Infrastructure;
 namespace WebApiProxy.Tasks
 {
     public class ProxyGenerationTask : ITask
@@ -19,6 +20,9 @@ namespace WebApiProxy.Tasks
         [Output]
         public string Root { get; set; }
 
+        [Output]
+        public string ProjectPath { get; set; }
+
         public IBuildEngine BuildEngine { get; set; }
 
         public ITaskHost HostObject { get; set; }
@@ -27,18 +31,12 @@ namespace WebApiProxy.Tasks
         {
             try
             {
-
-                if (!File.Exists(Filename))
-                {
-                    File.WriteAllText(Filename, "//WebApiProxy generation is disabled");
-                }
                 config = Configuration.Load(Root);
 
                 if (config.GenerateOnBuild)
                 {
-                    config.Metadata = GetProxy();
-                    var template = new CSharpProxyTemplate(config);
-                    var source = template.TransformText();
+                    var generator = new CSharpGenerator(config);
+                    var source = generator.Generate();
                     File.WriteAllText(Filename, source);
                     File.WriteAllText(Configuration.CacheFile, source);
                     
@@ -57,34 +55,7 @@ namespace WebApiProxy.Tasks
 
 
 
-        private Metadata GetProxy()
-        {
-            var url = string.Empty;
-
-            try
-            {
-                using (var client = new HttpClient())
-                {
-
-                    client.DefaultRequestHeaders.Add("X-Proxy-Type", "metadata");
-
-                    var response = client.GetAsync(config.Endpoint).Result;
-
-                    response.EnsureSuccessStatusCode();
-
-                    var metadata = response.Content.ReadAsAsync<Metadata>().Result;
-
-
-
-                    return metadata;
-                }
-            }
-            catch (Exception ex)
-            {
-
-                throw new ConnectionException(config.Endpoint);
-            }
-        }
+        
 
         private void tryReadFromCache()
         {

@@ -6,7 +6,7 @@
   </PropertyGroup>
   <UsingTask TaskName="ProxyGenerationTask" AssemblyFile="$(WebApiProxyBinDir)\WebApiProxy.Tasks.dll"/>
   <Target Name="ProxyTarget">
-    <ProxyGenerationTask Root="$(ProjectDir)\WebApiProxy\" Filename="$(ProjectDir)\WebApiProxy\WebApiProxy.generated.cs">
+    <ProxyGenerationTask ProjectPath="$(ProjectPath)" Root="$(ProjectDir)\WebApiProxy\" Filename="$(ProjectDir)\WebApiProxy\WebApiProxy.generated.cs">
       
     </ProxyGenerationTask>
   </Target>

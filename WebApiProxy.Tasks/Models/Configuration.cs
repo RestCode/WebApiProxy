@@ -86,7 +86,7 @@ namespace WebApiProxy.Tasks.Models
             var fileName = root + Configuration.ConfigFileName;
 
             if (!File.Exists(fileName))
-                throw new ConfigFileNotFoundException(root);
+                throw new ConfigFileNotFoundException(fileName);
 
             var xml = File.ReadAllText(fileName);
             var serializer = new XmlSerializer(typeof(Configuration), new XmlRootAttribute("proxy"));

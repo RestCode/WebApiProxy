@@ -4,7 +4,7 @@
     <id>WebApiProxy.CSharp</id>
     <title>WebApi C# Proxy Generator</title>
     <projectUrl>https://github.com/faniereynders/WebApiProxy</projectUrl>
-    <version>1.0.2.38</version>
+    <version>1.0.3.21</version>
     <authors>Fanie Reynders</authors>
     <owners>Fanie Reynders</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -17,10 +17,14 @@
     </dependencies>
   </metadata>
   <files>
-	<file src="bin\Debug\*.dll" target="build" />
-  <file src="bin\Debug\*.targets" target="build" />
-  <file src="bin\Debug\WebApiProxy.config" target="content\WebApiProxy" />
-  <file src="bin\Debug\WebApiProxy.generated.cs" target="content\WebApiProxy" />
-  <file src="webapiproxy.snippet" target="tools" />
+    <file src="bin\Debug\*.dll" target="build" />
+    <file src="bin\Debug\*.targets" target="build" />
+    <file src="bin\Debug\WebApiProxy.config" target="content\WebApiProxy" />
+    <file src="bin\Debug\WebApiProxy.generated.cs" target="content\WebApiProxy" />
+    <file src="bin\Debug\webapiproxy.snippet" target="tools" />
+    <file src="bin\Debug\init.ps1" target="tools" />
+    <file src="bin\Debug\install.ps1" target="tools" />
+    <file src="bin\Debug\uninstall.ps1" target="tools" />
+    <file src="bin\Debug\WebApiProxyCSharp.psm1" target="tools" />
   </files>
 </package>

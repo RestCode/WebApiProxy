@@ -41,7 +41,7 @@ namespace WebApiProxy
         {
             get
             {
-                return "WebApiProxy: Configuration file not found. Please make sure 'WebApiProxy.config' exists within " + path;
+                return "WebApiProxy: Configuration file not found: " + path;
             }
         }
     }
