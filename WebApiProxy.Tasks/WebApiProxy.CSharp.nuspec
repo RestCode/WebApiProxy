@@ -4,7 +4,7 @@
     <id>WebApiProxy.CSharp</id>
     <title>WebApi C# Proxy Generator</title>
     <projectUrl>https://github.com/faniereynders/WebApiProxy</projectUrl>
-    <version>1.0.3.21</version>
+    <version>1.0.3.27</version>
     <authors>Fanie Reynders</authors>
     <owners>Fanie Reynders</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>

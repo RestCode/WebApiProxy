@@ -378,7 +378,7 @@ using ");
 		var allParameters = method.UrlParameters.AsEnumerable();
 		
 		var queryParameterString = "\"";
-		var bodyParameterString = "";
+		var bodyParameterString = ", default(HttpResponseMessage)";
 
 
 		if (method.BodyParameter != null) {
@@ -490,7 +490,7 @@ using ");
             #line hidden
             
             #line 197 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(bodyParameterString));
+            this.Write(this.ToStringHelper.ToStringWithCulture(postOrPut ? bodyParameterString:""));
             
             #line default
             #line hidden

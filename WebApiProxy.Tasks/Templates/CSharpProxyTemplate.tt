@@ -155,7 +155,7 @@ namespace <#= Configuration.Namespace#>.Clients
 		var allParameters = method.UrlParameters.AsEnumerable();
 		
 		var queryParameterString = "\"";
-		var bodyParameterString = "";
+		var bodyParameterString = ", default(HttpResponseMessage)";
 
 
 		if (method.BodyParameter != null) {
@@ -194,7 +194,7 @@ namespace <#= Configuration.Namespace#>.Clients
         /// <returns></returns>
 		public virtual async Task<HttpResponseMessage> <#= method.Name #>Async(<#= parameterList#>)
 		{
-			return await HttpClient.<#=method.Type.ToTitle()#><#= postOrPut ? "AsJson" : "" #>Async<#= postOrPut && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "" #>(<#=url#><#=bodyParameterString#>);
+			return await HttpClient.<#=method.Type.ToTitle()#><#= postOrPut ? "AsJson" : "" #>Async<#= postOrPut && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "" #>(<#=url#><#= postOrPut ? bodyParameterString:""#>);
 		}
 
 <#}#>
