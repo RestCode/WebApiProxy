@@ -2,10 +2,10 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>WebApiProxy.CSharp</id>
-    <title>WebApi C# Proxy Generator</title>
+    <title>TPG WebApi C# Proxy Generator</title>
     <projectUrl>https://github.com/faniereynders/WebApiProxy</projectUrl>
-    <version>1.0.3.28</version>
-    <authors>Fanie Reynders</authors>
+    <version>42.0.3.28</version>
+    <authors>Fanie Reynders, TPG</authors>
     <owners>Fanie Reynders</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Generates a C# proxy for communicating to a RESTful Web Api that implements the WebApiProxy provider</description>
@@ -17,14 +17,16 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Debug\*.dll" target="build" />
-    <file src="bin\Debug\*.targets" target="build" />
-    <file src="bin\Debug\WebApiProxy.config" target="content\WebApiProxy" />
-    <file src="bin\Debug\WebApiProxy.generated.cs" target="content\WebApiProxy" />
-    <file src="bin\Debug\webapiproxy.snippet" target="tools" />
-    <file src="bin\Debug\init.ps1" target="tools" />
-    <file src="bin\Debug\install.ps1" target="tools" />
-    <file src="bin\Debug\uninstall.ps1" target="tools" />
-    <file src="bin\Debug\WebApiProxyCSharp.psm1" target="tools" />
+    <file src="bin\$configuration$\Newtonsoft.Json.dll" target="lib\net45" />
+    <file src="bin\$configuration$\System.Net.Http.Formatting.dll" target="lib\net45" />
+    <file src="bin\$configuration$\WebApiProxy.CSharp.targets" target="build\net45" />
+    
+    <file src="bin\$configuration$\WebApiProxy.config" target="content\WebApiProxy" />
+    <file src="bin\$configuration$\WebApiProxy.generated.cs" target="content\WebApiProxy" />
+    <file src="bin\$configuration$\webapiproxy.snippet" target="tools" />
+    <file src="bin\$configuration$\init.ps1" target="tools" />
+    <file src="bin\$configuration$\install.ps1" target="tools" />
+    <file src="bin\$configuration$\uninstall.ps1" target="tools" />
+    <file src="bin\$configuration$\WebApiProxyCSharp.psm1" target="tools" />
   </files>
 </package>
