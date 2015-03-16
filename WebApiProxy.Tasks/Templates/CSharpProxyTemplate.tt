@@ -39,6 +39,18 @@ namespace <#= Configuration.Namespace#>
 #region Models
 namespace <#= Configuration.Namespace#>.Models
 {
+	public class WebApiProxyResponseException : Exception
+	{
+		public HttpStatusCode StatusCode { get; private set; }
+		public string Content { get; private set; }
+
+		public WebApiProxyResponseException(HttpStatusCode statusCode, string content) : base("A " + statusCode + " (" + (int)statusCode + ") http exception occured. See Content for response body.")
+		{
+			StatusCode = statusCode;
+			Content = content;
+		}
+	}
+
 <# foreach(var model in Configuration.Metadata.Models.Where(m => m.Type.Equals("class"))) { #>	
 	/// <summary>
     /// <#= model.Description.ToSummary() #>
@@ -84,6 +96,57 @@ namespace <#= Configuration.Namespace#>.Models
 }
 #endregion
 
+#region Interfaces
+namespace <#= Configuration.Namespace#>.Interfaces
+{
+    public interface IClientBase : IDisposable
+    {
+        HttpClient HttpClient { get; }
+    }
+
+<# foreach(var definition in Configuration.Metadata.Definitions) { #>	
+	public partial interface I<#=definition.Name#><#=Configuration.ClientSuffix#> : IClientBase
+	{	
+<# foreach(var method in definition.ActionMethods) { 
+		var allParameters = method.UrlParameters.AsEnumerable().Where(m => m != null);
+		
+		//var queryParameterString = "\"";
+		var bodyParameterString = "";
+
+
+		if (method.BodyParameter != null) {
+			allParameters = allParameters.Concat(new [] { method.BodyParameter });
+			bodyParameterString = ", " + method.BodyParameter.Name;
+		}
+	
+		var parameterList = "";
+
+		if (allParameters.Any())
+		{
+			var q = allParameters.Select(m => m.Type + " " + m.Name);
+			if (q != null)
+				parameterList = string.Join(",", q.ToArray());
+		}		
+#>
+
+<# foreach(var p in method.UrlParameters) { #>
+		/// <param name="<#= p.Name #>"><#= p.Description #></param>
+<# } #>
+        /// <returns></returns>
+		Task<HttpResponseMessage> <#= method.Name #>Async(<#= parameterList#>);
+
+<# foreach(var p in method.UrlParameters) {#>
+		/// <param name="<#= p.Name #>"><#= p.Description #></param>
+<# } #>
+        /// <returns></returns>
+		<#= String.IsNullOrEmpty(method.ReturnType) ? "void" : method.ReturnType #> <#= method.Name #>(<#= parameterList#>);
+<#}#>				
+	}
+<#}#>
+
+}
+#endregion
+
 #region Clients
 namespace <#= Configuration.Namespace#>.Clients
 {
@@ -95,7 +158,7 @@ namespace <#= Configuration.Namespace#>.Clients
 	    /// <summary>
 		/// Gests the HttpClient.
 		/// </summary>
-		public HttpClient HttpClient { get; private set; }
+		public HttpClient HttpClient { get; protected set; }
 
 		/// <summary>
         /// Initializes a new instance of the <see cref="ClientBase"/> class.
@@ -106,6 +169,15 @@ namespace <#= Configuration.Namespace#>.Clients
 			{
 				BaseAddress = new Uri(Configuration.<#= Configuration.Name #>BaseAddress)
 			};
+		}
+
+		public virtual void EnsureSuccess(HttpResponseMessage response)
+		{			
+			if (response.IsSuccessStatusCode)				
+				return;
+													
+			var content = response.Content.ReadAsStringAsync().Result;
+			throw new WebApiProxyResponseException(response.StatusCode, content);			
 		}
 
 		/// <summary>
@@ -133,7 +205,7 @@ namespace <#= Configuration.Namespace#>.Clients
 	/// <summary>
     /// <#= definition.Description.ToSummary() #>
     /// </summary>
-	public partial class <#=definition.Name#><#= Configuration.ClientSuffix#> : ClientBase
+	public partial class <#=definition.Name#><#= Configuration.ClientSuffix#> : ClientBase, Interfaces.I<#=definition.Name#><#=Configuration.ClientSuffix#>
 	{		
 
 		/// <summary>
@@ -156,7 +228,7 @@ namespace <#= Configuration.Namespace#>.Clients
 		
 		var queryParameterString = "\"";
 		var bodyParameterString = ", default(HttpResponseMessage)";
-
+		var parameterNameList = "";
 
 		if (method.BodyParameter != null) {
 			allParameters = allParameters.Concat(new [] { method.BodyParameter });
@@ -166,10 +238,8 @@ namespace <#= Configuration.Namespace#>.Clients
 
 		if (allParameters.Any()) {
 			queryParameterString = "?";
-
 			queryParameterString += string.Join(" + \"&", allParameters.Where(m => m != null).Select(m => m.Name + "=\" + " + m.Name).ToArray());
-		
-
+			parameterNameList =  string.Join(", ", allParameters.Select(m => m.Name));
 		}
 
 		var parameterList = "";
@@ -195,6 +265,26 @@ namespace <#= Configuration.Namespace#>.Clients
 		public virtual async Task<HttpResponseMessage> <#= method.Name #>Async(<#= parameterList#>)
 		{
 			return await HttpClient.<#=method.Type.ToTitle()#><#= postOrPut ? "AsJson" : "" #>Async<#= postOrPut && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "" #>(<#=url#><#= postOrPut ? bodyParameterString:""#>);
+		}
+
+		/// <summary>
+        /// <#= method.Description #>
+        /// </summary>
+<# foreach(var p in method.UrlParameters) { #>
+		/// <param name="<#= p.Name #>"><#= p.Description #></param>
+<# } #>
+		public virtual <#= String.IsNullOrEmpty(method.ReturnType) ? "void" : method.ReturnType #> <#= method.Name #>(<#= parameterList#>)
+		{
+			<#
+			var parametersValues = String.IsNullOrEmpty(bodyParameterString) ? (url.IndexOf("+") > -1 ? url.Substring(url.IndexOf("+") + 1) : "") : bodyParameterString.Substring(2);
+			#>
+			 var result = Task.Run(() => <#= method.Name #>Async(<#=parameterNameList#>)).Result;		 
+			 
+			EnsureSuccess(result);
+			 	 
+			 <# if(!String.IsNullOrEmpty(method.ReturnType)) { #>			 			 
+             return result.Content.ReadAsAsync<<#= method.ReturnType #>>().Result;
+			 <# } #>
 		}
 
 <#}#>
