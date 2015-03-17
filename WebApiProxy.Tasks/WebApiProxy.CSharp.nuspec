@@ -2,24 +2,23 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>WebApiProxy.CSharp</id>
-    <title>TPG WebApi C# Proxy Generator</title>
+    <title>$title$</title>
     <projectUrl>https://github.com/faniereynders/WebApiProxy</projectUrl>
-    <version>42.0.3.28</version>
-    <authors>Fanie Reynders, TPG</authors>
+    <version>$version$</version>
+    <authors>Fanie Reynders</authors>
     <owners>Fanie Reynders</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Generates a C# proxy for communicating to a RESTful Web Api that implements the WebApiProxy provider</description>
+    <description>$description$</description>
     <releaseNotes></releaseNotes>
-    <copyright>Copyright 2014</copyright>
+    <copyright>$copyright$</copyright>
     <tags>AspNet WebAPI Proxy JavaScript CSharp</tags>
     <dependencies>
       <dependency id="Microsoft.AspNet.WebApi.Client" version="5.2.2" />
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\$configuration$\Newtonsoft.Json.dll" target="lib\net45" />
-    <file src="bin\$configuration$\System.Net.Http.Formatting.dll" target="lib\net45" />
-    <file src="bin\$configuration$\WebApiProxy.CSharp.targets" target="build\net45" />
+    <file src="bin\$configuration$\*.dll" target="build" />
+    <file src="bin\$configuration$\*.targets" target="build" />
     
     <file src="bin\$configuration$\WebApiProxy.config" target="content\WebApiProxy" />
     <file src="bin\$configuration$\WebApiProxy.generated.cs" target="content\WebApiProxy" />

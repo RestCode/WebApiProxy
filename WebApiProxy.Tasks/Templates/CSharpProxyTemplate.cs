@@ -56,9 +56,9 @@ using ");
             
             #line default
             #line hidden
-            this.Write("\r\n{\r\n\t/// <summary>\r\n    /// Client configuration.\r\n    /// </summary>\r\n    publi" +
-                    "c partial class Configuration\r\n\t{\r\n\t\t/// <summary>\r\n        /// Web Api Base Add" +
-                    "ress.\r\n        /// </summary>\r\n\t\tpublic static string ");
+            this.Write("\r\n{\r\n\t/// <summary>\r\n\t/// Client configuration.\r\n\t/// </summary>\r\n\tpublic partial" +
+                    " class Configuration\r\n\t{\r\n\t\t/// <summary>\r\n\t\t/// Web Api Base Address.\r\n\t\t/// </" +
+                    "summary>\r\n\t\tpublic static string ");
             
             #line 33 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Configuration.Name));
@@ -79,177 +79,351 @@ using ");
             
             #line default
             #line hidden
-            this.Write(".Models\r\n{\r\n");
+            this.Write(@".Models
+{
+	public class WebApiProxyResponseException : Exception
+	{
+		public HttpStatusCode StatusCode { get; private set; }
+		public string Content { get; private set; }
+
+		public WebApiProxyResponseException(HttpStatusCode statusCode, string content) : base(""A "" + statusCode + "" ("" + (int)statusCode + "") http exception occured. See Content for response body."")
+		{
+			StatusCode = statusCode;
+			Content = content;
+		}
+	}
+
+");
             
-            #line 42 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 54 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  foreach(var model in Configuration.Metadata.Models.Where(m => m.Type.Equals("class"))) { 
             
             #line default
             #line hidden
-            this.Write("\t\r\n\t/// <summary>\r\n    /// ");
+            this.Write("\t\r\n\t/// <summary>\r\n\t/// ");
             
-            #line 44 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 56 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(model.Description.ToSummary()));
             
             #line default
             #line hidden
-            this.Write("\r\n    /// </summary>\r\n\tpublic partial class ");
+            this.Write("\r\n\t/// </summary>\r\n\tpublic partial class ");
             
-            #line 46 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 58 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(model.Name));
             
             #line default
             #line hidden
             this.Write("\r\n\t{\r\n\t\t#region Constants\r\n");
             
-            #line 49 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 61 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  foreach(var constantItem in model.Constants) { 
             
             #line default
             #line hidden
-            this.Write("\t\t/// <summary>\r\n        /// ");
+            this.Write("\t\t/// <summary>\r\n\t\t/// ");
             
-            #line 51 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 63 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(constantItem.Description.ToSummary()));
             
             #line default
             #line hidden
-            this.Write("\r\n        /// </summary>\r\n\t\tpublic const ");
+            this.Write("\r\n\t\t/// </summary>\r\n\t\tpublic const ");
             
-            #line 53 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 65 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(constantItem.Type));
             
             #line default
             #line hidden
             this.Write(" ");
             
-            #line 53 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 65 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(constantItem.Name));
             
             #line default
             #line hidden
             this.Write(" = ");
             
-            #line 53 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 65 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(constantItem.Value));
             
             #line default
             #line hidden
             this.Write(";\r\n");
             
-            #line 54 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 66 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
 }
             
             #line default
             #line hidden
             this.Write("\t\t#endregion\r\n\r\n\t\t#region Properties\r\n");
             
-            #line 58 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 70 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  foreach(var propertyItem in model.Properties) { 
             
             #line default
             #line hidden
-            this.Write("\t\t/// <summary>\r\n        /// ");
+            this.Write("\t\t/// <summary>\r\n\t\t/// ");
             
-            #line 60 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 72 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(propertyItem.Description.ToSummary()));
             
             #line default
             #line hidden
-            this.Write("\r\n        /// </summary>\r\n\t\tpublic virtual ");
+            this.Write("\r\n\t\t/// </summary>\r\n\t\tpublic virtual ");
             
-            #line 62 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 74 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(propertyItem.Type));
             
             #line default
             #line hidden
             this.Write(" ");
             
-            #line 62 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 74 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(propertyItem.Name));
             
             #line default
             #line hidden
             this.Write(" { get; set; }\r\n");
             
-            #line 63 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 75 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
 }
             
             #line default
             #line hidden
             this.Write("\t\t#endregion\r\n\t}\t\r\n");
             
-            #line 66 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 78 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
 }
             
             #line default
             #line hidden
             this.Write("\r\n");
             
-            #line 68 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 80 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  foreach(var model in Configuration.Metadata.Models.Where(m => m.Type.Equals("enum"))) { 
             
             #line default
             #line hidden
-            this.Write("\t\r\n\t/// <summary>\r\n    /// ");
+            this.Write("\t\r\n\t/// <summary>\r\n\t/// ");
             
-            #line 70 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 82 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(model.Description.ToSummary()));
             
             #line default
             #line hidden
-            this.Write("\r\n    /// </summary>\r\n\tpublic enum ");
+            this.Write("\r\n\t/// </summary>\r\n\tpublic enum ");
             
-            #line 72 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 84 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(model.Name));
             
             #line default
             #line hidden
             this.Write("\r\n\t{\r\n");
             
-            #line 74 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 86 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  foreach(var constantItem in model.Constants) { 
             
             #line default
             #line hidden
             this.Write("\r\n\t\t/// <summary>\r\n\t\t/// ");
             
-            #line 77 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 89 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(constantItem.Description.ToSummary()));
             
             #line default
             #line hidden
             this.Write("\r\n\t\t/// </summary>\r\n\t\t");
             
-            #line 79 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 91 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(constantItem.Name));
             
             #line default
             #line hidden
             this.Write(" = ");
             
-            #line 79 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 91 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(constantItem.Value));
             
             #line default
             #line hidden
             this.Write(",\r\n");
             
-            #line 80 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 92 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
 }
             
             #line default
             #line hidden
             this.Write("\t\t\r\n\t}\r\n");
             
-            #line 82 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 94 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
 }
             
             #line default
             #line hidden
-            this.Write("\t\r\n}\r\n#endregion\r\n\r\n#region Clients\r\nnamespace ");
+            this.Write("\t\r\n}\r\n#endregion\r\n\r\n#region Interfaces\r\nnamespace ");
             
-            #line 88 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 100 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Configuration.Namespace));
+            
+            #line default
+            #line hidden
+            this.Write(".Interfaces\r\n{\r\n\tpublic interface IClientBase : IDisposable\r\n\t{\r\n\t\tHttpClient Htt" +
+                    "pClient { get; }\r\n\t}\r\n\r\n");
+            
+            #line 107 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+ foreach(var definition in Configuration.Metadata.Definitions) { 
+            
+            #line default
+            #line hidden
+            this.Write("\t\r\n\tpublic partial interface I");
+            
+            #line 108 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(definition.Name));
+            
+            #line default
+            #line hidden
+            
+            #line 108 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Configuration.ClientSuffix));
+            
+            #line default
+            #line hidden
+            this.Write(" : IClientBase\r\n\t{\t\r\n");
+            
+            #line 110 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+ foreach(var method in definition.ActionMethods) { 
+		var allParameters = method.UrlParameters.AsEnumerable().Where(m => m != null);
+		
+		//var queryParameterString = "\"";
+		var bodyParameterString = "";
+
+
+		if (method.BodyParameter != null) {
+			allParameters = allParameters.Concat(new [] { method.BodyParameter });
+			bodyParameterString = ", " + method.BodyParameter.Name;
+		}
+	
+		var parameterList = "";
+
+		if (allParameters.Any())
+		{
+			var q = allParameters.Select(m => m.Type + " " + m.Name);
+			if (q != null)
+				parameterList = string.Join(",", q.ToArray());
+		}		
+
+            
+            #line default
+            #line hidden
+            this.Write("\r\n");
+            
+            #line 132 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+ foreach(var p in method.UrlParameters) { 
+            
+            #line default
+            #line hidden
+            this.Write("\t\t/// <param name=\"");
+            
+            #line 133 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(p.Name));
+            
+            #line default
+            #line hidden
+            this.Write("\">");
+            
+            #line 133 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(p.Description));
+            
+            #line default
+            #line hidden
+            this.Write("</param>\r\n");
+            
+            #line 134 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+ } 
+            
+            #line default
+            #line hidden
+            this.Write("\t\t/// <returns></returns>\r\n\t\tTask<HttpResponseMessage> ");
+            
+            #line 136 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(method.Name));
+            
+            #line default
+            #line hidden
+            this.Write("Async(");
+            
+            #line 136 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(parameterList));
+            
+            #line default
+            #line hidden
+            this.Write(");\r\n\r\n");
+            
+            #line 138 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+ foreach(var p in method.UrlParameters) {
+            
+            #line default
+            #line hidden
+            this.Write("\t\t/// <param name=\"");
+            
+            #line 139 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(p.Name));
+            
+            #line default
+            #line hidden
+            this.Write("\">");
+            
+            #line 139 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(p.Description));
+            
+            #line default
+            #line hidden
+            this.Write("</param>\r\n");
+            
+            #line 140 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+ } 
+            
+            #line default
+            #line hidden
+            this.Write("\t\t/// <returns></returns>\r\n\t\t");
+            
+            #line 142 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(String.IsNullOrEmpty(method.ReturnType) ? "void" : method.ReturnType));
+            
+            #line default
+            #line hidden
+            this.Write(" ");
+            
+            #line 142 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(method.Name));
+            
+            #line default
+            #line hidden
+            this.Write("(");
+            
+            #line 142 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(parameterList));
+            
+            #line default
+            #line hidden
+            this.Write(");\r\n");
+            
+            #line 143 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+}
+            
+            #line default
+            #line hidden
+            this.Write("\t\t\t\t\r\n\t}\r\n");
+            
+            #line 145 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+}
+            
+            #line default
+            #line hidden
+            this.Write("\r\n}\r\n#endregion\r\n\r\n#region Clients\r\nnamespace ");
+            
+            #line 151 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Configuration.Namespace));
             
             #line default
@@ -257,25 +431,25 @@ using ");
             this.Write(@".Clients
 {
 	/// <summary>
-    /// Client base class.
-    /// </summary>
+	/// Client base class.
+	/// </summary>
 	public abstract partial class ClientBase : IDisposable
 	{
-	    /// <summary>
+		/// <summary>
 		/// Gests the HttpClient.
 		/// </summary>
-		public HttpClient HttpClient { get; private set; }
+		public HttpClient HttpClient { get; protected set; }
 
 		/// <summary>
-        /// Initializes a new instance of the <see cref=""ClientBase""/> class.
-        /// </summary>
+		/// Initializes a new instance of the <see cref=""ClientBase""/> class.
+		/// </summary>
 		protected ClientBase()
 		{
 			HttpClient = new HttpClient()
 			{
 				BaseAddress = new Uri(Configuration.");
             
-            #line 107 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 170 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Configuration.Name));
             
             #line default
@@ -284,88 +458,109 @@ using ");
 			};
 		}
 
+		public virtual void EnsureSuccess(HttpResponseMessage response)
+		{			
+			if (response.IsSuccessStatusCode)				
+				return;
+													
+			var content = response.Content.ReadAsStringAsync().Result;
+			throw new WebApiProxyResponseException(response.StatusCode, content);			
+		}
+
 		/// <summary>
-        /// Initializes a new instance of the <see cref=""ClientBase""/> class.
-        /// </summary>
-        /// <param name=""handler"">The handler.</param>
-        /// <param name=""disposeHandler"">if set to <c>true</c> [dispose handler].</param>
+		/// Initializes a new instance of the <see cref=""ClientBase""/> class.
+		/// </summary>
+		/// <param name=""handler"">The handler.</param>
+		/// <param name=""disposeHandler"">if set to <c>true</c> [dispose handler].</param>
 		protected ClientBase(HttpMessageHandler handler, bool disposeHandler = true)
 		{
 			HttpClient = new HttpClient(handler, disposeHandler)
 			{
 				BaseAddress = new Uri(Configuration.");
             
-            #line 120 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 192 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Configuration.Name));
             
             #line default
             #line hidden
-            this.Write("BaseAddress)\r\n\t\t\t};\r\n\t\t}\r\n\r\n\t\t/// <summary>\r\n        /// Releases the unmanaged r" +
-                    "esources and disposes of the managed resources.       \r\n        /// </summary>\r\n" +
-                    "\t\tpublic void Dispose()\r\n        {\r\n            HttpClient.Dispose();\r\n        }" +
-                    "\r\n\t}\r\n");
+            this.Write("BaseAddress)\r\n\t\t\t};\r\n\t\t}\r\n\r\n\t\t/// <summary>\r\n\t\t/// Releases the unmanaged resourc" +
+                    "es and disposes of the managed resources.       \r\n\t\t/// </summary>\r\n\t\tpublic voi" +
+                    "d Dispose()\r\n\t\t{\r\n\t\t\tHttpClient.Dispose();\r\n\t\t}\r\n\t}\r\n");
             
-            #line 132 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 204 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  foreach(var definition in Configuration.Metadata.Definitions) { 
             
             #line default
             #line hidden
-            this.Write("\t/// <summary>\r\n    /// ");
+            this.Write("\t/// <summary>\r\n\t/// ");
             
-            #line 134 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 206 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(definition.Description.ToSummary()));
             
             #line default
             #line hidden
-            this.Write("\r\n    /// </summary>\r\n\tpublic partial class ");
+            this.Write("\r\n\t/// </summary>\r\n\tpublic partial class ");
             
-            #line 136 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 208 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(definition.Name));
             
             #line default
             #line hidden
             
-            #line 136 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 208 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Configuration.ClientSuffix));
             
             #line default
             #line hidden
-            this.Write(" : ClientBase\r\n\t{\t\t\r\n\r\n\t\t/// <summary>\r\n        /// ");
+            this.Write(" : ClientBase, Interfaces.I");
             
-            #line 140 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(definition.Description.ToSummary()));
-            
-            #line default
-            #line hidden
-            this.Write("\r\n        /// </summary>\r\n\t\tpublic ");
-            
-            #line 142 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 208 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(definition.Name));
             
             #line default
             #line hidden
             
-            #line 142 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 208 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Configuration.ClientSuffix));
             
             #line default
             #line hidden
-            this.Write("() : base()\r\n\t\t{\r\n\t\t}\r\n\r\n\t\t/// <summary>\r\n        /// ");
+            this.Write("\r\n\t{\t\t\r\n\r\n\t\t/// <summary>\r\n\t\t/// ");
             
-            #line 147 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 212 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(definition.Description.ToSummary()));
             
             #line default
             #line hidden
-            this.Write("\r\n        /// </summary>\r\n\t\tpublic ");
+            this.Write("\r\n\t\t/// </summary>\r\n\t\tpublic ");
             
-            #line 149 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 214 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(definition.Name));
             
             #line default
             #line hidden
             
-            #line 149 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 214 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Configuration.ClientSuffix));
+            
+            #line default
+            #line hidden
+            this.Write("() : base()\r\n\t\t{\r\n\t\t}\r\n\r\n\t\t/// <summary>\r\n\t\t/// ");
+            
+            #line 219 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(definition.Description.ToSummary()));
+            
+            #line default
+            #line hidden
+            this.Write("\r\n\t\t/// </summary>\r\n\t\tpublic ");
+            
+            #line 221 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(definition.Name));
+            
+            #line default
+            #line hidden
+            
+            #line 221 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Configuration.ClientSuffix));
             
             #line default
@@ -373,13 +568,13 @@ using ");
             this.Write("(HttpMessageHandler handler, bool disposeHandler = true) : base(handler, disposeH" +
                     "andler)\r\n\t\t{\r\n\t\t}\r\n\r\n\t\t#region Methods\r\n");
             
-            #line 154 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 226 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  foreach(var method in definition.ActionMethods) { 
 		var allParameters = method.UrlParameters.AsEnumerable();
 		
 		var queryParameterString = "\"";
 		var bodyParameterString = ", default(HttpResponseMessage)";
-
+		var parameterNameList = "";
 
 		if (method.BodyParameter != null) {
 			allParameters = allParameters.Concat(new [] { method.BodyParameter });
@@ -389,10 +584,8 @@ using ");
 
 		if (allParameters.Any()) {
 			queryParameterString = "?";
-
 			queryParameterString += string.Join(" + \"&", allParameters.Where(m => m != null).Select(m => m.Name + "=\" + " + m.Name).ToArray());
-		
-
+			parameterNameList =  string.Join(", ", allParameters.Select(m => m.Name));
 		}
 
 		var parameterList = "";
@@ -411,99 +604,198 @@ using ");
             
             #line default
             #line hidden
-            this.Write("        /// <summary>\r\n        /// ");
+            this.Write("\t\t/// <summary>\r\n\t\t/// ");
             
-            #line 189 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 259 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(method.Description));
             
             #line default
             #line hidden
-            this.Write("\r\n        /// </summary>\r\n");
+            this.Write("\r\n\t\t/// </summary>\r\n");
             
-            #line 191 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 261 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  foreach(var p in method.UrlParameters) { 
             
             #line default
             #line hidden
             this.Write("\t\t/// <param name=\"");
             
-            #line 192 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 262 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(p.Name));
             
             #line default
             #line hidden
             this.Write("\">");
             
-            #line 192 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 262 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(p.Description));
             
             #line default
             #line hidden
             this.Write("</param>\r\n");
             
-            #line 193 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 263 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  } 
             
             #line default
             #line hidden
-            this.Write("        /// <returns></returns>\r\n\t\tpublic virtual async Task<HttpResponseMessage>" +
-                    " ");
+            this.Write("\t\t/// <returns></returns>\r\n\t\tpublic virtual async Task<HttpResponseMessage> ");
             
-            #line 195 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 265 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(method.Name));
             
             #line default
             #line hidden
             this.Write("Async(");
             
-            #line 195 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 265 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(parameterList));
             
             #line default
             #line hidden
             this.Write(")\r\n\t\t{\r\n\t\t\treturn await HttpClient.");
             
-            #line 197 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 267 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(method.Type.ToTitle()));
             
             #line default
             #line hidden
             
-            #line 197 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 267 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(postOrPut ? "AsJson" : ""));
             
             #line default
             #line hidden
             this.Write("Async");
             
-            #line 197 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 267 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(postOrPut && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : ""));
             
             #line default
             #line hidden
             this.Write("(");
             
-            #line 197 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 267 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(url));
             
             #line default
             #line hidden
             
-            #line 197 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 267 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(postOrPut ? bodyParameterString:""));
             
             #line default
             #line hidden
-            this.Write(");\r\n\t\t}\r\n\r\n");
+            this.Write(");\r\n\t\t}\r\n\r\n\t\t/// <summary>\r\n\t\t/// ");
             
-            #line 200 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 271 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(method.Description));
+            
+            #line default
+            #line hidden
+            this.Write("\r\n\t\t/// </summary>\r\n");
+            
+            #line 273 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+ foreach(var p in method.UrlParameters) { 
+            
+            #line default
+            #line hidden
+            this.Write("\t\t/// <param name=\"");
+            
+            #line 274 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(p.Name));
+            
+            #line default
+            #line hidden
+            this.Write("\">");
+            
+            #line 274 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(p.Description));
+            
+            #line default
+            #line hidden
+            this.Write("</param>\r\n");
+            
+            #line 275 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+ } 
+            
+            #line default
+            #line hidden
+            this.Write("\t\tpublic virtual ");
+            
+            #line 276 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(String.IsNullOrEmpty(method.ReturnType) ? "void" : method.ReturnType));
+            
+            #line default
+            #line hidden
+            this.Write(" ");
+            
+            #line 276 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(method.Name));
+            
+            #line default
+            #line hidden
+            this.Write("(");
+            
+            #line 276 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(parameterList));
+            
+            #line default
+            #line hidden
+            this.Write(")\r\n\t\t{\r\n\t\t\t");
+            
+            #line 278 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+
+			var parametersValues = String.IsNullOrEmpty(bodyParameterString) ? (url.IndexOf("+") > -1 ? url.Substring(url.IndexOf("+") + 1) : "") : bodyParameterString.Substring(2);
+			
+            
+            #line default
+            #line hidden
+            this.Write("\t\t\t var result = Task.Run(() => ");
+            
+            #line 281 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(method.Name));
+            
+            #line default
+            #line hidden
+            this.Write("Async(");
+            
+            #line 281 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(parameterNameList));
+            
+            #line default
+            #line hidden
+            this.Write(")).Result;\t\t \r\n\t\t\t \r\n\t\t\tEnsureSuccess(result);\r\n\t\t\t\t \r\n\t\t\t ");
+            
+            #line 285 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+ if(!String.IsNullOrEmpty(method.ReturnType)) { 
+            
+            #line default
+            #line hidden
+            this.Write("\t\t\t \t\t\t \r\n\t\t\t return result.Content.ReadAsAsync<");
+            
+            #line 286 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(method.ReturnType));
+            
+            #line default
+            #line hidden
+            this.Write(">().Result;\r\n\t\t\t ");
+            
+            #line 287 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+ } 
+            
+            #line default
+            #line hidden
+            this.Write("\t\t}\r\n\r\n");
+            
+            #line 290 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
 }
             
             #line default
             #line hidden
             this.Write("\t\t#endregion\r\n\t}\r\n");
             
-            #line 203 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
+            #line 293 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  } 
             
             #line default

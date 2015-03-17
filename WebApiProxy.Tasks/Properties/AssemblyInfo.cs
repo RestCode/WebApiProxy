@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("WebApiProxy.CSharp-Bardock")]
+[assembly: AssemblyTitle("WebApiProxy C# Proxy Client Generator")]
 [assembly: AssemblyDescription("Generates a C# proxy for communicating to a RESTful Web Api that implements the WebApiProxy provider")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("bardock")]
-[assembly: AssemblyCopyright("Copyright ©  2014")]
+[assembly: AssemblyCompany("WebApiProxy")]
+[assembly: AssemblyCopyright("Copyright ©  2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -31,6 +31,6 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyInformationalVersion("1.2.2")]
-[assembly: AssemblyVersion("1.2.2")]
-[assembly: AssemblyFileVersion("1.2.2")]
+[assembly: AssemblyInformationalVersion("1.0.4.*")]
+[assembly: AssemblyVersion("1.0.4.*")]
+[assembly: AssemblyFileVersion("1.0.4.*")]
