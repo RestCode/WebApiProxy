@@ -56,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Infrastructure\CSharpGenerator.cs" />
+    <Compile Include="Infrastructure\HttpResponseMessageExtensions.cs" />
     <Compile Include="Models\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProxyGenerationTask.cs" />
