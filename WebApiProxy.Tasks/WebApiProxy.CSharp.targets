@@ -7,13 +7,13 @@
   <UsingTask TaskName="ProxyGenerationTask" AssemblyFile="$(WebApiProxyBinDir)\WebApiProxy.Tasks.dll"/>
   <Target Name="ProxyTarget">
     <ProxyGenerationTask ProjectPath="$(ProjectPath)" Root="$(ProjectDir)\WebApiProxy\" Filename="$(ProjectDir)\WebApiProxy\WebApiProxy.generated.cs">
-      
+
     </ProxyGenerationTask>
   </Target>
   <Target Name="BeforeCompile"  DependsOnTargets="ProxyTarget" />
   <Target Name="CreateConfigurationProperties">
     <Import Project="$(ProjectDir)\WebApiProxy.CSharp.targets" />
   </Target>
- 
+
 </Project>
 

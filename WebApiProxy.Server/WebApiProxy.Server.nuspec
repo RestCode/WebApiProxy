@@ -2,15 +2,15 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>WebApiProxy</id>
-    <version>1.0.2.4</version>
-    <title>WebApi Proxy Provider</title>
+    <version>$version$</version>
+    <title>$title$</title>
     <authors>Fanie Reynders</authors>
     <owners>Fanie Reynders</owners>
     <projectUrl>https://github.com/faniereynders/WebApiProxy</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>This package exposes an endpoint for ASP.NET Web Api services to serve a JavaScript proxy and metadata</description>
+    <description>$description$</description>
     <releaseNotes />
-    <copyright>Copyright 2014</copyright>
+    <copyright>$copyright$</copyright>
     <tags>AspNet WebAPI Proxy JavaScript CSharp</tags>
     <dependencies>
       <dependency id="Microsoft.AspNet.WebApi.Core" version="5.2.2" />

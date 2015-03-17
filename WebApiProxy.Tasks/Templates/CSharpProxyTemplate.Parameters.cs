@@ -11,12 +11,12 @@ namespace WebApiProxy.Tasks.Templates
 {
 	public partial class CSharpProxyTemplate
 	{
-        public CSharpProxyTemplate(Configuration config)
+		public CSharpProxyTemplate(Configuration config)
 		{
-            
-            this.Configuration = config;
+			
+			this.Configuration = config;
 		}
-        public Configuration Configuration { get; set; }
+		public Configuration Configuration { get; set; }
 
-    }
+	}
 }
