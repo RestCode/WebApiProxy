@@ -47,17 +47,17 @@
 		return val;
 	}
 
-	function invoke(url, type, urlParams, body) {
+	function invoke(url, type, options, urlParams, body) {
 		//url += getQueryString(urlParams);
 
-		var ajaxOptions = $.extend({}, this.defaultOptions, {
+		var ajaxOptions = $.extend({}, {
 			url: appendPathDelimiter($.proxies.baseUrl) + url,
 			type: type,
 			beforeSend : function(xhr) {
 				if (typeof(webApiAuthToken) != "undefined" && webApiAuthToken.length > 0)
 					xhr.setRequestHeader("Authorization", "Bearer " + webApiAuthToken);
 			},
-		}, $.proxies.defaultOptions);
+		}, $.proxies.defaultOptions, this.defaultOptions, options);
 
 		if (body) {
 			ajaxOptions.data = body;
@@ -116,16 +116,9 @@
 
 
 	<#= method.Name.ToCamelCasing() #>: function(<#=parameterList#>) {
-		 var defaults = { fields: [] };
-         var settings = $.extend({}, defaults, options || {});
 		 var url = <#= url #>;
 
-		 if(settings.fields.length > 0) {
-		    url +=  url.indexOf("?") == -1 ? "?" : "&";
-			url += "fields=" + settings.fields.join();
-		 }
-
-		return invoke.call(this, url, "<#= method.Type.ToString().ToLower() #>", 
+		return invoke.call(this, url, "<#= method.Type.ToString().ToLower() #>", options, 
 		<# if (method.UrlParameters.Any()) { #>
 			{
 			<# foreach (var parameter in method.UrlParameters) { #>
