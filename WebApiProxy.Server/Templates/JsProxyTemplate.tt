@@ -116,7 +116,14 @@
 
 
 	<#= method.Name.ToCamelCasing() #>: function(<#=parameterList#>) {
-		 var url = <#= url #>;
+		var defaults = { fields: [] };
+        var settings = $.extend({}, defaults, options || {});
+		var url = <#= url #>;
+		 
+		if(settings.fields.length > 0) {
+			url +=  url.indexOf("?") == -1 ? "?" : "&";
+			url += "fields=" + settings.fields.join();
+		}
 
 		return invoke.call(this, url, "<#= method.Type.ToString().ToLower() #>", options, 
 		<# if (method.UrlParameters.Any()) { #>
