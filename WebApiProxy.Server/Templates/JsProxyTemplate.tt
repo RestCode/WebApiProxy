@@ -15,6 +15,10 @@
 		baseUrl: "<#= this.Metadata.Host #>/"
 	};
 
+	$.proxies = $.extend({}, $.proxies, {
+		defaultOptions: {}
+	});
+
 	function getQueryString(params, queryString) {
 		queryString = queryString || "";
 		for(var prop in params) {
@@ -53,7 +57,7 @@
 				if (typeof(webApiAuthToken) != "undefined" && webApiAuthToken.length > 0)
 					xhr.setRequestHeader("Authorization", "Bearer " + webApiAuthToken);
 			},
-		});
+		}, $.proxies.defaultOptions);
 
 		if (body) {
 			ajaxOptions.data = body;
