@@ -59,9 +59,7 @@
 			},
 		}, $.proxies.defaultOptions, this.defaultOptions, options);
 
-		if (body) {
-			ajaxOptions.data = body;
-		}
+		ajaxOptions.data = body || urlParams;
 
 		if (this.antiForgeryToken) {
 			var token = $.isFunction(this.antiForgeryToken) ? this.antiForgeryToken() : this.antiForgeryToken;

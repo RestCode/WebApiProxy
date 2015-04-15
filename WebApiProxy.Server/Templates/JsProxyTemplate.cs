@@ -18,7 +18,7 @@ namespace WebApiProxy.Server.Templates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\WorkGit\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+    #line 1 "D:\WorkGit\Own\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "12.0.0.0")]
     public partial class JsProxyTemplate : JsProxyTemplateBase
     {
@@ -31,7 +31,7 @@ namespace WebApiProxy.Server.Templates
             this.Write("\r\n(function($) {\r\n\t\"use strict\";\r\n\r\n\tif (!$) {\r\n\t\tthrow \"jQuery is required\";\r\n\t}" +
                     "\r\n\r\n\t$.proxies = $.proxies || { \r\n\t\tbaseUrl: \"");
             
-            #line 15 "C:\WorkGit\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 15 "D:\WorkGit\Own\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(this.Metadata.Host));
             
             #line default
@@ -51,24 +51,24 @@ namespace WebApiProxy.Server.Templates
                     ": function(xhr) {\r\n\t\t\t\tif (typeof(webApiAuthToken) != \"undefined\" && webApiAuthT" +
                     "oken.length > 0)\r\n\t\t\t\t\txhr.setRequestHeader(\"Authorization\", \"Bearer \" + webApiA" +
                     "uthToken);\r\n\t\t\t},\r\n\t\t}, $.proxies.defaultOptions, this.defaultOptions, options);" +
-                    "\r\n\r\n\t\tif (body) {\r\n\t\t\tajaxOptions.data = body;\r\n\t\t}\r\n\r\n\t\tif (this.antiForgeryTok" +
-                    "en) {\r\n\t\t\tvar token = $.isFunction(this.antiForgeryToken) ? this.antiForgeryToke" +
-                    "n() : this.antiForgeryToken;\r\n\t\t\tif (token) {\r\n\t\t\t\tajaxOptions.headers = ajaxOpt" +
-                    "ions.headers || {};\r\n\t\t\t}\r\n\t\t}\r\n\t\r\n\t\treturn $.ajax(ajaxOptions);\r\n\t}\r\n\r\n\tfunctio" +
-                    "n defaultAntiForgeryTokenAccessor() {\r\n\t\treturn $(\"input[name=__RequestVerificat" +
-                    "ionToken]\").val();\r\n\t}\r\n\r\n\tfunction endsWith(str, suffix) {\r\n\t\treturn str.indexO" +
-                    "f(suffix, str.length - suffix.length) !== -1;\r\n\t}\r\n\r\n\tfunction appendPathDelimit" +
-                    "er(url){\r\n\t\tif(!endsWith(url, \'/\')){\r\n\t\t\treturn url + \'/\';\r\n\t\t}\r\n\t\t\r\n\t\treturn ur" +
-                    "l;\r\n\t}\r\n\r\n\t/* Proxies */\r\n\r\n\t");
+                    "\r\n\r\n\t\tajaxOptions.data = body || urlParams;\r\n\r\n\t\tif (this.antiForgeryToken) {\r\n\t" +
+                    "\t\tvar token = $.isFunction(this.antiForgeryToken) ? this.antiForgeryToken() : th" +
+                    "is.antiForgeryToken;\r\n\t\t\tif (token) {\r\n\t\t\t\tajaxOptions.headers = ajaxOptions.hea" +
+                    "ders || {};\r\n\t\t\t}\r\n\t\t}\r\n\t\r\n\t\treturn $.ajax(ajaxOptions);\r\n\t}\r\n\r\n\tfunction defaul" +
+                    "tAntiForgeryTokenAccessor() {\r\n\t\treturn $(\"input[name=__RequestVerificationToken" +
+                    "]\").val();\r\n\t}\r\n\r\n\tfunction endsWith(str, suffix) {\r\n\t\treturn str.indexOf(suffix" +
+                    ", str.length - suffix.length) !== -1;\r\n\t}\r\n\r\n\tfunction appendPathDelimiter(url){" +
+                    "\r\n\t\tif(!endsWith(url, \'/\')){\r\n\t\t\treturn url + \'/\';\r\n\t\t}\r\n\t\t\r\n\t\treturn url;\r\n\t}\r\n" +
+                    "\r\n\t/* Proxies */\r\n\r\n\t");
             
-            #line 94 "C:\WorkGit\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 92 "D:\WorkGit\Own\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
  foreach(var definition in this.Metadata.Definitions) { 
             
             #line default
             #line hidden
             this.Write("\t$.proxies.");
             
-            #line 95 "C:\WorkGit\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 93 "D:\WorkGit\Own\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(definition.Name.ToLower()));
             
             #line default
@@ -76,14 +76,14 @@ namespace WebApiProxy.Server.Templates
             this.Write(" = {\r\n\t\tdefaultOptions: {},\r\n\t\tantiForgeryToken: defaultAntiForgeryTokenAccessor," +
                     "\r\n");
             
-            #line 98 "C:\WorkGit\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 96 "D:\WorkGit\Own\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
  foreach(var method in definition.ActionMethods) { 
             
             #line default
             #line hidden
             this.Write("\r\n");
             
-            #line 100 "C:\WorkGit\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 98 "D:\WorkGit\Own\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
 
 	var allParameters = method.UrlParameters.AsEnumerable();
 	
@@ -105,14 +105,14 @@ namespace WebApiProxy.Server.Templates
             #line hidden
             this.Write("\r\n\r\n\t");
             
-            #line 118 "C:\WorkGit\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 116 "D:\WorkGit\Own\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(method.Name.ToCamelCasing()));
             
             #line default
             #line hidden
             this.Write(": function(");
             
-            #line 118 "C:\WorkGit\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 116 "D:\WorkGit\Own\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(parameterList));
             
             #line default
@@ -120,7 +120,7 @@ namespace WebApiProxy.Server.Templates
             this.Write(") {\r\n\t\tvar defaults = { fields: [] };\r\n        var settings = $.extend({}, defaul" +
                     "ts, options || {});\r\n\t\tvar url = ");
             
-            #line 121 "C:\WorkGit\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 119 "D:\WorkGit\Own\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(url));
             
             #line default
@@ -129,98 +129,98 @@ namespace WebApiProxy.Server.Templates
                     "?\" : \"&\";\r\n\t\t\turl += \"fields=\" + settings.fields.join();\r\n\t\t}\r\n\r\n\t\treturn invoke" +
                     ".call(this, url, \"");
             
-            #line 128 "C:\WorkGit\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 126 "D:\WorkGit\Own\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(method.Type.ToString().ToLower()));
             
             #line default
             #line hidden
             this.Write("\", options, \r\n\t\t");
             
-            #line 129 "C:\WorkGit\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 127 "D:\WorkGit\Own\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
  if (method.UrlParameters.Any()) { 
             
             #line default
             #line hidden
             this.Write("\t\t\t{\r\n\t\t\t");
             
-            #line 131 "C:\WorkGit\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 129 "D:\WorkGit\Own\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
  foreach (var parameter in method.UrlParameters) { 
             
             #line default
             #line hidden
             this.Write("\t\t\t\t");
             
-            #line 132 "C:\WorkGit\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 130 "D:\WorkGit\Own\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(parameter.Name));
             
             #line default
             #line hidden
             this.Write(": ");
             
-            #line 132 "C:\WorkGit\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 130 "D:\WorkGit\Own\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(parameter.Name));
             
             #line default
             #line hidden
             this.Write(",\r\n\t\t\t");
             
-            #line 133 "C:\WorkGit\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 131 "D:\WorkGit\Own\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
  } 
             
             #line default
             #line hidden
             this.Write("\t\t\t}\r\n\t\t");
             
-            #line 135 "C:\WorkGit\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 133 "D:\WorkGit\Own\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
  } else { 
             
             #line default
             #line hidden
             this.Write("\t\t\t{}\r\n\t\t");
             
-            #line 137 "C:\WorkGit\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 135 "D:\WorkGit\Own\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
  } 
             
             #line default
             #line hidden
             this.Write("\t\t");
             
-            #line 138 "C:\WorkGit\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 136 "D:\WorkGit\Own\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
  if (method.BodyParameter != null) { 
             
             #line default
             #line hidden
             this.Write("\t\t\t, ");
             
-            #line 139 "C:\WorkGit\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 137 "D:\WorkGit\Own\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(method.BodyParameter.Name));
             
             #line default
             #line hidden
             this.Write(");\r\n\t\t");
             
-            #line 140 "C:\WorkGit\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 138 "D:\WorkGit\Own\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
  } else { 
             
             #line default
             #line hidden
             this.Write("\t\t\t);\r\n\t\t");
             
-            #line 142 "C:\WorkGit\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 140 "D:\WorkGit\Own\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
  } 
             
             #line default
             #line hidden
             this.Write("\t},\r\n");
             
-            #line 144 "C:\WorkGit\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 142 "D:\WorkGit\Own\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
  } 
             
             #line default
             #line hidden
             this.Write(" \r\n};\r\n\t");
             
-            #line 146 "C:\WorkGit\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
+            #line 144 "D:\WorkGit\Own\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
  } 
             
             #line default
