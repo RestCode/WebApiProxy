@@ -50,6 +50,12 @@
 	function invoke(url, type, options, urlParams, body) {
 		//url += getQueryString(urlParams);
 
+		if (!body && urlParams) {
+			var index = url.indexOf('?');
+			if (index > -1)
+				url = url.substring(0, index);
+		}
+
 		var ajaxOptions = $.extend({}, {
 			url: appendPathDelimiter($.proxies.baseUrl) + url,
 			type: type,
