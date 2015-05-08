@@ -102,7 +102,7 @@ namespace WebApiProxy.Server
                 res = GetGenericRepresentation(type, (t) => ParseType(t, model), model);
 
                     AddModelDefinition(type);
-                }
+            }
             else
             {
                 if (type.ToString().StartsWith("System."))

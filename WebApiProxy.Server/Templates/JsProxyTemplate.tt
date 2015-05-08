@@ -15,62 +15,20 @@
 		baseUrl: "<#= this.Metadata.Host #>/"
 	};
 
-	function getQueryString(params, queryString) {
-		queryString = queryString || "";
-		for(var prop in params) {
-			if (params.hasOwnProperty(prop)) {
-				var val = getArgValue(params[prop]);
-				if (val === null) continue;
+	$.proxies = $.extend({}, $.proxies, {
+		defaultOptions: {}
+	});
 
-				if ("" + val === "[object Object]") {
-					queryString = getQueryString(params[prop], queryString);
-					continue;
-				}
+	function invoke(url, type, options, data) {
 
-				if (queryString.length) {
-					queryString += "&";
-				} else {
-					queryString += "?";
-				}
-				queryString = queryString + prop + "=" +val;
-			}
-		}
-		return queryString;
-	}
-
-	function getArgValue(val) {
-		if (val === undefined || val === null) return null;
-		return val;
-	}
-
-	function invoke(url, type, urlParams, body) {
-		//url += getQueryString(urlParams);
-
-		var ajaxOptions = $.extend({}, this.defaultOptions, {
+		var ajaxOptions = $.extend({}, {
 			url: appendPathDelimiter($.proxies.baseUrl) + url,
 			type: type,
-			beforeSend : function(xhr) {
-				if (typeof(webApiAuthToken) != "undefined" && webApiAuthToken.length > 0)
-					xhr.setRequestHeader("Authorization", "Bearer " + webApiAuthToken);
-			},
-		});
+		}, $.proxies.defaultOptions, this.defaultOptions, options);
 
-		if (body) {
-			ajaxOptions.data = body;
-		}
-
-		if (this.antiForgeryToken) {
-			var token = $.isFunction(this.antiForgeryToken) ? this.antiForgeryToken() : this.antiForgeryToken;
-			if (token) {
-				ajaxOptions.headers = ajaxOptions.headers || {};
-			}
-		}
+		ajaxOptions.data = data;
 	
 		return $.ajax(ajaxOptions);
-	}
-
-	function defaultAntiForgeryTokenAccessor() {
-		return $("input[name=__RequestVerificationToken]").val();
 	}
 
 	function endsWith(str, suffix) {
@@ -90,7 +48,6 @@
 	<# foreach(var definition in this.Metadata.Definitions) { #>
 	$.proxies.<#= definition.Name.ToLower() #> = {
 		defaultOptions: {},
-		antiForgeryToken: defaultAntiForgeryTokenAccessor,
 <# foreach(var method in definition.ActionMethods) { #>
 
 <#
@@ -103,39 +60,32 @@
 	selectedParameters.Add("options");
 
 	var parameterList = string.Join(",", selectedParameters);
-
 	
-	
-	var url = ("\"" + method.Url.Replace("{", "\" + ").Replace("}", " + \"") + "\"").Replace(" + \"\"","");
+	var url = method.Url.Split('?').First();
+	url = ("\"" + url.Replace("{", "\" + ").Replace("}", " + \"") + "\"").Replace(" + \"\"","");
 
 #>
 
 
 	<#= method.Name.ToCamelCasing() #>: function(<#=parameterList#>) {
-		 var defaults = { fields: [] };
-         var settings = $.extend({}, defaults, options || {});
-		 var url = <#= url #>;
 
-		 if(settings.fields.length > 0) {
-		    url +=  url.indexOf("?") == -1 ? "?" : "&";
-			url += "fields=" + settings.fields.join();
-		 }
+		var url = <#= url #>;
 
-		return invoke.call(this, url, "<#= method.Type.ToString().ToLower() #>", 
+		var ajaxData;
 		<# if (method.UrlParameters.Any()) { #>
-			{
+			ajaxData = {
 			<# foreach (var parameter in method.UrlParameters) { #>
 				<#= parameter.Name #>: <#= parameter.Name #>,
 			<# } #>
-			}
+			};
 		<# } else { #>
-			{}
+			ajaxData = {};
 		<# } #>
 		<# if (method.BodyParameter != null) { #>
-			, <#= method.BodyParameter.Name #>);
-		<# } else { #>
-			);
+			ajaxData = $.extend(ajaxData, <#= method.BodyParameter.Name #>);
 		<# } #>
+
+		return invoke.call(this, url, "<#= method.Type.ToString().ToLower() #>", options, ajaxData);
 	},
 <# } #> 
 };
