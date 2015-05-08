@@ -188,7 +188,7 @@ namespace WebApiProxy.Server.Templates
             
             #line default
             #line hidden
-            this.Write("\t\t\t$.extend({}, ajaxData, ");
+            this.Write("\t\t\tajaxData = $.extend(ajaxData, ");
             
             #line 85 "D:\WorkGit\Own\WebApiProxy\WebApiProxy.Server\Templates\JsProxyTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(method.BodyParameter.Name));

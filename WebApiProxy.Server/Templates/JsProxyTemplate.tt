@@ -82,7 +82,7 @@
 			ajaxData = {};
 		<# } #>
 		<# if (method.BodyParameter != null) { #>
-			$.extend({}, ajaxData, <#= method.BodyParameter.Name #>);
+			ajaxData = $.extend(ajaxData, <#= method.BodyParameter.Name #>);
 		<# } #>
 
 		return invoke.call(this, url, "<#= method.Type.ToString().ToLower() #>", options, ajaxData);
