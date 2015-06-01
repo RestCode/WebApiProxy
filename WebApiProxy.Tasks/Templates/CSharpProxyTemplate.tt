@@ -126,25 +126,27 @@ namespace <#= Configuration.Namespace#>.Interfaces
 			var q = allParameters.Select(m => m.Type + " " + m.Name);
 			if (q != null)
 				parameterList = string.Join(",", q.ToArray());
-		}		
+		}
+
+		var concreteReturnType = method.ReturnType.ToConcrete();
 #>
 
 <# foreach(var p in method.UrlParameters) { #>
-		/// <param name="<#= p.Name #>"><#= p.Description #></param>
+		/// <param name="<#= p.Name #>"><#= p.Description.ToSummary() #></param>
 <# } #>
 
-<# if (Configuration.GenerateAsyncReturnTypes == false || String.IsNullOrEmpty(method.ReturnType)) { #>
+<# if (Configuration.GenerateAsyncReturnTypes == false || String.IsNullOrEmpty(concreteReturnType)) { #>
 		/// <returns></returns>
 		Task<HttpResponseMessage> <#= method.Name #>Async(<#= parameterList#>);
 <# } else { #>
-		Task<<#= method.ReturnType #>> <#= method.Name #>Async(<#= parameterList#>);
+		Task<<#= concreteReturnType #>> <#= method.Name #>Async(<#= parameterList#>);
 <# } #>
 
 <# foreach(var p in method.UrlParameters) {#>
-		/// <param name="<#= p.Name #>"><#= p.Description #></param>
+		/// <param name="<#= p.Name #>"><#= p.Description.ToSummary() #></param>
 <# } #>
 		/// <returns></returns>
-		<#= String.IsNullOrEmpty(method.ReturnType) ? "void" : method.ReturnType #> <#= method.Name #>(<#= parameterList#>);
+		<#= String.IsNullOrEmpty(concreteReturnType) ? "void" : concreteReturnType #> <#= method.Name #>(<#= parameterList#>);
 <#}#>				
 	}
 <#}#>
@@ -318,13 +320,13 @@ namespace <#= Configuration.Namespace#>.Clients
 		var postOrPut =  method.Type.ToTitle() == "Post" || method.Type.ToTitle() == "Put";
 		var url = ("\"" + method.Url.Replace("{", "\" + ").Replace("}", " + \"") + "\"").Replace(" + \"\"","");
 		
-		var parametersValues = String.IsNullOrEmpty(bodyParameterString) ? (url.IndexOf("+") > -1 ? url.Substring(url.IndexOf("+") + 1) : "") : bodyParameterString.Substring(2);
+		var concreteReturnType = method.ReturnType.ToConcrete();
 #>
 		/// <summary>
-		/// <#= method.Description #>
+		/// <#= method.Description.ToSummary() #>
 		/// </summary>
 <# foreach(var p in method.UrlParameters) { #>
-		/// <param name="<#= p.Name #>"><#= p.Description #></param>
+		/// <param name="<#= p.Name #>"><#= p.Description.ToSummary() #></param>
 <# } #>
 		/// <returns></returns>
 		public virtual async Task<HttpResponseMessage> <#= method.Name #>AsyncMsg(<#= parameterList#>)
@@ -332,12 +334,12 @@ namespace <#= Configuration.Namespace#>.Clients
 			return await HttpClient.<#=method.Type.ToTitle()#><#= postOrPut ? "AsJson" : "" #>Async<#= postOrPut && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "" #>(<#=url#><#= postOrPut ? bodyParameterString:""#>);
 		}
 
-<# if (Configuration.GenerateAsyncReturnTypes == false || String.IsNullOrEmpty(method.ReturnType)) { #>
+<# if (Configuration.GenerateAsyncReturnTypes == false || String.IsNullOrEmpty(concreteReturnType)) { #>
 		/// <summary>
-		/// <#= method.Description #>
+		/// <#= method.Description.ToSummary() #>
 		/// </summary>
 <# foreach(var p in method.UrlParameters) { #>
-		/// <param name="<#= p.Name #>"><#= p.Description #></param>
+		/// <param name="<#= p.Name #>"><#= p.Description.ToSummary() #></param>
 <# } #>
 		/// <returns></returns>
 		public virtual Task<HttpResponseMessage> <#= method.Name #>Async(<#= parameterList#>)
@@ -347,35 +349,35 @@ namespace <#= Configuration.Namespace#>.Clients
 
 <# } else { #>
 		/// <summary>
-		/// <#= method.Description #>
+		/// <#= method.Description.ToSummary() #>
 		/// </summary>
 <# foreach(var p in method.UrlParameters) { #>
-		/// <param name="<#= p.Name #>"><#= p.Description #></param>
+		/// <param name="<#= p.Name #>"><#= p.Description.ToSummary() #></param>
 <# } #>
 		/// <returns></returns>
-		public virtual async Task<<#= method.ReturnType #>> <#= method.Name #>Async(<#= parameterList#>)
+		public virtual async Task<<#= concreteReturnType #>> <#= method.Name #>Async(<#= parameterList#>)
 		{
 			var result = await HttpClient.<#=method.Type.ToTitle()#><#= postOrPut ? "AsJson" : "" #>Async<#= postOrPut && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "" #>(<#=url#><#= postOrPut ? bodyParameterString:""#>);
 			
 			EnsureSuccess(result);
 
-			return await result.Content.ReadAsAsync<<#= method.ReturnType #>>();
+			return await result.Content.ReadAsAsync<<#= concreteReturnType #>>();
 		}
 
 <# }#>
 		/// <summary>
-		/// <#= method.Description #>
+		/// <#= method.Description.ToSummary() #>
 		/// </summary>
 <# foreach(var p in method.UrlParameters) { #>
-		/// <param name="<#= p.Name #>"><#= p.Description #></param>
+		/// <param name="<#= p.Name #>"><#= p.Description.ToSummary() #></param>
 <# } #>
-		public virtual <#= String.IsNullOrEmpty(method.ReturnType) ? "void" : method.ReturnType #> <#= method.Name #>(<#= parameterList#>)
+		public virtual <#= String.IsNullOrEmpty(concreteReturnType) ? "void" : concreteReturnType #> <#= method.Name #>(<#= parameterList#>)
 		{
 			var result = Task.Run(() => <#= method.Name #>AsyncMsg(<#=parameterNameList#>)).Result;		 
 			 
 			EnsureSuccess(result);
-<# if(!String.IsNullOrEmpty(method.ReturnType)) { #>			 			 
-			return result.Content.ReadAsAsync<<#= method.ReturnType #>>().Result;
+<# if(!String.IsNullOrEmpty(concreteReturnType)) { #>			 			 
+			return result.Content.ReadAsAsync<<#= concreteReturnType #>>().Result;
 <# } #>
 		}
 
