@@ -132,8 +132,13 @@ namespace <#= Configuration.Namespace#>.Interfaces
 <# foreach(var p in method.UrlParameters) { #>
 		/// <param name="<#= p.Name #>"><#= p.Description #></param>
 <# } #>
+
+<# if (Configuration.GenerateAsyncReturnTypes == false || String.IsNullOrEmpty(method.ReturnType)) { #>
 		/// <returns></returns>
 		Task<HttpResponseMessage> <#= method.Name #>Async(<#= parameterList#>);
+<# } else { #>
+		Task<<#= method.ReturnType #>> <#= method.Name #>Async(<#= parameterList#>);
+<# } #>
 
 <# foreach(var p in method.UrlParameters) {#>
 		/// <param name="<#= p.Name #>"><#= p.Description #></param>
@@ -201,6 +206,63 @@ namespace <#= Configuration.Namespace#>.Clients
 			HttpClient.Dispose();
 		}
 	}
+
+	/// <summary>
+	/// Helper class to access all clients at once
+	/// </summary>
+	public partial class WebApiClients
+	{
+<# foreach(var definition in Configuration.Metadata.Definitions) { #>
+		public <#=definition.Name#><#= Configuration.ClientSuffix#> <#= definition.Name #> { get; private set; }
+<# } #>
+		
+        protected IEnumerable<Interfaces.IClientBase> Clients
+        {
+            get
+            {
+<# foreach(var definition in Configuration.Metadata.Definitions) { #>
+				yield return <#= definition.Name #>;
+<# } #>
+            }
+        }
+
+		public WebApiClients(Uri baseAddress = null)
+		{
+            if (baseAddress != null)
+                Configuration.MyWebApiProxyBaseAddress = baseAddress.AbsoluteUri;
+
+<# foreach(var definition in Configuration.Metadata.Definitions) { #>
+			<#= definition.Name #> = new <#=definition.Name#><#= Configuration.ClientSuffix#>();
+<# } #>
+		}
+
+        public void SetAuthentication(AuthenticationHeaderValue auth)
+        {
+            foreach (var client in Clients)
+                client.HttpClient.DefaultRequestHeaders.Authorization = auth;
+        }
+		
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                foreach (var client in Clients)
+                    client.Dispose();
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+		~WebApiClients() 
+		{
+            Dispose(false);
+		}
+	}
+
 <# foreach(var definition in Configuration.Metadata.Definitions) { #>
 	/// <summary>
 	/// <#= definition.Description.ToSummary() #>
@@ -223,6 +285,7 @@ namespace <#= Configuration.Namespace#>.Clients
 		}
 
 		#region Methods
+
 <# foreach(var method in definition.ActionMethods) { 
 		var allParameters = method.UrlParameters.AsEnumerable();
 		
@@ -254,6 +317,8 @@ namespace <#= Configuration.Namespace#>.Clients
 
 		var postOrPut =  method.Type.ToTitle() == "Post" || method.Type.ToTitle() == "Put";
 		var url = ("\"" + method.Url.Replace("{", "\" + ").Replace("}", " + \"") + "\"").Replace(" + \"\"","");
+		
+		var parametersValues = String.IsNullOrEmpty(bodyParameterString) ? (url.IndexOf("+") > -1 ? url.Substring(url.IndexOf("+") + 1) : "") : bodyParameterString.Substring(2);
 #>
 		/// <summary>
 		/// <#= method.Description #>
@@ -262,11 +327,42 @@ namespace <#= Configuration.Namespace#>.Clients
 		/// <param name="<#= p.Name #>"><#= p.Description #></param>
 <# } #>
 		/// <returns></returns>
-		public virtual async Task<HttpResponseMessage> <#= method.Name #>Async(<#= parameterList#>)
+		public virtual async Task<HttpResponseMessage> <#= method.Name #>AsyncMsg(<#= parameterList#>)
 		{
 			return await HttpClient.<#=method.Type.ToTitle()#><#= postOrPut ? "AsJson" : "" #>Async<#= postOrPut && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "" #>(<#=url#><#= postOrPut ? bodyParameterString:""#>);
 		}
 
+<# if (Configuration.GenerateAsyncReturnTypes == false || String.IsNullOrEmpty(method.ReturnType)) { #>
+		/// <summary>
+		/// <#= method.Description #>
+		/// </summary>
+<# foreach(var p in method.UrlParameters) { #>
+		/// <param name="<#= p.Name #>"><#= p.Description #></param>
+<# } #>
+		/// <returns></returns>
+		public virtual Task<HttpResponseMessage> <#= method.Name #>Async(<#= parameterList#>)
+		{
+			return <#= method.Name #>AsyncMsg(<#= parameterNameList #>);
+		}
+
+<# } else { #>
+		/// <summary>
+		/// <#= method.Description #>
+		/// </summary>
+<# foreach(var p in method.UrlParameters) { #>
+		/// <param name="<#= p.Name #>"><#= p.Description #></param>
+<# } #>
+		/// <returns></returns>
+		public virtual async Task<<#= method.ReturnType #>> <#= method.Name #>Async(<#= parameterList#>)
+		{
+			var result = await HttpClient.<#=method.Type.ToTitle()#><#= postOrPut ? "AsJson" : "" #>Async<#= postOrPut && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "" #>(<#=url#><#= postOrPut ? bodyParameterString:""#>);
+			
+			EnsureSuccess(result);
+
+			return await result.Content.ReadAsAsync<<#= method.ReturnType #>>();
+		}
+
+<# }#>
 		/// <summary>
 		/// <#= method.Description #>
 		/// </summary>
@@ -275,16 +371,12 @@ namespace <#= Configuration.Namespace#>.Clients
 <# } #>
 		public virtual <#= String.IsNullOrEmpty(method.ReturnType) ? "void" : method.ReturnType #> <#= method.Name #>(<#= parameterList#>)
 		{
-			<#
-			var parametersValues = String.IsNullOrEmpty(bodyParameterString) ? (url.IndexOf("+") > -1 ? url.Substring(url.IndexOf("+") + 1) : "") : bodyParameterString.Substring(2);
-			#>
-			 var result = Task.Run(() => <#= method.Name #>Async(<#=parameterNameList#>)).Result;		 
+			var result = Task.Run(() => <#= method.Name #>AsyncMsg(<#=parameterNameList#>)).Result;		 
 			 
 			EnsureSuccess(result);
-				 
-			 <# if(!String.IsNullOrEmpty(method.ReturnType)) { #>			 			 
-			 return result.Content.ReadAsAsync<<#= method.ReturnType #>>().Result;
-			 <# } #>
+<# if(!String.IsNullOrEmpty(method.ReturnType)) { #>			 			 
+			return result.Content.ReadAsAsync<<#= method.ReturnType #>>().Result;
+<# } #>
 		}
 
 <#}#>
