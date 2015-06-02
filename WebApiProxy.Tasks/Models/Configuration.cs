@@ -19,7 +19,6 @@ namespace WebApiProxy.Tasks.Models
         private string _clientSuffix = "Client";
         private string _name = "MyWebApiProxy";
         private bool _generateOnBuild = false;
-        private bool _generateAsyncReturnTypes = false;
         private string _namespace = "WebApi.Proxies";
 
         [XmlAttribute("generateOnBuild")]
