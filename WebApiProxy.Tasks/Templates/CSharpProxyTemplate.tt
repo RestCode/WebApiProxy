@@ -110,9 +110,7 @@ namespace <#= Configuration.Namespace#>.Interfaces
 <# foreach(var method in definition.ActionMethods) { 
 		var allParameters = method.UrlParameters.AsEnumerable().Where(m => m != null);
 		
-		//var queryParameterString = "\"";
 		var bodyParameterString = "";
-
 
 		if (method.BodyParameter != null) {
 			allParameters = allParameters.Concat(new [] { method.BodyParameter });
@@ -291,7 +289,6 @@ namespace <#= Configuration.Namespace#>.Clients
 <# foreach(var method in definition.ActionMethods) { 
 		var allParameters = method.UrlParameters.AsEnumerable();
 		
-		var queryParameterString = "\"";
 		var bodyParameterString = ", default(HttpResponseMessage)";
 		var parameterNameList = "";
 
@@ -300,21 +297,17 @@ namespace <#= Configuration.Namespace#>.Clients
 			bodyParameterString = ", " + method.BodyParameter.Name;
 		}
 
-
-		if (allParameters.Any()) {
-			queryParameterString = "?";
-			queryParameterString += string.Join(" + \"&", allParameters.Where(m => m != null).Select(m => m.Name + "=\" + " + m.Name).ToArray());
+		if (allParameters.Any())
 			parameterNameList =  string.Join(", ", allParameters.Select(m => m.Name));
-		}
 
 		var parameterList = "";
 
 		if (allParameters.Any())
 		{
-		var q = allParameters.Where(m => m != null).Select(m => m.Type + " " + m.Name);
+			var q = allParameters.Where(m => m != null).Select(m => m.Type + " " + m.Name);
 
-		if (q != null)
-			parameterList = string.Join(",", q.ToArray());
+			if (q != null)
+				parameterList = string.Join(",", q.ToArray());
 		}
 
 		var postOrPut =  method.Type.ToTitle() == "Post" || method.Type.ToTitle() == "Put";
