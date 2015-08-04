@@ -240,19 +240,47 @@ namespace <#= Configuration.Namespace#>.Clients
 		var urlParts = method.Url.Split(new[] {"?"}, StringSplitOptions.RemoveEmptyEntries);
 		var requestUrl = urlParts[0];
 		var urlQueryString = string.Empty;
-		var isGetRequestAndHasQueryString = falst;
+		var hasQueryString = false;
 
         if (urlParts.Length > 1)
 		{
             urlQueryString = urlParts[1];
-		    isGetRequestAndHasQueryString = method.Type.ToTitle() == "Get";
+		    hasQueryString = true;
 		}
 
+		requestUrl = System.Text.RegularExpressions.Regex.Replace(requestUrl, @"\{(.*?)\}", "\"+Uri.EscapeUriString(Convert.ToString($1))+\"");
 
 
-		if(!hasQueryString){
-			requestUrl = Regex.Replace(requestUrl, @"\{(.*?)\}", "\"+Uri.EscapeUriString(Convert.ToString($1))+\"");
-		}
+		var urlQueryParts = urlQueryString.Split(new[] {"&"}, StringSplitOptions.RemoveEmptyEntries)
+										.Select(item =>
+												{
+													var kvParts = item.Split(new[] {"="},
+																			StringSplitOptions.RemoveEmptyEntries);
+													return new KeyValuePair<string, string>(kvParts[0], kvParts[1]);
+												})
+										.ToList();
+
+		var queryHasParams =
+		urlQueryParts.Where(
+							item =>
+							allParameters.Any(param =>
+												string.Equals(item.Value, "{" + param.Name + "}",
+															StringComparison.OrdinalIgnoreCase)))
+						.ToList();
+
+		var queryHasParamUrlTpl = string.Join("&",
+											queryHasParams.Select(
+																	item =>
+																	string.Format("{0}={1}", item.Key, item.Value)));
+
+		var queryHasParamUrl = System.Text.RegularExpressions.Regex.Replace(queryHasParamUrlTpl, @"\{(.*?)\}", "\"+Uri.EscapeDataString(Convert.ToString($1))+\"");
+
+
+		var queryHasNoParams = urlQueryParts.Except(queryHasParams).ToList();
+		var queryNoParamUrlTpl = string.Join("&",
+											queryHasNoParams.Select(
+																	item =>
+																	string.Format("{0}={1}", item.Key, item.Value)));
 #>
 
 		/// <summary>
@@ -263,23 +291,36 @@ namespace <#= Configuration.Namespace#>.Clients
 <# } #>
 		public virtual async Task<HttpResponseMessage> <#= method.Name #>Async(<#= parameterList#>)
 		{
-			var requestUrl = <#= requestUrl #>;
-			<# if(isGetRequestAndHasQueryString){  #>
-				
-				var urlQueryString = Generate<#= method.Name #>Url(<#= urlQueryString #>, <#=parameterNameList#>);
-				if (!string.IsNullOrEmpty(urlQueryString))
+			var requestUrl = "<#= requestUrl #>";
+			<# if(hasQueryString){  #>
+
+				var queryHasParamUrl = "<#= queryHasParamUrl #>";
+
+
+				<# if(!string.IsNullOrEmpty(queryNoParamUrlTpl)){  #>
+					var queryNoParamUrlTpl = "<#= queryNoParamUrlTpl #>";
+					var queryNoParamUrl = Generate<#= method.Name #>QueryString(queryNoParamUrlTpl, <#=parameterNameList#>);
+				<# }else{ #>
+					var queryNoParamUrl = string.Empty;
+				<# } #>
+			
+				if (string.IsNullOrEmpty(queryHasParamUrl))
 				{
-					requestUrl = requestUrl + "?" + urlQueryString;
+					requestUrl = requestUrl + "?" + queryNoParamUrl;
+				}
+				else
+				{
+					requestUrl = requestUrl + "?" + queryHasParamUrl + "&" + queryNoParamUrl;
 				}
 
-			<# }else{ #>
-			return await HttpClient.<#=method.Type.ToTitle()#><#= postOrPut ? "AsJson" : "" #>Async<#= postOrPut && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "" #>(requestUrl <#= postOrPut ? bodyParameterString:""#>).ConfigureAwait(false);
 			<# } #>
+
+				return await HttpClient.<#=method.Type.ToTitle()#><#= postOrPut ? "AsJson" : "" #>Async<#= postOrPut && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "" #>(requestUrl <#= postOrPut ? bodyParameterString:""#>).ConfigureAwait(false);
 		}
 
-		<# if(isGetRequestAndHasQueryString){  #>
+		<# if(hasQueryString && !string.IsNullOrEmpty(queryNoParamUrlTpl)){  #>
 				
-			public virtual string Generate<#= method.Name #>Url(string urlQueryString, <#= parameterList#>)
+			public virtual string Generate<#= method.Name #>QueryString(string urlQueryString, <#= parameterList#>)
 			{
 				throw new NotImplementedException();
 			}
