@@ -39,17 +39,6 @@ namespace <#= Configuration.Namespace#>
 #region Models
 namespace <#= Configuration.Namespace#>.Models
 {
-	public class WebApiProxyResponseException : Exception
-	{
-		public HttpStatusCode StatusCode { get; private set; }
-		public string Content { get; private set; }
-
-		public WebApiProxyResponseException(HttpStatusCode statusCode, string content) : base("A " + statusCode + " (" + (int)statusCode + ") http exception occured. See Content for response body.")
-		{
-			StatusCode = statusCode;
-			Content = content;
-		}
-	}
 
 <# foreach(var model in Configuration.Metadata.Models.Where(m => m.Type.Equals("class"))) { #>	
 	/// <summary>
@@ -129,16 +118,17 @@ namespace <#= Configuration.Namespace#>.Interfaces
 		}		
 #>
 
+		/// <summary>
+		/// <#= method.Description #>
+		/// </summary>
 <# foreach(var p in method.UrlParameters) { #>
 		/// <param name="<#= p.Name #>"><#= p.Description #></param>
 <# } #>
-		/// <returns></returns>
 		Task<HttpResponseMessage> <#= method.Name #>Async(<#= parameterList#>);
 
 <# foreach(var p in method.UrlParameters) {#>
 		/// <param name="<#= p.Name #>"><#= p.Description #></param>
 <# } #>
-		/// <returns></returns>
 		<#= String.IsNullOrEmpty(method.ReturnType) ? "void" : method.ReturnType #> <#= method.Name #>(<#= parameterList#>);
 <#}#>				
 	}
@@ -176,8 +166,7 @@ namespace <#= Configuration.Namespace#>.Clients
 			if (response.IsSuccessStatusCode)				
 				return;
 													
-			var content = response.Content.ReadAsStringAsync().Result;
-			throw new WebApiProxyResponseException(response.StatusCode, content);			
+            throw new HttpResponseException(response);
 		}
 
 		/// <summary>
@@ -201,23 +190,17 @@ namespace <#= Configuration.Namespace#>.Clients
 			HttpClient.Dispose();
 		}
 	}
+
 <# foreach(var definition in Configuration.Metadata.Definitions) { #>
 	/// <summary>
 	/// <#= definition.Description.ToSummary() #>
 	/// </summary>
 	public partial class <#=definition.Name#><#= Configuration.ClientSuffix#> : ClientBase, Interfaces.I<#=definition.Name#><#=Configuration.ClientSuffix#>
 	{		
-
-		/// <summary>
-		/// <#= definition.Description.ToSummary() #>
-		/// </summary>
 		public <#=definition.Name#><#= Configuration.ClientSuffix#>() : base()
 		{
 		}
 
-		/// <summary>
-		/// <#= definition.Description.ToSummary() #>
-		/// </summary>
 		public <#=definition.Name#><#= Configuration.ClientSuffix#>(HttpMessageHandler handler, bool disposeHandler = true) : base(handler, disposeHandler)
 		{
 		}
@@ -253,19 +236,56 @@ namespace <#= Configuration.Namespace#>.Clients
 		}
 
 		var postOrPut =  method.Type.ToTitle() == "Post" || method.Type.ToTitle() == "Put";
-		var url = ("\"" + method.Url.Replace("{", "\" + ").Replace("}", " + \"") + "\"").Replace(" + \"\"","");
+
+		var urlParts = method.Url.Split(new[] {"?"}, StringSplitOptions.RemoveEmptyEntries);
+		var requestUrl = urlParts[0];
+		var urlQueryString = string.Empty;
+		var isGetRequestAndHasQueryString = falst;
+
+        if (urlParts.Length > 1)
+		{
+            urlQueryString = urlParts[1];
+		    isGetRequestAndHasQueryString = method.Type.ToTitle() == "Get";
+		}
+
+
+
+		if(!hasQueryString){
+			requestUrl = Regex.Replace(requestUrl, @"\{(.*?)\}", "\"+Uri.EscapeUriString(Convert.ToString($1))+\"");
+		}
 #>
+
 		/// <summary>
 		/// <#= method.Description #>
 		/// </summary>
 <# foreach(var p in method.UrlParameters) { #>
 		/// <param name="<#= p.Name #>"><#= p.Description #></param>
 <# } #>
-		/// <returns></returns>
 		public virtual async Task<HttpResponseMessage> <#= method.Name #>Async(<#= parameterList#>)
 		{
-			return await HttpClient.<#=method.Type.ToTitle()#><#= postOrPut ? "AsJson" : "" #>Async<#= postOrPut && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "" #>(<#=url#><#= postOrPut ? bodyParameterString:""#>);
+			var requestUrl = <#= requestUrl #>;
+			<# if(isGetRequestAndHasQueryString){  #>
+				
+				var urlQueryString = Generate<#= method.Name #>Url(<#= urlQueryString #>, <#=parameterNameList#>);
+				if (!string.IsNullOrEmpty(urlQueryString))
+				{
+					requestUrl = requestUrl + "?" + urlQueryString;
+				}
+
+			<# }else{ #>
+			return await HttpClient.<#=method.Type.ToTitle()#><#= postOrPut ? "AsJson" : "" #>Async<#= postOrPut && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "" #>(requestUrl <#= postOrPut ? bodyParameterString:""#>).ConfigureAwait(false);
+			<# } #>
 		}
+
+		<# if(isGetRequestAndHasQueryString){  #>
+				
+			public virtual string Generate<#= method.Name #>Url(string urlQueryString, <#= parameterList#>)
+			{
+				throw new NotImplementedException();
+			}
+
+		<#}#>
+
 
 		/// <summary>
 		/// <#= method.Description #>
@@ -275,16 +295,13 @@ namespace <#= Configuration.Namespace#>.Clients
 <# } #>
 		public virtual <#= String.IsNullOrEmpty(method.ReturnType) ? "void" : method.ReturnType #> <#= method.Name #>(<#= parameterList#>)
 		{
-			<#
-			var parametersValues = String.IsNullOrEmpty(bodyParameterString) ? (url.IndexOf("+") > -1 ? url.Substring(url.IndexOf("+") + 1) : "") : bodyParameterString.Substring(2);
-			#>
-			 var result = Task.Run(() => <#= method.Name #>Async(<#=parameterNameList#>)).Result;		 
+			var result = <#= method.Name #>Async(<#=parameterNameList#>).Result;		 
 			 
 			EnsureSuccess(result);
 				 
-			 <# if(!String.IsNullOrEmpty(method.ReturnType)) { #>			 			 
-			 return result.Content.ReadAsAsync<<#= method.ReturnType #>>().Result;
-			 <# } #>
+			<# if(!String.IsNullOrEmpty(method.ReturnType)) { #>			 			 
+			return result.Content.ReadAsAsync<<#= method.ReturnType #>>().Result;
+			<# } #>
 		}
 
 <#}#>
