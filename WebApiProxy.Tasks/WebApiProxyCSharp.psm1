@@ -6,9 +6,11 @@
 	$rootSpaces = "$root"
 
 	$generateJob = Start-Job -ScriptBlock { 
-        param($project,$projectPath,$rootSpace) 
+        param($project,$projectPath,$rootSpaces) 
 
 		Add-Type -Path (Join-Path $projectPath "bin\Debug\WebApiProxy.Tasks.dll")
+
+
 		$config = [WebApiProxy.Tasks.Models.Configuration]::Load($rootSpaces);
 
 		$generator = New-Object WebApiProxy.Tasks.Infrastructure.CSharpGenerator -ArgumentList @($config)
@@ -22,10 +24,8 @@
 			  -ItemType "file" -Force `
 			  -Value $source
     
-		$item = $project.ProjectItems.AddFromFile($fileName)
-		$source
-		Write-Host "Done..."
-	 } -ArgumentList @($project,$projectPath,$rootSpace)
+		# $item = $project.ProjectItems.AddFromFile($fileName)
+	 } -ArgumentList @($project,$projectPath,$rootSpaces)
 	 
 	 $result = Receive-Job -Job $generateJob -Wait
 	 Write-Host $result
