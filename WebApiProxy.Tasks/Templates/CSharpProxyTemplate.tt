@@ -40,6 +40,19 @@ namespace <#= Configuration.Namespace#>
 namespace <#= Configuration.Namespace#>.Models
 {
 
+ public class WebApiProxyResponseException : Exception
+  {
+
+    public HttpResponseMessage Response { get; private set; }
+
+
+    public WebApiProxyResponseException(HttpResponseMessage response): base("A " + response.StatusCode + " (" + (int)response.StatusCode + ") http exception occured. See response.")
+		{
+			Response = response;
+		}
+	}
+
+
 <# foreach(var model in Configuration.Metadata.Models.Where(m => m.Type.Equals("class"))) { #>	
 	/// <summary>
 	/// <#= model.Description.ToSummary() #>
@@ -166,7 +179,7 @@ namespace <#= Configuration.Namespace#>.Clients
 			if (response.IsSuccessStatusCode)				
 				return;
 													
-            throw new HttpResponseException(response);
+            throw new WebApiProxyResponseException(response);
 		}
 
 		/// <summary>
@@ -340,7 +353,7 @@ namespace <#= Configuration.Namespace#>.Clients
 			 
 			EnsureSuccess(result);
 				 
-			<# if(!String.IsNullOrEmpty(method.ReturnType)) { #>			 			 
+			<# if(!String.IsNullOrEmpty(method.ReturnType) && method.ReturnType != "void" ) { #>			 			 
 			return result.Content.ReadAsAsync<<#= method.ReturnType #>>().Result;
 			<# } #>
 		}
