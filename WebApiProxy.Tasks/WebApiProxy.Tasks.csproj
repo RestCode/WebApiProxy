@@ -88,7 +88,7 @@
     <None Include="WebApiProxy.CSharp.nuspec">
       <SubType>Designer</SubType>
     </None>
-    <None Include="WebApiProxy.CSharp.targets">
+    <None Include="UOKO.ApiProxy.CSharp.targets">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
