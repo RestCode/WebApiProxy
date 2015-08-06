@@ -186,6 +186,23 @@ namespace <#= Configuration.Namespace#>.Clients
             throw new WebApiProxyResponseException(response);
 		}
 
+		public virtual string GenerateQueryStrFromKvList(List<KeyValuePair<string, object>> kvList)
+	    {
+            var urlTpl = string.Join("&",
+                             kvList.Select(item =>
+                             {
+                                 var queryKey = Uri.EscapeDataString(item.Key);
+                                 var queryValue = string.Empty;
+                                 if (item.Value != null)
+                                 {
+                                     var queryValueJson = JsonConvert.SerializeObject(item.Value);
+                                     queryValue = Uri.EscapeDataString(queryValueJson);
+                                 }
+                                 return queryKey + "=" + queryValue;
+                             }));
+	        return urlTpl;
+	    }
+
 		/// <summary>
 		/// Releases the unmanaged resources and disposes of the managed resources.       
 		/// </summary>
@@ -323,15 +340,7 @@ namespace <#= Configuration.Namespace#>.Clients
 			public virtual string Generate<#= method.Name #>QueryString(string urlQueryString, <#= parameterList#>)
 			{
 				var kvList = Generate<#= method.Name #>KeyValueList( <#=parameterNameList#> );
-                var urlTpl = string.Join("&",
-                              kvList.Select(item =>
-                              {
-                                  var queryKey = Uri.EscapeDataString(item.Key);
-
-                                  var queryValueJson = JsonConvert.SerializeObject(item.Value);
-                                  var queryValue = Uri.EscapeDataString(queryValueJson);
-                                  return queryKey + "=" + queryValue;
-                              }));
+                var urlTpl = GenerateQueryStrFromKvList(kvList);
 
         	    return urlTpl;
 			}
