@@ -139,6 +139,9 @@ namespace <#= Configuration.Namespace#>.Interfaces
 <# } #>
 		Task<HttpResponseMessage> <#= method.Name #>Async(<#= parameterList#>);
 
+		/// <summary>
+		/// <#= method.Description #>
+		/// </summary>
 <# foreach(var p in method.UrlParameters) {#>
 		/// <param name="<#= p.Name #>"><#= p.Description #></param>
 <# } #>
