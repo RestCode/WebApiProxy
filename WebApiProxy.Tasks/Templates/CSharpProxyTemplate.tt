@@ -17,6 +17,7 @@ using System.Net.Http.Formatting;
 using System.Linq;
 using System.Net;
 using System.Web;
+using Newtonsoft.Json;
 using <#= Configuration.Namespace#>.Models;
 
 #region Proxies
@@ -321,8 +322,25 @@ namespace <#= Configuration.Namespace#>.Clients
 				
 			public virtual string Generate<#= method.Name #>QueryString(string urlQueryString, <#= parameterList#>)
 			{
+				var kvList = Generate<#= method.Name #>KeyValueList( <#=parameterNameList#> );
+                var urlTpl = string.Join("&",
+                              kvList.Select(item =>
+                              {
+                                  var queryKey = Uri.EscapeDataString(item.Key);
+
+                                  var queryValueJson = JsonConvert.SerializeObject(item.Value);
+                                  var queryValue = Uri.EscapeDataString(queryValueJson);
+                                  return queryKey + "=" + queryValue;
+                              }));
+
+        	    return urlTpl;
+			}
+
+			public virtual List<KeyValuePair<string, object>> Generate<#= method.Name #>KeyValueList(<#= parameterList#>)
+			{
 				throw new NotImplementedException();
 			}
+
 
 		<#}#>
 
