@@ -183,19 +183,6 @@ namespace <#= Configuration.Namespace#>.Clients
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="ClientBase"/> class.
-		/// </summary>
-		/// <param name="handler">The handler.</param>
-		/// <param name="disposeHandler">if set to <c>true</c> [dispose handler].</param>
-		protected ClientBase(HttpMessageHandler handler, bool disposeHandler = true)
-		{
-			HttpClient = new HttpClient(handler, disposeHandler)
-			{
-				BaseAddress = new Uri(Configuration.<#= Configuration.Name #>BaseAddress)
-			};
-		}
-
-		/// <summary>
 		/// Releases the unmanaged resources and disposes of the managed resources.       
 		/// </summary>
 		public void Dispose()
@@ -211,10 +198,6 @@ namespace <#= Configuration.Namespace#>.Clients
 	public partial class <#=definition.Name#><#= Configuration.ClientSuffix#> : ClientBase, Interfaces.I<#=definition.Name#><#=Configuration.ClientSuffix#>
 	{		
 		public <#=definition.Name#><#= Configuration.ClientSuffix#>() : base()
-		{
-		}
-
-		public <#=definition.Name#><#= Configuration.ClientSuffix#>(HttpMessageHandler handler, bool disposeHandler = true) : base(handler, disposeHandler)
 		{
 		}
 
