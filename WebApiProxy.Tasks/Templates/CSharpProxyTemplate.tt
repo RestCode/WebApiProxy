@@ -204,7 +204,7 @@ namespace <#= Configuration.Namespace#>.Clients
 
 								if (item.Value is string)
 								{
-                                    queryValue = Uri.EscapeDataString(item.Value);
+                                    queryValue = Uri.EscapeDataString((string)item.Value);
 								}
 								else
 								{
