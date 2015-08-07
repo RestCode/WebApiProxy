@@ -17,6 +17,7 @@ using System.Net.Http.Formatting;
 using System.Linq;
 using System.Net;
 using System.Web;
+using Newtonsoft.Json;
 using <#= Configuration.Namespace#>.Models;
 
 #region Proxies
@@ -175,7 +176,15 @@ namespace <#= Configuration.Namespace#>.Clients
 			{
 				BaseAddress = new Uri(Configuration.<#= Configuration.Name #>BaseAddress)
 			};
+
+			SerializationSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+            };
 		}
+
+        public JsonSerializerSettings SerializationSettings;
 
 		public virtual void EnsureSuccess(HttpResponseMessage response)
 		{			
@@ -192,10 +201,17 @@ namespace <#= Configuration.Namespace#>.Clients
                              {
                                  var queryKey = Uri.EscapeDataString(item.Key);
                                  var queryValue = string.Empty;
-                                 if (item.Value != null)
-                                 {
-                                     queryValue = Uri.EscapeDataString(item.Value.ToString());
-                                 }
+
+								if (item.Value is string)
+								{
+                                    queryValue = Uri.EscapeDataString(item.Value);
+								}
+								else
+								{
+									var queryValueJson = JsonConvert.SerializeObject(item.Value).Trim('"');
+                                    queryValue = Uri.EscapeDataString(queryValueJson);
+								}
+
                                  return queryKey + "=" + queryValue;
                              }));
 	        return urlTpl;
