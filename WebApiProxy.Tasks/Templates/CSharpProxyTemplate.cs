@@ -485,12 +485,13 @@ using ");
                     "ueryValue = string.Empty;\r\n\r\n\t\t\t\t\t\t\t\tif (item.Value is string)\r\n\t\t\t\t\t\t\t\t{\r\n     " +
                     "                               queryValue = Uri.EscapeDataString((string)item.Va" +
                     "lue);\r\n\t\t\t\t\t\t\t\t}\r\n\t\t\t\t\t\t\t\telse\r\n\t\t\t\t\t\t\t\t{\r\n\t\t\t\t\t\t\t\t\tvar queryValueJson = JsonCon" +
-                    "vert.SerializeObject(item.Value).Trim(\'\"\');\r\n                                   " +
-                    " queryValue = Uri.EscapeDataString(queryValueJson);\r\n\t\t\t\t\t\t\t\t}\r\n\r\n              " +
-                    "                   return queryKey + \"=\" + queryValue;\r\n                        " +
-                    "     }));\r\n\t        return urlTpl;\r\n\t    }\r\n\r\n\t\t/// <summary>\r\n\t\t/// Releases th" +
-                    "e unmanaged resources and disposes of the managed resources.       \r\n\t\t/// </sum" +
-                    "mary>\r\n\t\tpublic void Dispose()\r\n\t\t{\r\n\t\t\tHttpClient.Dispose();\r\n\t\t}\r\n\t}\r\n\r\n");
+                    "vert.SerializeObject(item.Value,SerializationSettings).Trim(\'\"\');\r\n             " +
+                    "                       queryValue = Uri.EscapeDataString(queryValueJson);\r\n\t\t\t\t\t" +
+                    "\t\t\t}\r\n\r\n                                 return queryKey + \"=\" + queryValue;\r\n  " +
+                    "                           }));\r\n\t        return urlTpl;\r\n\t    }\r\n\r\n\t\t/// <summa" +
+                    "ry>\r\n\t\t/// Releases the unmanaged resources and disposes of the managed resource" +
+                    "s.       \r\n\t\t/// </summary>\r\n\t\tpublic void Dispose()\r\n\t\t{\r\n\t\t\tHttpClient.Dispose" +
+                    "();\r\n\t\t}\r\n\t}\r\n\r\n");
             
             #line 229 "E:\git\github\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
  foreach(var definition in Configuration.Metadata.Definitions) { 

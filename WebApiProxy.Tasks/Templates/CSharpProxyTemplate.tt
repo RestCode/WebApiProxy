@@ -208,7 +208,7 @@ namespace <#= Configuration.Namespace#>.Clients
 								}
 								else
 								{
-									var queryValueJson = JsonConvert.SerializeObject(item.Value).Trim('"');
+									var queryValueJson = JsonConvert.SerializeObject(item.Value,SerializationSettings).Trim('"');
                                     queryValue = Uri.EscapeDataString(queryValueJson);
 								}
 
