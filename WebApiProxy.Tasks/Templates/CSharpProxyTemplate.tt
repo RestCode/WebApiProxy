@@ -202,16 +202,18 @@ namespace <#= Configuration.Namespace#>.Clients
                                  var queryKey = Uri.EscapeDataString(item.Key);
                                  var queryValue = string.Empty;
 
-								if (item.Value is string)
-								{
-                                    queryValue = Uri.EscapeDataString((string)item.Value);
-								}
-								else
-								{
-									var queryValueJson = JsonConvert.SerializeObject(item.Value,SerializationSettings).Trim('"');
-                                    queryValue = Uri.EscapeDataString(queryValueJson);
-								}
-
+								 if (item.Value != null)
+                                  {
+										if (item.Value is string)
+										{
+											queryValue = Uri.EscapeDataString((string)item.Value);
+										}
+										else
+										{
+											var queryValueJson = JsonConvert.SerializeObject(item.Value,SerializationSettings).Trim('"');
+											queryValue = Uri.EscapeDataString(queryValueJson);
+										}
+							      }
                                  return queryKey + "=" + queryValue;
                              }));
 	        return urlTpl;
