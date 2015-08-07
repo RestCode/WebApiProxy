@@ -491,7 +491,7 @@ using ");
                                  var queryValue = string.Empty;
                                  if (item.Value != null)
                                  {
-                                     queryValue = Uri.EscapeDataString(item.Value);
+                                     queryValue = Uri.EscapeDataString(item.Value.ToString());
                                  }
                                  return queryKey + ""="" + queryValue;
                              }));
