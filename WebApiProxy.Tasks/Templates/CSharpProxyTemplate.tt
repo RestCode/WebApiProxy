@@ -17,7 +17,6 @@ using System.Net.Http.Formatting;
 using System.Linq;
 using System.Net;
 using System.Web;
-using Newtonsoft.Json;
 using <#= Configuration.Namespace#>.Models;
 
 #region Proxies
@@ -195,8 +194,7 @@ namespace <#= Configuration.Namespace#>.Clients
                                  var queryValue = string.Empty;
                                  if (item.Value != null)
                                  {
-                                     var queryValueJson = JsonConvert.SerializeObject(item.Value);
-                                     queryValue = Uri.EscapeDataString(queryValueJson);
+                                     queryValue = Uri.EscapeDataString(item.Value);
                                  }
                                  return queryKey + "=" + queryValue;
                              }));
