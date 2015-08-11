@@ -101,8 +101,8 @@ namespace WebApiProxy.Server
             {
                 res = GetGenericRepresentation(type, (t) => ParseType(t, model), model);
 
-                    AddModelDefinition(type);
-                }
+                AddModelDefinition(type);
+            }
             else
             {
                 if (type.ToString().StartsWith("System."))
@@ -116,7 +116,10 @@ namespace WebApiProxy.Server
                 {
                     res = type.Name;
 
+                    if (!type.IsGenericParameter)
+                    {
                         AddModelDefinition(type);
+                    }
                 }
             }
 
@@ -154,6 +157,33 @@ namespace WebApiProxy.Server
             return res;
         }
 
+        private string GetGenericTypeDefineRepresentation(Type genericTypeDefClass)
+        {
+
+            string res = genericTypeDefClass.Name;
+            int index = res.IndexOf('`');
+            if (index > -1)
+                res = res.Substring(0, index);
+
+            Type[] args = genericTypeDefClass.GetGenericArguments();
+
+            res += "<";
+
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (i > 0)
+                    res += ", ";
+
+                var arg = args[i];
+                res += arg.Name;
+            }
+
+            res += ">";
+            return res;
+        }
+
+
+
         private void AddModelDefinition(Type classToDef)
         {
             var documentationProvider = config.Services.GetDocumentationProvider();
@@ -176,7 +206,7 @@ namespace WebApiProxy.Server
                 model.Description = GetDescription(classToDef);
                 if (classToDef.IsGenericType)
                 {
-                    model.Name = GetGenericRepresentation(classToDef, (t) => model.AddGenericArgument(t.Name), model);
+                    model.Name = GetGenericTypeDefineRepresentation(classToDef.GetGenericTypeDefinition());
                 }
                 model.Type = classToDef.IsEnum ? "enum" : "class";
                 var constants = classToDef
@@ -192,14 +222,17 @@ namespace WebApiProxy.Server
                                       Description = GetDescription(constant)
                                   };
 
-                var properties = classToDef.GetProperties();
+                var properties = classToDef.IsGenericType
+                                     ? classToDef.GetGenericTypeDefinition().GetProperties()
+                                     : classToDef.GetProperties();
+            
                 model.Properties = from property in properties
                                    select new ModelProperty
-                                   {
-                                       Name = property.Name,
-                                       Type = ParseType(property.PropertyType, model),
-                                       Description = GetDescription(property)
-                                   };
+                                          {
+                                              Name = property.Name,
+                                              Type = ParseType(property.PropertyType, model),
+                                              Description = GetDescription(property)
+                                          };
                 AddTypeToIgnore(model.Name);
                 foreach (var p in properties)
                 {
