@@ -1,0 +1,183 @@
+#+TITLE: web-api-uoko
+#+DATE: <2015-08-07 Fri>
+#+AUTHOR: $+j
+#+EMAIL: lust4life.jun@gmail.com
+#+OPTIONS: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline
+#+OPTIONS: author:t c:nil creator:comment d:(not "LOGBOOK") date:t
+#+OPTIONS: e:t email:nil f:t inline:t num:t p:nil pri:nil stat:t
+#+OPTIONS: tags:t tasks:t tex:t timestamp:t toc:t todo:t |:t
+#+CREATOR: Emacs 24.5.1 (Org mode 8.2.10)
+#+DESCRIPTION:
+#+EXCLUDE_TAGS: noexport
+#+KEYWORDS:
+#+LANGUAGE: zh
+#+SELECT_TAGS: export
+
+* 使用 api proxy
+
+** 服务端配置
+
+*** 从 nuget 安装包
+
+    在api的站点层,引用包 : WebApiProxy(WebApi Proxy Provider) ,创建者为 Fanie Reynders 的这个.
+
+*** 注册 Endpoint
+
+    在 web api 配置类中注册
+
+    #+BEGIN_SRC csharp
+     config.RegisterProxyRoutes();
+    #+END_SRC
+
+** 客户端配置
+
+*** 安装包
+
+    在需要用到 client 的地方,建立一个类库项目,作为这个 client 的寄宿.对这个类库项目引用 uoko nuget 上的 UOKO.ApiProxy.CSharp (WebApiProxy c# Proxy Client Generator).
+
+    #+BEGIN_QUOTE
+    为什么要单独建立一个类库项目?
+
+    因为目前这个 proxy client 的代码生成不支持多个 endpoint ,所以在需要调用 api 的项目中直接使用的话,没法做到多个 api 一起用.后期可以改改源码,支持多个 endpoint 的代码生成.
+    #+END_QUOTE
+
+*** config 和 使用
+
+    安装成功以后,在项目中会出现一个 WebApiProxy 的文件夹.分别有一个代码生成类文件 以及 一个配置文件.
+
+    #+BEGIN_SRC xml
+      <proxy xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:noNamespaceSchemaLocation="http://webapiproxy.github.io/schemas/client-config.xsd"
+
+             endpoint="http://api.mgmt.test.uoko.ioc/api/proxies" generateOnBuild="0" namespace="UOKO.Mgmt.WebApi.Client"
+
+      />
+    #+END_SRC
+
+    我们主要配置三个东西:
+
+    - endpoint   : 这个是你需要使用的 api 服务端地址
+    - namespace  : proxy 代码生成类的命名空间
+    - generateOnBuild : 是否在 build 的时候,生成代码. 建议是按需调整.需要生成的时候置为 1 , 生成完成后修改为 0
+
+    然后 build 这个解决方案, 相应的 proxy 代码即可生成了.
+
+** 细节处理
+
+
+*** 服务端相关
+
+    大家都知道 web api Action 的返回类型支持就 4 种.
+
+
+    1. void
+    2. HttpResponseMessage
+    3. IHttpActionResult
+    4. Some other type
+
+    见: http://www.asp.net/web-api/overview/getting-started-with-aspnet-web-api/action-results
+
+    如果你的返回类型是 1, 4 那么不用修改什么. 如果你的返回类型是 2,3 两种的话,那么你需要告诉 Proxy 你请求成功时候真正的返回类型是什么类型.这样代码生成的时候才能生成相应的类.这时候在 Action 使用 [ResponseType(xxxType)] 即可.如下:
+
+    [[./img/web-api-uoko/api-response-type-assign.jpg]]
+
+*** 客户端相关
+
+    客户端生成的代码中有一类情况需要完善修改的.就是大家需要搜索生成代码中 =throw new NotImplementedException();= 的地方.需要对这些类进行继承以后重写实现这个方法.
+
+    #+BEGIN_QUOTE
+    什么时候回出现这类情况?
+
+    如果大家在服务端 Action 的参数中使用了复杂类型参数,并且请求是 Get 请求, 并且这个参数的绑定方式是 FromUri 的时候,那么生成的 Proxy 代码就会出现这类情况.
+    #+END_QUOTE
+
+    见如下代码:
+
+    #+BEGIN_SRC csharp
+      /// <summary>
+      /// 获取部门分页列表
+      /// </summary>
+      /// <param name="query">查询实体类</param>
+      public virtual async Task<HttpResponseMessage> GetAsync(DepartmentQuery query)
+      {
+          var requestUrl = "api/Department";
+
+          var queryHasParamUrl = "";
+
+
+          var queryNoParamUrlTpl = "CompanyId={CompanyId}&DepLevel={DepLevel}&offset={offset}&pageSize={pageSize}&sortBy={sortBy}&sortType={sortType}";
+          var queryNoParamUrl = GenerateGetQueryString(queryNoParamUrlTpl, query);
+
+          if (string.IsNullOrEmpty(queryHasParamUrl))
+          {
+              requestUrl = requestUrl + "?" + queryNoParamUrl;
+          }
+          else
+          {
+              requestUrl = requestUrl + "?" + queryHasParamUrl + "&" + queryNoParamUrl;
+          }
+
+
+          return await HttpClient.GetAsync(requestUrl ).ConfigureAwait(false);
+      }
+
+
+      public virtual string GenerateGetQueryString(string urlQueryString, DepartmentQuery query)
+      {
+          var kvList = GenerateGetKeyValueList( query );
+          var urlTpl = GenerateQueryStrFromKvList(kvList);
+
+          return urlTpl;
+      }
+
+      public virtual List<KeyValuePair<string, object>> GenerateGetKeyValueList(DepartmentQuery query)
+      {
+          throw new NotImplementedException();
+      }
+    #+END_SRC
+
+    这类情况我们需要做的就是:
+
+    #+BEGIN_SRC csharp
+      public  class DepartmentClientIndeed : DepartmentClient
+      {
+          public override List<KeyValuePair<string, object>> GenerateGetKeyValueList(DepartmentQuery query)
+          {
+              var kvList = new List<KeyValuePair<string, object>>()
+                  {
+                      new KeyValuePair<string, object>("CompanyId", query.CompanyId),
+                      new KeyValuePair<string, object>("DepLevel", query.DepLevel),
+
+                      new KeyValuePair<string, object>("offset", query.offset),
+                      new KeyValuePair<string, object>("pageSize", query.pageSize),
+                      new KeyValuePair<string, object>("sortBy", query.sortBy),
+                      new KeyValuePair<string, object>("sortType", query.sortType),
+                  };
+              return kvList;
+          }
+      }
+    #+END_SRC
+
+    这里做的就是, 指定上面 url 中查询串的参数,都如何从 复杂对象 中获取.
+
+    因为 Proxy 代码是生成的, 所以这个新建的子类,应该是独立的类文件, 不会被生成覆盖的.
+
+
+*** 使用
+
+    到此,基本上就可以正常使用了. 因为会有子类的存在,所以我们最好不要直接在需要用 api 的地方, 创建具体的实体类. 这样不利于后期维护和修改调整.因为生成代码中已经生成了接口代码.所以最好是对接口进行依赖.然后通过大家喜欢的 DI 框架,注入到接口中进行使用.比如:
+
+    [[./img/web-api-uoko/api-client-usage.jpg]]
+
+    如下是 DI 框架注入的, 箭头都是被重写过的类.
+
+    [[./img/web-api-uoko/api-client-usage-di.jpg]]
+
+
+* 关于 proxy
+
+  使用的是 https://github.com/faniereynders/WebApiProxy
+
+  该项目分两大部分,服务端 api 描述信息生成. 客户端代码根据描述信息,生成本地代理.我们只是把生成代理的代码做了一些定制化修改,方便我们自己使用.更多有意思的东西,可以直接看官方使用 wiki: https://github.com/faniereynders/WebApiProxy/wiki 或者源码进行了解.
+
+  有兴趣还可了解下来由:  [[file:user-permission-refactor.org::*web%20api%20proxy/help%20page(api%20lifecycle)][web api proxy/help page(api lifecycle)]]
