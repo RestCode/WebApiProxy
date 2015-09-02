@@ -229,7 +229,7 @@ namespace <#= Configuration.Namespace#>.Clients
 		public WebApiClients(Uri baseAddress = null)
 		{
             if (baseAddress != null)
-                Configuration.MyWebApiProxyBaseAddress = baseAddress.AbsoluteUri;
+                Configuration.<#= Configuration.Name #>BaseAddress = baseAddress.AbsoluteUri;
 
 <# foreach(var definition in Configuration.Metadata.Definitions) { #>
 			<#= definition.Name #> = new <#=definition.Name#><#= Configuration.ClientSuffix#>();
@@ -318,12 +318,17 @@ namespace <#= Configuration.Namespace#>.Clients
 		/// <summary>
 		/// <#= method.Description.ToSummary() #>
 		/// </summary>
-<# foreach(var p in method.UrlParameters) { #>
+<# foreach(var p in allParameters.Where(m => m != null)) { #>
 		/// <param name="<#= p.Name #>"><#= p.Description.ToSummary() #></param>
 <# } #>
 		/// <returns></returns>
 		public virtual async Task<HttpResponseMessage> <#= method.Name #>AsyncMsg(<#= parameterList#>)
 		{
+
+<# foreach(var p in allParameters.Where(m => m != null && (m.Type == "string" || m.Type == "String"))) { #>
+			<#= p.Name #> = System.Net.WebUtility.UrlEncode(<#= p.Name #>);
+<# } #>
+			
 			return await HttpClient.<#=method.Type.ToTitle()#><#= postOrPut ? "AsJson" : "" #>Async<#= postOrPut && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "" #>(<#=url#><#= postOrPut ? bodyParameterString:""#>);
 		}
 
@@ -350,6 +355,9 @@ namespace <#= Configuration.Namespace#>.Clients
 		/// <returns></returns>
 		public virtual async Task<<#= concreteReturnType #>> <#= method.Name #>Async(<#= parameterList#>)
 		{
+<# foreach(var p in allParameters.Where(m => m != null && (m.Type == "string" || m.Type == "String"))) { #>
+			<#= p.Name #> = System.Net.WebUtility.UrlEncode(<#= p.Name #>);
+<# } #>
 			var result = await HttpClient.<#=method.Type.ToTitle()#><#= postOrPut ? "AsJson" : "" #>Async<#= postOrPut && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "" #>(<#=url#><#= postOrPut ? bodyParameterString:""#>);
 			
 			EnsureSuccess(result);
