@@ -314,7 +314,6 @@ namespace <#= Configuration.Namespace#>.Clients
 		var allParameters = method.UrlParameters.AsEnumerable();
 		
 		var bodyParameterString  = ", default(HttpResponseMessage)";
-	    var encodedParameterList = "";
 		var parameterNameList    = "";
 
 		if (method.BodyParameter != null) {
@@ -322,10 +321,9 @@ namespace <#= Configuration.Namespace#>.Clients
 			bodyParameterString = ", " + method.BodyParameter.Name;
 		}
 
-		if (allParameters.Any()) {
-			parameterNameList    =  string.Join(", ", allParameters.Select(m => m.Name));
-			encodedParameterList =  string.Join(", ", allParameters.Select(m => "EncodeParam(" + m.Name + ")"));
-        }
+		if (allParameters.Any())
+			parameterNameList =  string.Join(", ", allParameters.Select(m => m.Name));
+		
 		var parameterList = "";
 
 		if (allParameters.Any())
