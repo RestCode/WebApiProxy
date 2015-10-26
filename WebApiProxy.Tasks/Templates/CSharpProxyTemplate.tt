@@ -197,7 +197,31 @@ namespace <#= Configuration.Namespace#>.Clients
 				BaseAddress = new Uri(Configuration.<#= Configuration.Name #>BaseAddress)
 			};
 		}
-
+		
+		/// <summary>
+		/// Encode the input parameter as a string
+		/// </summary>
+		protected string EncodeParam<T>(T value) 
+		{
+			return System.Net.WebUtility.UrlEncode(value.ToString());
+		}
+		
+		/// <summary>
+		/// Encode the input parameter as a string
+		/// </summary>
+		protected string EncodeParam(DateTime value) 
+		{
+			return System.Net.WebUtility.UrlEncode(value.ToString("s"));
+		}
+		
+		/// <summary>
+		/// Encode the input parameter as a string
+		/// </summary>
+		protected string EncodeParam(DateTimeOffset value)
+		{
+			return System.Net.WebUtility.UrlEncode(value.ToString("s"));
+		}
+		
 		/// <summary>
 		/// Releases the unmanaged resources and disposes of the managed resources.       
 		/// </summary>
@@ -289,17 +313,19 @@ namespace <#= Configuration.Namespace#>.Clients
 <# foreach(var method in definition.ActionMethods) { 
 		var allParameters = method.UrlParameters.AsEnumerable();
 		
-		var bodyParameterString = ", default(HttpResponseMessage)";
-		var parameterNameList = "";
+		var bodyParameterString  = ", default(HttpResponseMessage)";
+	    var encodedParameterList = "";
+		var parameterNameList    = "";
 
 		if (method.BodyParameter != null) {
 			allParameters = allParameters.Concat(new [] { method.BodyParameter });
 			bodyParameterString = ", " + method.BodyParameter.Name;
 		}
 
-		if (allParameters.Any())
-			parameterNameList =  string.Join(", ", allParameters.Select(m => m.Name));
-
+		if (allParameters.Any()) {
+			parameterNameList    =  string.Join(", ", allParameters.Select(m => m.Name));
+			encodedParameterList =  string.Join(", ", allParameters.Select(m => "EncodeParam(" + m.Name + ")"));
+        }
 		var parameterList = "";
 
 		if (allParameters.Any())
@@ -311,7 +337,7 @@ namespace <#= Configuration.Namespace#>.Clients
 		}
 
 		var postOrPut =  method.Type.ToTitle() == "Post" || method.Type.ToTitle() == "Put";
-		var url = ("\"" + method.Url.Replace("{", "\" + ").Replace("}", " + \"") + "\"").Replace(" + \"\"","");
+		var url = ("\"" + method.Url.Replace("{", "\" + EncodeParam(").Replace("}", ") + \"") + "\"").Replace(" + \"\"","");
 		
 		var concreteReturnType = method.ReturnType.ToConcrete();
 #>
@@ -324,11 +350,6 @@ namespace <#= Configuration.Namespace#>.Clients
 		/// <returns></returns>
 		public virtual async Task<HttpResponseMessage> <#= method.Name #>AsyncMsg(<#= parameterList#>)
 		{
-
-<# foreach(var p in allParameters.Where(m => m != null && (m.Type == "string" || m.Type == "String"))) { #>
-			<#= p.Name #> = System.Net.WebUtility.UrlEncode(<#= p.Name #>);
-<# } #>
-			
 			return await HttpClient.<#=method.Type.ToTitle()#><#= postOrPut ? "AsJson" : "" #>Async<#= postOrPut && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "" #>(<#=url#><#= postOrPut ? bodyParameterString:""#>);
 		}
 
@@ -355,9 +376,6 @@ namespace <#= Configuration.Namespace#>.Clients
 		/// <returns></returns>
 		public virtual async Task<<#= concreteReturnType #>> <#= method.Name #>Async(<#= parameterList#>)
 		{
-<# foreach(var p in allParameters.Where(m => m != null && (m.Type == "string" || m.Type == "String"))) { #>
-			<#= p.Name #> = System.Net.WebUtility.UrlEncode(<#= p.Name #>);
-<# } #>
 			var result = await HttpClient.<#=method.Type.ToTitle()#><#= postOrPut ? "AsJson" : "" #>Async<#= postOrPut && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "" #>(<#=url#><#= postOrPut ? bodyParameterString:""#>);
 			
 			EnsureSuccess(result);
