@@ -13,7 +13,7 @@
     <copyright>$copyright$</copyright>
     <tags>AspNet WebAPI Proxy JavaScript CSharp</tags>
     <dependencies>
-      <dependency id="Microsoft.AspNet.WebApi.Client" version="5.2.2" />
+      <dependency id="Microsoft.AspNet.WebApi.Client" version="5.2.3" />
     </dependencies>
   </metadata>
   <files>
