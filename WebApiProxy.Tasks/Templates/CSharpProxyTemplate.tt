@@ -30,7 +30,7 @@ namespace <#= Configuration.Namespace#>
 		/// <summary>
 		/// Web Api Base Address.
 		/// </summary>
-		public static string <#= Configuration.Name #>BaseAddress = "<#= Configuration.Metadata.Host #>";
+		public static string <#= Configuration.Name #>BaseAddress = "<#= Configuration.Host #>";
 		
 	}
 }
