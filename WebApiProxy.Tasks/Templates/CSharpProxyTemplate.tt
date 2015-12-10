@@ -252,7 +252,7 @@ namespace <#= Configuration.Namespace#>.Clients
 			parameterList = string.Join(",", q.ToArray());
 		}
 
-		var postOrPut =  method.Type.ToTitle() == "Post" || method.Type.ToTitle() == "Put";
+		var postOrPutOrPatch =  method.Type.ToTitle() == "Post" || method.Type.ToTitle() == "Put" || method.Type.ToTitle() == "Patch";
 		var url = ("\"" + method.Url.Replace("{", "\" + ").Replace("}", " + \"") + "\"").Replace(" + \"\"","");
 #>
 		/// <summary>
@@ -264,7 +264,7 @@ namespace <#= Configuration.Namespace#>.Clients
 		/// <returns></returns>
 		public virtual async Task<HttpResponseMessage> <#= method.Name #>Async(<#= parameterList#>)
 		{
-			return await HttpClient.<#=method.Type.ToTitle()#><#= postOrPut ? "AsJson" : "" #>Async<#= postOrPut && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "" #>(<#=url#><#= postOrPut ? bodyParameterString:""#>);
+			return await HttpClient.<#=method.Type.ToTitle()#><#= postOrPutOrPatch ? "AsJson" : "" #>Async<#= postOrPutOrPatch && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "" #>(<#=url#><#= postOrPutOrPatch ? bodyParameterString:""#>);
 		}
 
 		/// <summary>
