@@ -78,6 +78,9 @@ namespace WebApiProxy.Tasks.Models
         [XmlAttribute("endpoint")]
         public string Endpoint { get; set; }
 
+        [XmlAttribute("host")]
+        public string Host { get; set; }
+
         [XmlIgnore]
         public Metadata Metadata { get; set; }
 
@@ -93,6 +96,10 @@ namespace WebApiProxy.Tasks.Models
             var reader = new StreamReader(fileName);
             var config = (Configuration)serializer.Deserialize(reader);
             reader.Close();
+
+            if (string.IsNullOrEmpty(config.Host))
+                config.Host = config.Metadata.Host;
+
             return config;
 
         }
