@@ -78,6 +78,9 @@ namespace WebApiProxy.Tasks.Models
         [XmlAttribute("endpoint")]
         public string Endpoint { get; set; }
 
+        [XmlAttribute("generateAsyncReturnTypes")]
+        public bool GenerateAsyncReturnTypes { get; set; }
+
         [XmlAttribute("host")]
         public string Host { get; set; }
 

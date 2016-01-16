@@ -14,7 +14,7 @@
     <tags>AspNet WebAPI Proxy JavaScript CSharp</tags>
     <dependencies>
       <dependency id="Microsoft.AspNet.WebApi.Core" version="5.2.2" />
-      <dependency id="DocsByReflection" version="1.0.8.0" />
+      <dependency id="DocsByReflection" version="[1.0.11]" />
     </dependencies>
   </metadata>
 </package>
