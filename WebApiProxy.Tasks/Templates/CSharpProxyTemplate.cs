@@ -68,7 +68,7 @@ using ");
             this.Write("BaseAddress = \"");
             
             #line 33 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(Configuration.Metadata.Host));
+            this.Write(this.ToStringHelper.ToStringWithCulture(Configuration.Host ?? config.Metadata.Host));
             
             #line default
             #line hidden
@@ -598,7 +598,7 @@ using ");
 			parameterList = string.Join(",", q.ToArray());
 		}
 
-		var postOrPut =  method.Type.ToTitle() == "Post" || method.Type.ToTitle() == "Put";
+		var postOrPutOrPatch =  method.Type.ToTitle() == "Post" || method.Type.ToTitle() == "Put" || method.Type.ToTitle() == "Patch";
 		var url = ("\"" + method.Url.Replace("{", "\" + ").Replace("}", " + \"") + "\"").Replace(" + \"\"","");
 
             
@@ -662,14 +662,14 @@ using ");
             #line hidden
             
             #line 267 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(postOrPut ? "AsJson" : ""));
+            this.Write(this.ToStringHelper.ToStringWithCulture(postOrPutOrPatch ? "AsJson" : ""));
             
             #line default
             #line hidden
             this.Write("Async");
             
             #line 267 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(postOrPut && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : ""));
+            this.Write(this.ToStringHelper.ToStringWithCulture(postOrPutOrPatch && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : ""));
             
             #line default
             #line hidden
@@ -682,7 +682,7 @@ using ");
             #line hidden
             
             #line 267 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(postOrPut ? bodyParameterString:""));
+            this.Write(this.ToStringHelper.ToStringWithCulture(postOrPutOrPatch ? bodyParameterString:""));
             
             #line default
             #line hidden

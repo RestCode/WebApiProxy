@@ -97,11 +97,7 @@ namespace WebApiProxy.Tasks.Models
             var config = (Configuration)serializer.Deserialize(reader);
             reader.Close();
 
-            if (string.IsNullOrEmpty(config.Host))
-                config.Host = config.Metadata.Host;
-
             return config;
-
         }
 
     }
