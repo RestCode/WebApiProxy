@@ -68,7 +68,7 @@ using ");
             this.Write("BaseAddress = \"");
             
             #line 33 "D:\Projects\WebApiProxy\WebApiProxy.Tasks\Templates\CSharpProxyTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(Configuration.Host ?? config.Metadata.Host));
+            this.Write(this.ToStringHelper.ToStringWithCulture(Configuration.Host ?? Configuration.Metadata.Host));
             
             #line default
             #line hidden
