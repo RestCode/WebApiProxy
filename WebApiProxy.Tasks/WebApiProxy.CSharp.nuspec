@@ -17,6 +17,8 @@
     </dependencies>
   </metadata>
   <files>
+    <file src="bin\$configuration$\Newtonsoft.Json.dll" target="lib\net45" />
+    <file src="bin\$configuration$\System.Net.Http.Formatting.dll" target="lib\net45" />
     <file src="bin\$configuration$\*.dll" target="build" />
     <file src="bin\$configuration$\*.targets" target="build" />
     
