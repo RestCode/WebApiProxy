@@ -40,7 +40,7 @@ namespace WebApiProxy.Tasks.Infrastructure
             }
             catch (Exception ex)
             {
-                throw new ConnectionException(config.Endpoint);
+                throw ex;
             }
         }
     }
