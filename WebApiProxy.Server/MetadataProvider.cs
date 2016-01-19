@@ -27,7 +27,8 @@ namespace WebApiProxy.Server
 
         public Metadata GetMetadata(HttpRequestMessage request)
         {
-            var host = request.RequestUri.Scheme + "://" + request.RequestUri.Authority;
+            var virtualPath = request.GetRequestContext().VirtualPathRoot;
+            var host = request.RequestUri.Scheme + "://" + request.RequestUri.Authority + virtualPath;
             var descriptions = config.Services.GetApiExplorer().ApiDescriptions;
             var documentationProvider = config.Services.GetDocumentationProvider();
 
