@@ -8,7 +8,7 @@
     <owners>Fanie Reynders</owners>
     <projectUrl>https://github.com/faniereynders/WebApiProxy</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Provides an endpoint for ASP.NET Web Api services to serve a JavaScript proxy and metadata</description>
+    <description>Provides an endpoint for ASP.NET Web Api services to serve a JavaScript proxy and metadata.</description>
     <releaseNotes />
     <copyright>Copyright © 2016</copyright>
     <tags>AspNet WebAPI Proxy JavaScript CSharp</tags>
