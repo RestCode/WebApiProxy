@@ -16,9 +16,9 @@
       <dependency id="Microsoft.AspNet.WebApi.Core" version="5.2.2" />
       <dependency id="DocsByReflection" version="[1.0.11]" />
     </dependencies>
-      <files>
-        <file src="bin\$configuration$\WebApiProxy.Core.dll" target="lib\net45" />
-        <file src="bin\$configuration$\WebApiProxy.Server.dll" target="lib\net45" />
-      </files>
   </metadata>
+  <files>
+    <file src="bin\$configuration$\WebApiProxy.Core.dll" target="lib\net45" />
+    <file src="bin\$configuration$\WebApiProxy.Server.dll" target="lib\net45" />
+  </files>
 </package>
