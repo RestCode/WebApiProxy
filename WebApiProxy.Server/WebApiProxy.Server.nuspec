@@ -3,14 +3,14 @@
   <metadata>
     <id>WebApiProxy</id>
     <version>$version$</version>
-    <title>$title$</title>
+    <title>Web Api Proxy Provider</title>
     <authors>Fanie Reynders</authors>
     <owners>Fanie Reynders</owners>
     <projectUrl>https://github.com/faniereynders/WebApiProxy</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>$description$</description>
+    <description>Provides an endpoint for ASP.NET Web Api services to serve a JavaScript proxy and metadata</description>
     <releaseNotes />
-    <copyright>$copyright$</copyright>
+    <copyright>Copyright © 2016</copyright>
     <tags>AspNet WebAPI Proxy JavaScript CSharp</tags>
     <dependencies>
       <dependency id="Microsoft.AspNet.WebApi.Core" version="5.2.2" />
