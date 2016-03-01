@@ -1,4 +1,6 @@
 [![Join the chat at https://gitter.im/faniereynders/WebApiProxy](https://badges.gitter.im/faniereynders/WebApiProxy.svg)](https://gitter.im/faniereynders/WebApiProxy?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Build status](https://ci.appveyor.com/api/projects/status/vx4x6f8pgs6vbgwg?svg=true)](https://ci.appveyor.com/project/faniereynders/webapiproxy)
+
 
 WebApiProxy
 ===========
