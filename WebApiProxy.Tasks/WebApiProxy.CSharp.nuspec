@@ -22,6 +22,7 @@
     <file src="bin\$configuration$\WebApiProxy.*.dll" target="lib\net45" />
     <file src="bin\$configuration$\WebApiProxy.*.dll" target="build" />
     <file src="bin\$configuration$\*.targets" target="build" />
+    <file src="bin\$configuration$\System.Net.Http.Formatting.dll" target="build" />
     
     <file src="bin\$configuration$\WebApiProxy.config" target="content\WebApiProxy" />
     <file src="bin\$configuration$\WebApiProxy.generated.cs" target="content\WebApiProxy" />
