@@ -19,77 +19,77 @@ namespace WebApiProxy.Server
 
         public MetadataProvider(HttpConfiguration config)
         {
-            
             this.models = new List<ModelDefinition>();
             this.typesToIgnore = new List<string>();
             this.config = config;
         }
 
-        public Metadata GetMetadata(HttpRequestMessage request)
-        {
-            var host = request.RequestUri.Scheme + "://" + request.RequestUri.Authority + request.GetRequestContext().VirtualPathRoot;
-            var descriptions = config.Services.GetApiExplorer().ApiDescriptions;
-            var documentationProvider = config.Services.GetDocumentationProvider();
+	    public Metadata GetMetadata(HttpRequestMessage request) { return BuildMetadata(request); }
 
-            ILookup<HttpControllerDescriptor, ApiDescription> apiGroups = descriptions
-                .Where(a => !a.ActionDescriptor.ControllerDescriptor.ControllerType.IsAbstract
-                    && !a.RelativePath.Contains("Swagger")
-                    && !a.RelativePath.Contains("docs"))
-                .ToLookup(a => a.ActionDescriptor.ControllerDescriptor);
+	    protected virtual Metadata BuildMetadata(HttpRequestMessage request)
+	    {
+		    var host = request.RequestUri.Scheme + "://" + request.RequestUri.Authority + request.GetRequestContext().VirtualPathRoot;
+		    var descriptions = config.Services.GetApiExplorer().ApiDescriptions;
+		    var documentationProvider = config.Services.GetDocumentationProvider();
 
-            var metadata = new Metadata
-            {
-                Definitions = from d in apiGroups
-                              where !d.Key.ControllerType.IsExcluded()
-                              select new ControllerDefinition
-                              {
-                                  Name = d.Key.ControllerName,
-                                  Description = documentationProvider == null ? "" : documentationProvider.GetDocumentation(d.Key) ?? "",
-                                  ActionMethods = from a in descriptions
-                                                  where !a.ActionDescriptor.ControllerDescriptor.ControllerType.IsExcluded()
-                                                  && !a.ActionDescriptor.IsExcluded()
-                                                  && !a.RelativePath.Contains("Swagger")
-                                                  && !a.RelativePath.Contains("docs")
-                                                  && a.ActionDescriptor.ControllerDescriptor.ControllerName == d.Key.ControllerName
-                                                  select new ActionMethodDefinition
-                                                  {
-                                                      Name = a.ActionDescriptor.ActionName,
-                                                      BodyParameter = (from b in a.ParameterDescriptions
-                                                                       where b.Source == ApiParameterSource.FromBody
-                                                                       select new ParameterDefinition
-                                                                       {
-                                                                           Name = b.ParameterDescriptor.ParameterName,
-                                                                           Type = ParseType(b.ParameterDescriptor.ParameterType),
-                                                                           Description = b.Documentation ?? ""
-                                                                       }).FirstOrDefault(),
-                                                      UrlParameters = from b in a.ParameterDescriptions.Where(p => p.ParameterDescriptor != null)
-                                                                      where b.Source == ApiParameterSource.FromUri
-                                                                      select new ParameterDefinition
-                                                                      {
-                                                                          Name = b.ParameterDescriptor.ParameterName,
-                                                                          Type = ParseType(b.ParameterDescriptor.ParameterType),
-                                                                          Description = b.Documentation ?? "",
-                                                                          IsOptional = b.ParameterDescriptor.IsOptional,
-                                                                          DefaultValue = b.ParameterDescriptor.DefaultValue
-                                                                      },
-                                                      Url = a.RelativePath,
+		    ILookup<HttpControllerDescriptor, ApiDescription> apiGroups = descriptions
+			    .Where(a => !a.ActionDescriptor.ControllerDescriptor.ControllerType.IsAbstract
+			                && !a.RelativePath.Contains("Swagger")
+			                && !a.RelativePath.Contains("docs"))
+			    .ToLookup(a => a.ActionDescriptor.ControllerDescriptor);
 
-                                                      Description = a.Documentation ?? "",
-                                                      ReturnType = ParseType(a.ResponseDescription.ResponseType ?? a.ResponseDescription.DeclaredType),
-                                                      Type = a.HttpMethod.Method
-                                                  }
-                              },
-                Models = models,
-                Host = host
-            };
+		    var metadata = new Metadata
+		                   {
+			                   Definitions = from d in apiGroups
+				                   where !d.Key.ControllerType.IsExcluded()
+				                   select new ControllerDefinition
+				                          {
+					                          Name = d.Key.ControllerName,
+											  ControllerType = d.Key.ControllerType,
+											  Description = documentationProvider == null ? "" : documentationProvider.GetDocumentation(d.Key) ?? "",
+					                          ActionMethods = from a in descriptions
+						                          where !a.ActionDescriptor.ControllerDescriptor.ControllerType.IsExcluded()
+						                                && !a.ActionDescriptor.IsExcluded()
+						                                && !a.RelativePath.Contains("Swagger")
+						                                && !a.RelativePath.Contains("docs")
+						                                && a.ActionDescriptor.ControllerDescriptor.ControllerName == d.Key.ControllerName
+						                          select new ActionMethodDefinition
+						                                 {
+							                                 Name = a.ActionDescriptor.ActionName,
+							                                 BodyParameter = (from b in a.ParameterDescriptions
+								                                 where b.Source == ApiParameterSource.FromBody
+								                                 select new ParameterDefinition
+								                                        {
+									                                        Name = b.ParameterDescriptor.ParameterName,
+									                                        Type = ParseType(b.ParameterDescriptor.ParameterType),
+									                                        Description = b.Documentation ?? ""
+								                                        }).FirstOrDefault(),
+							                                 UrlParameters = from b in a.ParameterDescriptions.Where(p => p.ParameterDescriptor != null)
+								                                 where b.Source == ApiParameterSource.FromUri
+								                                 select new ParameterDefinition
+								                                        {
+									                                        Name = b.ParameterDescriptor.ParameterName,
+									                                        Type = ParseType(b.ParameterDescriptor.ParameterType),
+									                                        Description = b.Documentation ?? "",
+									                                        IsOptional = b.ParameterDescriptor.IsOptional,
+									                                        DefaultValue = b.ParameterDescriptor.DefaultValue
+								                                        },
+							                                 Url = a.RelativePath,
+							                                 Description = a.Documentation ?? "",
+							                                 ReturnType = ParseType(a.ResponseDescription.ResponseType ?? a.ResponseDescription.DeclaredType),
+							                                 Type = a.HttpMethod.Method
+						                                 }
+				                          },
+			                   Models = models,
+			                   Host = host
+		                   };
 
-            metadata.Definitions = metadata.Definitions.Distinct().OrderBy(d => d.Name);
-            metadata.Models = metadata.Models.Distinct(new ModelDefinitionEqualityComparer()).OrderBy(d => d.Name);
-            return metadata;
+		    metadata.Definitions = metadata.Definitions.Distinct().OrderBy(d => d.Name);
+		    metadata.Models = metadata.Models.Distinct(new ModelDefinitionEqualityComparer()).OrderBy(d => d.Name);
+		    return metadata;
+	    }
 
-        }
-
-        private string ParseType(Type type, ModelDefinition model = null)
+	    private string ParseType(Type type, ModelDefinition model = null)
         {
             string res;
 

@@ -10,11 +10,16 @@ namespace WebApiProxy.Server
 {
     public class ProxyHandler : DelegatingHandler
     {
-        private MetadataProvider _metadataProvider;
-        HttpConfiguration _config;
-        public ProxyHandler(HttpConfiguration config)
+	    readonly MetadataProvider _metadataProvider;
+	    // ReSharper disable once NotAccessedField.Local
+        readonly HttpConfiguration _config;
+
+	    public ProxyHandler(HttpConfiguration config)
+		    : this(config, null) { }
+
+	    public ProxyHandler(HttpConfiguration config, MetadataProvider metadataProvider)
         {
-            _metadataProvider = new MetadataProvider(config);
+			_metadataProvider = metadataProvider ?? new MetadataProvider(config);
             _config = config;
         }
 
@@ -35,7 +40,7 @@ namespace WebApiProxy.Server
                 js.Headers.ContentType = new MediaTypeHeaderValue("application/javascript");
                 js.Headers.Expires = DateTime.Now.AddDays(30).ToUniversalTime();
 
-                var result = new HttpResponseMessage { Content = js }; ;
+                var result = new HttpResponseMessage { Content = js };
                 result.Headers.CacheControl = CacheControlHeaderValue.Parse("public");
                 
                 return result;
