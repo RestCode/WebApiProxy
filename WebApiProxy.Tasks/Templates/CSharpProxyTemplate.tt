@@ -143,7 +143,7 @@ namespace <#= Configuration.Namespace#>.Interfaces
 		/// <param name="<#= p.Name #>"><#= p.Description.ToSummary() #></param>
 <# } #>
 
-<# if (Configuration.GenerateAsyncReturnTypes == false || String.IsNullOrEmpty(concreteReturnType)) { #>
+<# if (Configuration.GenerateAsyncReturnTypes == false || String.IsNullOrEmpty(concreteReturnType) || concreteReturnType == "void") { #>
 		/// <returns></returns>
 		Task<HttpResponseMessage> <#= method.Name #>Async(<#= parameterList#>);
 <# } else { #>
@@ -382,7 +382,7 @@ namespace <#= Configuration.Namespace#>.Clients
 
 		#region Methods
 
-<# foreach(var method in definition.ActionMethods) { 
+	<# foreach(var method in definition.ActionMethods) { 
 		var allParameters = method.UrlParameters.AsEnumerable();
 		
 		var bodyParameterString  = ", default(HttpResponseMessage)";
@@ -457,16 +457,19 @@ namespace <#= Configuration.Namespace#>.Clients
 											queryHasNoParams.Select(
 																	item =>
 																	string.Format("{0}={1}", item.Key, item.Value)));
-#>
+	#>
+
+
+<# if (Configuration.GenerateAsyncReturnTypes && !String.IsNullOrEmpty(concreteReturnType) && concreteReturnType != "void") { #>
 
 		/// <summary>
 		/// <#= method.Description.ToSummary() #>
 		/// </summary>
-<# foreach(var p in allParameters.Where(m => m != null)) { #>
+	<# foreach(var p in allParameters.Where(m => m != null)) { #>
 		/// <param name="<#= p.Name #>"><#= p.Description.ToSummary() #></param>
-<# } #>
+	<# } #>
 		/// <returns></returns>
-		protected virtual async Task<HttpResponseMessage> <#= method.Name #>AsyncMsg(<#= parameterList#>)
+		public virtual async Task<<#= concreteReturnType #>> <#= method.Name #>Async(<#= parameterList#>)
 		{
 		    var requestUrl = "<#= requestUrl #>";
 			<# if(hasQueryString){  #>
@@ -492,14 +495,21 @@ namespace <#= Configuration.Namespace#>.Clients
             
 			<# } #>
 
-			return await HttpClient.<#=method.Type.ToTitle()#><#= postOrPutOrPatch ? "AsJson" : "" #>Async<#= postOrPutOrPatch && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "" #>(<#=requestUrl#><#= postOrPutOrPatch ? bodyParameterString:""#>);
+			var result = await HttpClient.<#=method.Type.ToTitle()#><#= postOrPutOrPatch ? "AsJson" : "" #>Async<#= postOrPutOrPatch && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "" #>(requestUrl <#= postOrPutOrPatch ? bodyParameterString:""#>);
+		
+
+			EnsureSuccess(result);
+				 
+			return await result.Content.ReadAsAsync<<#= concreteReturnType #>>();
 		}
 
-<# if (Configuration.GenerateAsyncReturnTypes == false || String.IsNullOrEmpty(concreteReturnType)) { #>
+<# } else { #>
+
+
 		/// <summary>
 		/// <#= method.Description.ToSummary() #>
 		/// </summary>
-<# foreach(var p in method.UrlParameters) { #>
+<# foreach(var p in allParameters.Where(m => m != null)) { #>
 		/// <param name="<#= p.Name #>"><#= p.Description.ToSummary() #></param>
 <# } #>
 		/// <returns></returns>
@@ -529,51 +539,13 @@ namespace <#= Configuration.Namespace#>.Clients
             
 			<# } #>
 
-			return await HttpClient.<#=method.Type.ToTitle()#><#= postOrPutOrPatch ? "AsJson" : "" #>Async<#= postOrPutOrPatch && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "" #>(<#=requestUrl#><#= postOrPutOrPatch ? bodyParameterString:""#>);
+			return await HttpClient.<#=method.Type.ToTitle()#><#= postOrPutOrPatch ? "AsJson" : "" #>Async<#= postOrPutOrPatch && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "" #>(requestUrl <#= postOrPutOrPatch ? bodyParameterString:""#>);
 		}
 
-<# } else { #>
-		/// <summary>
-		/// <#= method.Description.ToSummary() #>
-		/// </summary>
-<# foreach(var p in method.UrlParameters) { #>
-		/// <param name="<#= p.Name #>"><#= p.Description.ToSummary() #></param>
+
 <# } #>
-		/// <returns></returns>
-		public virtual async Task<<#= concreteReturnType #>> <#= method.Name #>Async(<#= parameterList#>)
-		{
-		    var requestUrl = "<#= requestUrl #>";
-			<# if(hasQueryString){  #>
-
-				var queryHasParamUrl = "<#= queryHasParamUrl #>";
 
 
-				<# if(!string.IsNullOrEmpty(queryNoParamUrlTpl)){  #>
-					var queryNoParamUrlTpl = "<#= queryNoParamUrlTpl #>";
-					var queryNoParamUrl = Generate<#= method.Name #>QueryString(queryNoParamUrlTpl, <#=parameterNameList#>);
-				<# }else{ #>
-					var queryNoParamUrl = string.Empty;
-				<# } #>
-        
-				if (string.IsNullOrEmpty(queryHasParamUrl))
-				{
-					requestUrl = requestUrl + "?" + queryNoParamUrl;
-				}
-				else
-				{
-					requestUrl = requestUrl + "?" + queryHasParamUrl + "&" + queryNoParamUrl;
-				}
-            
-			<# } #>
-
-			var result = await HttpClient.<#=method.Type.ToTitle()#><#= postOrPutOrPatch ? "AsJson" : "" #>Async<#= postOrPutOrPatch && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "" #>(<#=requestUrl#><#= postOrPutOrPatch ? bodyParameterString:""#>);
-			 
-			EnsureSuccess(result);
-				 
-			return await result.Content.ReadAsAsync<<#= concreteReturnType #>>();
-		}
-
-<# }#>
 		/// <summary>
 		/// <#= method.Description.ToSummary() #>
 		/// </summary>
@@ -582,18 +554,26 @@ namespace <#= Configuration.Namespace#>.Clients
 <# } #>
 		public virtual <#= String.IsNullOrEmpty(concreteReturnType) ? "void" : concreteReturnType #> <#= method.Name #>(<#= parameterList#>)
 		{
-			var result = Task.Run(() => <#= method.Name #>AsyncMsg(<#=parameterNameList#>)).Result;		 
-			 
+
+<# if (Configuration.GenerateAsyncReturnTypes && !String.IsNullOrEmpty(concreteReturnType) && concreteReturnType != "void") { #>
+			return <#= method.Name #>Async(<#=parameterNameList#>).Result;
+<# } else { #>
+			var result = Task.Run(() => <#= method.Name #>Async(<#=parameterNameList#>)).Result; 
 			EnsureSuccess(result);
-<# if(!String.IsNullOrEmpty(concreteReturnType)) { #>			 			 
+<# if (!String.IsNullOrEmpty(concreteReturnType) && concreteReturnType != "void") { #>
 			return result.Content.ReadAsAsync<<#= concreteReturnType #>>().Result;
-			 <# } #>
+<# } #>
+
+<# } #>
+
 		}
 
 <#}#>
 		#endregion
 	}
 <# } #>
+
 }
+
 #endregion
 
