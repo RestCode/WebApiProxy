@@ -1,13 +1,9 @@
 ﻿using System;
 using System.IO;
-using System.Net.Http;
 using Microsoft.Build.Framework;
-using WebApiProxy.Core.Models;
-using WebApiProxy.Tasks.Templates;
-using WebApiProxy.Tasks.Models;
-using Microsoft.Build.Evaluation;
-using System.Linq;
 using WebApiProxy.Tasks.Infrastructure;
+using WebApiProxy.Tasks.Models;
+
 namespace WebApiProxy.Tasks
 {
     public class ProxyGenerationTask : ITask
@@ -50,12 +46,9 @@ namespace WebApiProxy.Tasks
             {
                 throw ex;
             }
+
             return true;
         }
-
-
-
-        
 
         private void tryReadFromCache()
         {
@@ -66,8 +59,5 @@ namespace WebApiProxy.Tasks
             var source = File.ReadAllText(Configuration.CacheFile);
             File.WriteAllText(Filename, source);
         }
-
-
     }
 }
-

@@ -13,12 +13,17 @@
     <copyright>$copyright$</copyright>
     <tags>AspNet WebAPI Proxy JavaScript CSharp</tags>
     <dependencies>
-      <dependency id="Microsoft.AspNet.WebApi.Client" version="5.2.2" />
+      <dependency id="Microsoft.AspNet.WebApi.Client" version="5.2.3" />
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\$configuration$\*.dll" target="build" />
+    <file src="bin\$configuration$\Newtonsoft.Json.dll" target="lib\net45" />
+    <file src="bin\$configuration$\System.Net.Http.Formatting.dll" target="lib\net45" />
+    <file src="bin\$configuration$\WebApiProxy.*.dll" target="lib\net45" />
+    <file src="bin\$configuration$\WebApiProxy.*.dll" target="build" />
     <file src="bin\$configuration$\*.targets" target="build" />
+    <file src="bin\$configuration$\System.Net.Http.Formatting.dll" target="build" />
+    <file src="bin\$configuration$\Newtonsoft.Json.dll" target="build" />
     
     <file src="bin\$configuration$\WebApiProxy.config" target="content\WebApiProxy" />
     <file src="bin\$configuration$\WebApiProxy.generated.cs" target="content\WebApiProxy" />

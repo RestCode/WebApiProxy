@@ -35,6 +35,31 @@ namespace WebApiProxy
             return Regex.Replace(description, "\n\\s*", "\n\t\t/// ");
         }
 
+        /// <summary>
+        /// Ensures common return types are made conrete
+        /// </summary>
+        public static string ToConcrete(this string returnType)
+        {
+            if (string.IsNullOrWhiteSpace(returnType))
+                return returnType;
+
+            string[] commonTypes = { 
+                "IQueryable", 
+                "IList", 
+                "IEnumerable"
+            };
+
+            foreach (var type in commonTypes)
+            {
+                var replaced = Regex.Replace(returnType, type + @"\<(.+)\>", "List<$1>");
+
+                if (replaced.Length != returnType.Length)
+                    return replaced;
+            }
+
+            return returnType;
+        }
+
         public static string Format(this string pattern, object template)
         {
             var rePattern = new Regex(@"(\{+)([^\}]+)(\}+)", RegexOptions.Compiled);

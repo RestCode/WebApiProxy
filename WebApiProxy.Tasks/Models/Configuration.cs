@@ -20,6 +20,7 @@ namespace WebApiProxy.Tasks.Models
         private string _name = "MyWebApiProxy";
         private bool _generateOnBuild = false;
         private string _namespace = "WebApi.Proxies";
+        private bool _generateAsyncReturnTypes = false;
 
         [XmlAttribute("generateOnBuild")]
         public bool GenerateOnBuild
@@ -78,6 +79,22 @@ namespace WebApiProxy.Tasks.Models
         [XmlAttribute("endpoint")]
         public string Endpoint { get; set; }
 
+        [XmlAttribute("generateAsyncReturnTypes")]
+        public bool GenerateAsyncReturnTypes
+        {
+            get
+            {
+                return _generateAsyncReturnTypes;
+            }
+            set
+            {
+                _generateAsyncReturnTypes = value;
+            }
+        }
+
+        //[XmlAttribute("host")]
+        //public string Host { get; set; }
+
         [XmlIgnore]
         public Metadata Metadata { get; set; }
 
@@ -86,13 +103,21 @@ namespace WebApiProxy.Tasks.Models
             var fileName = root + Configuration.ConfigFileName;
 
             if (!File.Exists(fileName))
+            {
                 throw new ConfigFileNotFoundException(fileName);
+            }
 
             var xml = File.ReadAllText(fileName);
             var serializer = new XmlSerializer(typeof(Configuration), new XmlRootAttribute("proxy"));
             var reader = new StreamReader(fileName);
             var config = (Configuration)serializer.Deserialize(reader);
             reader.Close();
+
+            //if (string.IsNullOrEmpty(config.Host))
+            //{
+            //    config.Host = config.Metadata.Host;
+            //}
+
             return config;
 
         }
