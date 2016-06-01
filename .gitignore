@@ -182,3 +182,7 @@ UpgradeLog*.htm
 
 # Microsoft Fakes
 FakesAssemblies/
+
+
+# ignore generate file for better diff or merge
+WebApiProxy.Tasks/Templates/CSharpProxyTemplate.cs
