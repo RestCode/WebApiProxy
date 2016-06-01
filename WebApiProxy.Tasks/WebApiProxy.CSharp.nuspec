@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>WebApiProxy.CSharp</id>
+    <id>UOKO.ApiProxy.CSharp</id>
     <title>$title$</title>
     <projectUrl>https://github.com/faniereynders/WebApiProxy</projectUrl>
     <version>$version$</version>

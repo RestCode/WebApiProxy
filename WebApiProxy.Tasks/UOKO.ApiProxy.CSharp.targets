@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <!--<WebApiProxyBinDir Condition="'$(WebApiProxyBinDir)' == ''">$(MSBuildThisFileDirectory)</WebApiProxyBinDir>-->
+    <WebApiProxyBinDir Condition="'$(WebApiProxyBinDir)' == ''">.</WebApiProxyBinDir>
+  </PropertyGroup>
+  <UsingTask TaskName="ProxyGenerationTask" AssemblyFile="$(WebApiProxyBinDir)\WebApiProxy.Tasks.dll"/>
+  <Target Name="ProxyTarget">
+    <ProxyGenerationTask ProjectPath="$(ProjectPath)" Root="$(ProjectDir)\WebApiProxy\" Filename="$(ProjectDir)\WebApiProxy\WebApiProxy.generated.cs">
+
+    </ProxyGenerationTask>
+  </Target>
+  <Target Name="BeforeCompile"  DependsOnTargets="ProxyTarget" />
+  <Target Name="CreateConfigurationProperties">
+    <Import Project="$(ProjectDir)\WebApiProxy.CSharp.targets" />
+  </Target>
+
+</Project>
+

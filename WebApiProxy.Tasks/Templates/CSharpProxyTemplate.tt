@@ -17,6 +17,7 @@ using System.Net.Http.Formatting;
 using System.Linq;
 using System.Net;
 using System.Web;
+using Newtonsoft.Json;
 using <#= Configuration.Namespace#>.Models;
 
 #region Proxies
@@ -39,17 +40,19 @@ namespace <#= Configuration.Namespace#>
 #region Models
 namespace <#= Configuration.Namespace#>.Models
 {
-	public class WebApiProxyResponseException : Exception
-	{
-		public HttpStatusCode StatusCode { get; private set; }
-		public string Content { get; private set; }
 
-		public WebApiProxyResponseException(HttpStatusCode statusCode, string content) : base("A " + statusCode + " (" + (int)statusCode + ") http exception occured. See Content for response body.")
+ public class WebApiProxyResponseException : Exception
+  {
+
+    public HttpResponseMessage Response { get; private set; }
+
+
+    public WebApiProxyResponseException(HttpResponseMessage response): base("A " + response.StatusCode + " (" + (int)response.StatusCode + ") http exception occured. See response.")
 		{
-			StatusCode = statusCode;
-			Content = content;
+			Response = response;
 		}
 	}
+
 
 <# foreach(var model in Configuration.Metadata.Models.Where(m => m.Type.Equals("class"))) { #>	
 	/// <summary>
@@ -129,16 +132,20 @@ namespace <#= Configuration.Namespace#>.Interfaces
 		}		
 #>
 
+		/// <summary>
+		/// <#= method.Description #>
+		/// </summary>
 <# foreach(var p in method.UrlParameters) { #>
 		/// <param name="<#= p.Name #>"><#= p.Description #></param>
 <# } #>
-		/// <returns></returns>
 		Task<HttpResponseMessage> <#= method.Name #>Async(<#= parameterList#>);
 
+		/// <summary>
+		/// <#= method.Description #>
+		/// </summary>
 <# foreach(var p in method.UrlParameters) {#>
 		/// <param name="<#= p.Name #>"><#= p.Description #></param>
 <# } #>
-		/// <returns></returns>
 		<#= String.IsNullOrEmpty(method.ReturnType) ? "void" : method.ReturnType #> <#= method.Name #>(<#= parameterList#>);
 <#}#>				
 	}
@@ -169,29 +176,48 @@ namespace <#= Configuration.Namespace#>.Clients
 			{
 				BaseAddress = new Uri(Configuration.<#= Configuration.Name #>BaseAddress)
 			};
+
+			SerializationSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+            };
 		}
+
+        public JsonSerializerSettings SerializationSettings;
 
 		public virtual void EnsureSuccess(HttpResponseMessage response)
 		{			
 			if (response.IsSuccessStatusCode)				
 				return;
 													
-			var content = response.Content.ReadAsStringAsync().Result;
-			throw new WebApiProxyResponseException(response.StatusCode, content);			
+            throw new WebApiProxyResponseException(response);
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ClientBase"/> class.
-		/// </summary>
-		/// <param name="handler">The handler.</param>
-		/// <param name="disposeHandler">if set to <c>true</c> [dispose handler].</param>
-		protected ClientBase(HttpMessageHandler handler, bool disposeHandler = true)
-		{
-			HttpClient = new HttpClient(handler, disposeHandler)
-			{
-				BaseAddress = new Uri(Configuration.<#= Configuration.Name #>BaseAddress)
-			};
-		}
+		public virtual string GenerateQueryStrFromKvList(List<KeyValuePair<string, object>> kvList)
+	    {
+            var urlTpl = string.Join("&",
+                             kvList.Select(item =>
+                             {
+                                 var queryKey = Uri.EscapeDataString(item.Key);
+                                 var queryValue = string.Empty;
+
+								 if (item.Value != null)
+                                  {
+										if (item.Value is string)
+										{
+											queryValue = Uri.EscapeDataString((string)item.Value);
+										}
+										else
+										{
+											var queryValueJson = JsonConvert.SerializeObject(item.Value,SerializationSettings).Trim('"');
+											queryValue = Uri.EscapeDataString(queryValueJson);
+										}
+							      }
+                                 return queryKey + "=" + queryValue;
+                             }));
+	        return urlTpl;
+	    }
 
 		/// <summary>
 		/// Releases the unmanaged resources and disposes of the managed resources.       
@@ -201,24 +227,14 @@ namespace <#= Configuration.Namespace#>.Clients
 			HttpClient.Dispose();
 		}
 	}
+
 <# foreach(var definition in Configuration.Metadata.Definitions) { #>
 	/// <summary>
 	/// <#= definition.Description.ToSummary() #>
 	/// </summary>
 	public partial class <#=definition.Name#><#= Configuration.ClientSuffix#> : ClientBase, Interfaces.I<#=definition.Name#><#=Configuration.ClientSuffix#>
 	{		
-
-		/// <summary>
-		/// <#= definition.Description.ToSummary() #>
-		/// </summary>
 		public <#=definition.Name#><#= Configuration.ClientSuffix#>() : base()
-		{
-		}
-
-		/// <summary>
-		/// <#= definition.Description.ToSummary() #>
-		/// </summary>
-		public <#=definition.Name#><#= Configuration.ClientSuffix#>(HttpMessageHandler handler, bool disposeHandler = true) : base(handler, disposeHandler)
 		{
 		}
 
@@ -253,19 +269,106 @@ namespace <#= Configuration.Namespace#>.Clients
 		}
 
 		var postOrPut =  method.Type.ToTitle() == "Post" || method.Type.ToTitle() == "Put";
-		var url = ("\"" + method.Url.Replace("{", "\" + ").Replace("}", " + \"") + "\"").Replace(" + \"\"","");
+
+		var urlParts = method.Url.Split(new[] {"?"}, StringSplitOptions.RemoveEmptyEntries);
+		var requestUrl = urlParts[0];
+		var urlQueryString = string.Empty;
+		var hasQueryString = false;
+
+        if (urlParts.Length > 1)
+		{
+            urlQueryString = urlParts[1];
+		    hasQueryString = true;
+		}
+
+		requestUrl = System.Text.RegularExpressions.Regex.Replace(requestUrl, @"\{(.*?)\}", "\"+Uri.EscapeUriString(Convert.ToString($1))+\"");
+
+
+		var urlQueryParts = urlQueryString.Split(new[] {"&"}, StringSplitOptions.RemoveEmptyEntries)
+										.Select(item =>
+												{
+													var kvParts = item.Split(new[] {"="},
+																			StringSplitOptions.RemoveEmptyEntries);
+													return new KeyValuePair<string, string>(kvParts[0], kvParts[1]);
+												})
+										.ToList();
+
+		var queryHasParams =
+		urlQueryParts.Where(
+							item =>
+							allParameters.Any(param =>
+												string.Equals(item.Value, "{" + param.Name + "}",
+															StringComparison.OrdinalIgnoreCase)))
+						.ToList();
+
+		var queryHasParamUrlTpl = string.Join("&",
+											queryHasParams.Select(
+																	item =>
+																	string.Format("{0}={1}", item.Key, item.Value)));
+
+		var queryHasParamUrl = System.Text.RegularExpressions.Regex.Replace(queryHasParamUrlTpl, @"\{(.*?)\}", "\"+Uri.EscapeDataString(Convert.ToString($1))+\"");
+
+
+		var queryHasNoParams = urlQueryParts.Except(queryHasParams).ToList();
+		var queryNoParamUrlTpl = string.Join("&",
+											queryHasNoParams.Select(
+																	item =>
+																	string.Format("{0}={1}", item.Key, item.Value)));
 #>
+
 		/// <summary>
 		/// <#= method.Description #>
 		/// </summary>
 <# foreach(var p in method.UrlParameters) { #>
 		/// <param name="<#= p.Name #>"><#= p.Description #></param>
 <# } #>
-		/// <returns></returns>
 		public virtual async Task<HttpResponseMessage> <#= method.Name #>Async(<#= parameterList#>)
 		{
-			return await HttpClient.<#=method.Type.ToTitle()#><#= postOrPut ? "AsJson" : "" #>Async<#= postOrPut && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "" #>(<#=url#><#= postOrPut ? bodyParameterString:""#>);
+			var requestUrl = "<#= requestUrl #>";
+			<# if(hasQueryString){  #>
+
+				var queryHasParamUrl = "<#= queryHasParamUrl #>";
+
+
+				<# if(!string.IsNullOrEmpty(queryNoParamUrlTpl)){  #>
+					var queryNoParamUrlTpl = "<#= queryNoParamUrlTpl #>";
+					var queryNoParamUrl = Generate<#= method.Name #>QueryString(queryNoParamUrlTpl, <#=parameterNameList#>);
+				<# }else{ #>
+					var queryNoParamUrl = string.Empty;
+				<# } #>
+			
+				if (string.IsNullOrEmpty(queryHasParamUrl))
+				{
+					requestUrl = requestUrl + "?" + queryNoParamUrl;
+				}
+				else
+				{
+					requestUrl = requestUrl + "?" + queryHasParamUrl + "&" + queryNoParamUrl;
+				}
+
+			<# } #>
+
+				return await HttpClient.<#=method.Type.ToTitle()#><#= postOrPut ? "AsJson" : "" #>Async<#= postOrPut && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "" #>(requestUrl <#= postOrPut ? bodyParameterString:""#>).ConfigureAwait(false);
 		}
+
+		<# if(hasQueryString && !string.IsNullOrEmpty(queryNoParamUrlTpl)){  #>
+				
+			public virtual string Generate<#= method.Name #>QueryString(string urlQueryString, <#= parameterList#>)
+			{
+				var kvList = Generate<#= method.Name #>KeyValueList( <#=parameterNameList#> );
+                var urlTpl = GenerateQueryStrFromKvList(kvList);
+
+        	    return urlTpl;
+			}
+
+			public virtual List<KeyValuePair<string, object>> Generate<#= method.Name #>KeyValueList(<#= parameterList#>)
+			{
+				throw new NotImplementedException();
+			}
+
+
+		<#}#>
+
 
 		/// <summary>
 		/// <#= method.Description #>
@@ -275,16 +378,13 @@ namespace <#= Configuration.Namespace#>.Clients
 <# } #>
 		public virtual <#= String.IsNullOrEmpty(method.ReturnType) ? "void" : method.ReturnType #> <#= method.Name #>(<#= parameterList#>)
 		{
-			<#
-			var parametersValues = String.IsNullOrEmpty(bodyParameterString) ? (url.IndexOf("+") > -1 ? url.Substring(url.IndexOf("+") + 1) : "") : bodyParameterString.Substring(2);
-			#>
-			 var result = Task.Run(() => <#= method.Name #>Async(<#=parameterNameList#>)).Result;		 
+			var result = <#= method.Name #>Async(<#=parameterNameList#>).Result;		 
 			 
 			EnsureSuccess(result);
 				 
-			 <# if(!String.IsNullOrEmpty(method.ReturnType)) { #>			 			 
-			 return result.Content.ReadAsAsync<<#= method.ReturnType #>>().Result;
-			 <# } #>
+			<# if(!String.IsNullOrEmpty(method.ReturnType) && method.ReturnType != "void" ) { #>			 			 
+			return result.Content.ReadAsAsync<<#= method.ReturnType #>>().Result;
+			<# } #>
 		}
 
 <#}#>
