@@ -56,7 +56,7 @@ namespace Test.Proxies.Models
 	/// <summary>
 	/// 
 	/// </summary>
-	public partial class Case2Model
+	public partial class ComplexModel
 	{
 		#region Constants
 		#endregion
@@ -76,12 +76,60 @@ namespace Test.Proxies.Models
 	/// <summary>
 	/// 
 	/// </summary>
-	public partial class Case3Model
+	public partial class GenericBase<T>
 	{
 		#region Constants
 		#endregion
 
 		#region Properties
+		/// <summary>
+		/// 
+		/// </summary>
+		public virtual T Id { get; set; }
+		#endregion
+	}	
+	
+	/// <summary>
+	/// 
+	/// </summary>
+	public partial class NestedModel
+	{
+		#region Constants
+		#endregion
+
+		#region Properties
+		/// <summary>
+		/// 
+		/// </summary>
+		public virtual ComplexModel ComplexModel { get; set; }
+		/// <summary>
+		/// 
+		/// </summary>
+		public virtual Int32 Id { get; set; }
+		#endregion
+	}	
+	
+	/// <summary>
+	/// 
+	/// </summary>
+	public partial class TotalResult
+	{
+		#region Constants
+		#endregion
+
+		#region Properties
+		/// <summary>
+		/// 
+		/// </summary>
+		public virtual String SimpleStr { get; set; }
+		/// <summary>
+		/// 
+		/// </summary>
+		public virtual ComplexModel ComplexModel { get; set; }
+		/// <summary>
+		/// 
+		/// </summary>
+		public virtual NestedModel NestedModel { get; set; }
 		#endregion
 	}	
 
@@ -104,57 +152,88 @@ namespace Test.Proxies.Interfaces
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="id"></param>
 
-		/// <returns></returns>
-		Task<HttpResponseMessage> Case1Async();
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		void Case1();
-
-		/// <summary>
-		/// 
-		/// </summary>
-
-		Task<Case2Model> Case2Async(Case2Model dataFrom);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		Case2Model Case2(Case2Model dataFrom);
-
-		/// <summary>
-		/// 
-		/// </summary>
-
-		Task<Case3Model> Case3Async(Case3Model dataFrom);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		Case3Model Case3(Case3Model dataFrom);
-
-		/// <summary>
-		/// 
-		/// </summary>
-
-		/// <returns></returns>
-		Task<HttpResponseMessage> PostAsync(String value);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		void Post(String value);
+		Task<GenericBase<String>> GetFromSimpleArgAsync(String id);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="id"></param>
+		/// <returns></returns>
+		GenericBase<String> GetFromSimpleArg(String id);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="dataArg"></param>
+
+		Task<ComplexModel> GetFromComplexArgAsync(ComplexModel dataArg);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="dataArg"></param>
+		/// <returns></returns>
+		ComplexModel GetFromComplexArg(ComplexModel dataArg);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="id"></param>
+		/// <param name="dataArg"></param>
+
+		Task<NestedModel> GetFromMixedArgAsync(Int32 id,ComplexModel dataArg);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="id"></param>
+		/// <param name="dataArg"></param>
+		/// <returns></returns>
+		NestedModel GetFromMixedArg(Int32 id,ComplexModel dataArg);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="simpleStr"></param>
+		/// <param name="uriNestedArg"></param>
+		/// <param name="bodyComplexArg"></param>
+
+		Task<TotalResult> PostFromMixedArgAsync(String simpleStr,NestedModel uriNestedArg,ComplexModel bodyComplexArg);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="simpleStr"></param>
+		/// <param name="uriNestedArg"></param>
+		/// <param name="bodyComplexArg"></param>
+		/// <returns></returns>
+		TotalResult PostFromMixedArg(String simpleStr,NestedModel uriNestedArg,ComplexModel bodyComplexArg);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="simpleStr"></param>
+		/// <param name="uriComplexArg"></param>
+		/// <param name="bodyNestedArg"></param>
+
+		Task<TotalResult> PostFromMixedArg2Async(String simpleStr,ComplexModel uriComplexArg,NestedModel bodyNestedArg);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="simpleStr"></param>
+		/// <param name="uriComplexArg"></param>
+		/// <param name="bodyNestedArg"></param>
+		/// <returns></returns>
+		TotalResult PostFromMixedArg2(String simpleStr,ComplexModel uriComplexArg,NestedModel bodyNestedArg);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="id"></param>
+		/// <param name="value"></param>
 
 		/// <returns></returns>
 		Task<HttpResponseMessage> PutAsync(Int32 id,String value);
@@ -163,6 +242,7 @@ namespace Test.Proxies.Interfaces
 		/// 
 		/// </summary>
 		/// <param name="id"></param>
+		/// <param name="value"></param>
 		/// <returns></returns>
 		void Put(Int32 id,String value);
 
@@ -399,62 +479,52 @@ namespace Test.Proxies.Clients
 	
 
 
-
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="id"></param>
 		/// <returns></returns>
-		public virtual async Task<HttpResponseMessage> Case1Async()
+		public virtual async Task<GenericBase<String>> GetFromSimpleArgAsync(String id)
 		{
-		    var requestUrl = "api/test/case1";
-			
-			return await HttpClient.PostAsJsonAsync(requestUrl , default(HttpResponseMessage));
-		}
+		    var requestUrl = "api/test/GetFromSimpleArg";
+		
+	
+			var queryHasParamUrl = "id="+Uri.EscapeDataString(Convert.ToString(id))+"";
 
 
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public virtual void Case1()
-		{
-
-			var result = Task.Run(() => Case1Async()).Result; 
-			EnsureSuccess(result);
-
-
-		}
-
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="dataFrom"></param>
-		/// <returns></returns>
-		public virtual async Task<Case2Model> Case2Async(Case2Model dataFrom)
-		{
-		    var requestUrl = "api/test/case2";
-			
-			var result = await HttpClient.PostAsJsonAsync<Case2Model>(requestUrl , dataFrom);
+		
+			var queryNoParamUrl = string.Empty;
+		
+		        
+			if (string.IsNullOrEmpty(queryHasParamUrl))
+			{
+				requestUrl = requestUrl + "?" + queryNoParamUrl;
+			}
+			else
+			{
+				requestUrl = requestUrl + "?" + queryHasParamUrl + "&" + queryNoParamUrl;
+			}
+            
+	
+			var result = await HttpClient.GetAsync(requestUrl );
 		
 
 			EnsureSuccess(result);
 				 
-			return await result.Content.ReadAsAsync<Case2Model>();
+			return await result.Content.ReadAsAsync<GenericBase<String>>();
 		}
 
 
+	
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public virtual Case2Model Case2(Case2Model dataFrom)
+		/// <param name="id"></param>
+		public virtual GenericBase<String> GetFromSimpleArg(String id)
 		{
 
-			return Case2Async(dataFrom).Result;
+			return GetFromSimpleArgAsync(id).Result;
 
 		}
 
@@ -464,32 +534,66 @@ namespace Test.Proxies.Clients
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="dataFrom"></param>
+		/// <param name="dataArg"></param>
 		/// <returns></returns>
-		public virtual async Task<Case3Model> Case3Async(Case3Model dataFrom)
+		public virtual async Task<ComplexModel> GetFromComplexArgAsync(ComplexModel dataArg)
 		{
-		    var requestUrl = "api/test/case3";
-			
-			var result = await HttpClient.PostAsJsonAsync<Case3Model>(requestUrl , dataFrom);
+		    var requestUrl = "api/test/GetFromComplexArg";
+		
+	
+			var queryHasParamUrl = "";
+
+
+		
+			var queryNoParamUrlTpl = "Name={Name}&Age={Age}";
+			var queryNoParamUrl = GenerateGetFromComplexArgQueryString(queryNoParamUrlTpl, dataArg);
+		
+		        
+			if (string.IsNullOrEmpty(queryHasParamUrl))
+			{
+				requestUrl = requestUrl + "?" + queryNoParamUrl;
+			}
+			else
+			{
+				requestUrl = requestUrl + "?" + queryHasParamUrl + "&" + queryNoParamUrl;
+			}
+            
+	
+			var result = await HttpClient.GetAsync(requestUrl );
 		
 
 			EnsureSuccess(result);
 				 
-			return await result.Content.ReadAsAsync<Case3Model>();
+			return await result.Content.ReadAsAsync<ComplexModel>();
 		}
 
 
+					
+		public virtual string GenerateGetFromComplexArgQueryString(string urlQueryString, ComplexModel dataArg)
+		{
+			var kvList = GenerateGetFromComplexArgKeyValueList( dataArg );
+            var urlTpl = GenerateQueryStrFromKvList(kvList);
+
+        	return urlTpl;
+		}
+
+		public virtual List<KeyValuePair<string, object>> GenerateGetFromComplexArgKeyValueList(ComplexModel dataArg)
+		{
+			throw new NotImplementedException();
+		}
+
+	
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public virtual Case3Model Case3(Case3Model dataFrom)
+		/// <param name="dataArg"></param>
+		public virtual ComplexModel GetFromComplexArg(ComplexModel dataArg)
 		{
 
-			return Case3Async(dataFrom).Result;
+			return GetFromComplexArgAsync(dataArg).Result;
 
 		}
-
 
 
 
@@ -497,13 +601,67 @@ namespace Test.Proxies.Clients
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="value"></param>
+		/// <param name="id"></param>
+		/// <param name="dataArg"></param>
 		/// <returns></returns>
-		public virtual async Task<HttpResponseMessage> PostAsync(String value)
+		public virtual async Task<NestedModel> GetFromMixedArgAsync(Int32 id,ComplexModel dataArg)
 		{
-		    var requestUrl = "api/Test";
-			
-			return await HttpClient.PostAsJsonAsync<String>(requestUrl , value);
+		    var requestUrl = "api/test/GetFromMixedArg";
+		
+	
+			var queryHasParamUrl = "id="+Uri.EscapeDataString(Convert.ToString(id))+"";
+
+
+		
+			var queryNoParamUrlTpl = "Name={Name}&Age={Age}";
+			var queryNoParamUrl = GenerateGetFromMixedArgQueryString(queryNoParamUrlTpl, id, dataArg);
+		
+		        
+			if (string.IsNullOrEmpty(queryHasParamUrl))
+			{
+				requestUrl = requestUrl + "?" + queryNoParamUrl;
+			}
+			else
+			{
+				requestUrl = requestUrl + "?" + queryHasParamUrl + "&" + queryNoParamUrl;
+			}
+            
+	
+			var result = await HttpClient.GetAsync(requestUrl );
+		
+
+			EnsureSuccess(result);
+				 
+			return await result.Content.ReadAsAsync<NestedModel>();
+		}
+
+
+					
+		public virtual string GenerateGetFromMixedArgQueryString(string urlQueryString, Int32 id,ComplexModel dataArg)
+		{
+			var kvList = GenerateGetFromMixedArgKeyValueList( id, dataArg );
+            var urlTpl = GenerateQueryStrFromKvList(kvList);
+
+        	return urlTpl;
+		}
+
+		public virtual List<KeyValuePair<string, object>> GenerateGetFromMixedArgKeyValueList(Int32 id,ComplexModel dataArg)
+		{
+			throw new NotImplementedException();
+		}
+
+	
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="id"></param>
+		/// <param name="dataArg"></param>
+		public virtual NestedModel GetFromMixedArg(Int32 id,ComplexModel dataArg)
+		{
+
+			return GetFromMixedArgAsync(id, dataArg).Result;
+
 		}
 
 
@@ -512,12 +670,124 @@ namespace Test.Proxies.Clients
 		/// <summary>
 		/// 
 		/// </summary>
-		public virtual void Post(String value)
+		/// <param name="simpleStr"></param>
+		/// <param name="uriNestedArg"></param>
+		/// <param name="bodyComplexArg"></param>
+		/// <returns></returns>
+		public virtual async Task<TotalResult> PostFromMixedArgAsync(String simpleStr,NestedModel uriNestedArg,ComplexModel bodyComplexArg)
+		{
+		    var requestUrl = "api/test/PostFromMixedArg";
+		
+	
+			var queryHasParamUrl = "simpleStr="+Uri.EscapeDataString(Convert.ToString(simpleStr))+"";
+
+
+		
+			var queryNoParamUrl = string.Empty;
+		
+		        
+			if (string.IsNullOrEmpty(queryHasParamUrl))
+			{
+				requestUrl = requestUrl + "?" + queryNoParamUrl;
+			}
+			else
+			{
+				requestUrl = requestUrl + "?" + queryHasParamUrl + "&" + queryNoParamUrl;
+			}
+            
+	
+			var result = await HttpClient.PostAsJsonAsync<ComplexModel>(requestUrl , bodyComplexArg);
+		
+
+			EnsureSuccess(result);
+				 
+			return await result.Content.ReadAsAsync<TotalResult>();
+		}
+
+
+	
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="simpleStr"></param>
+		/// <param name="uriNestedArg"></param>
+		/// <param name="bodyComplexArg"></param>
+		public virtual TotalResult PostFromMixedArg(String simpleStr,NestedModel uriNestedArg,ComplexModel bodyComplexArg)
 		{
 
-			var result = Task.Run(() => PostAsync(value)).Result; 
-			EnsureSuccess(result);
+			return PostFromMixedArgAsync(simpleStr, uriNestedArg, bodyComplexArg).Result;
 
+		}
+
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="simpleStr"></param>
+		/// <param name="uriComplexArg"></param>
+		/// <param name="bodyNestedArg"></param>
+		/// <returns></returns>
+		public virtual async Task<TotalResult> PostFromMixedArg2Async(String simpleStr,ComplexModel uriComplexArg,NestedModel bodyNestedArg)
+		{
+		    var requestUrl = "api/test/PostFromMixedArg2";
+		
+	
+			var queryHasParamUrl = "simpleStr="+Uri.EscapeDataString(Convert.ToString(simpleStr))+"";
+
+
+		
+			var queryNoParamUrlTpl = "Name={Name}&Age={Age}";
+			var queryNoParamUrl = GeneratePostFromMixedArg2QueryString(queryNoParamUrlTpl, simpleStr, uriComplexArg, bodyNestedArg);
+		
+		        
+			if (string.IsNullOrEmpty(queryHasParamUrl))
+			{
+				requestUrl = requestUrl + "?" + queryNoParamUrl;
+			}
+			else
+			{
+				requestUrl = requestUrl + "?" + queryHasParamUrl + "&" + queryNoParamUrl;
+			}
+            
+	
+			var result = await HttpClient.PostAsJsonAsync<NestedModel>(requestUrl , bodyNestedArg);
+		
+
+			EnsureSuccess(result);
+				 
+			return await result.Content.ReadAsAsync<TotalResult>();
+		}
+
+
+					
+		public virtual string GeneratePostFromMixedArg2QueryString(string urlQueryString, String simpleStr,ComplexModel uriComplexArg,NestedModel bodyNestedArg)
+		{
+			var kvList = GeneratePostFromMixedArg2KeyValueList( simpleStr, uriComplexArg, bodyNestedArg );
+            var urlTpl = GenerateQueryStrFromKvList(kvList);
+
+        	return urlTpl;
+		}
+
+		public virtual List<KeyValuePair<string, object>> GeneratePostFromMixedArg2KeyValueList(String simpleStr,ComplexModel uriComplexArg,NestedModel bodyNestedArg)
+		{
+			throw new NotImplementedException();
+		}
+
+	
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="simpleStr"></param>
+		/// <param name="uriComplexArg"></param>
+		/// <param name="bodyNestedArg"></param>
+		public virtual TotalResult PostFromMixedArg2(String simpleStr,ComplexModel uriComplexArg,NestedModel bodyNestedArg)
+		{
+
+			return PostFromMixedArg2Async(simpleStr, uriComplexArg, bodyNestedArg).Result;
 
 		}
 
@@ -534,21 +804,23 @@ namespace Test.Proxies.Clients
 		public virtual async Task<HttpResponseMessage> PutAsync(Int32 id,String value)
 		{
 		    var requestUrl = "api/Test/"+Uri.EscapeUriString(Convert.ToString(id))+"";
-			
+
+	
 			return await HttpClient.PutAsJsonAsync<String>(requestUrl , value);
 		}
 
 
-
+	
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="id"></param>
+		/// <param name="value"></param>
 		public virtual void Put(Int32 id,String value)
 		{
 
-			var result = Task.Run(() => PutAsync(id, value)).Result; 
+			var result = PutAsync(id, value).Result; 
 			EnsureSuccess(result);
 
 
@@ -566,12 +838,13 @@ namespace Test.Proxies.Clients
 		public virtual async Task<HttpResponseMessage> DeleteAsync(Int32 id)
 		{
 		    var requestUrl = "api/Test/"+Uri.EscapeUriString(Convert.ToString(id))+"";
-			
+
+	
 			return await HttpClient.DeleteAsync(requestUrl );
 		}
 
 
-
+	
 
 		/// <summary>
 		/// 
@@ -580,7 +853,7 @@ namespace Test.Proxies.Clients
 		public virtual void Delete(Int32 id)
 		{
 
-			var result = Task.Run(() => DeleteAsync(id)).Result; 
+			var result = DeleteAsync(id).Result; 
 			EnsureSuccess(result);
 
 

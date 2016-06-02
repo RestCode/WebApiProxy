@@ -139,7 +139,7 @@ namespace <#= Configuration.Namespace#>.Interfaces
 		/// <summary>
 		/// <#= method.Description #>
 		/// </summary>
-<# foreach(var p in method.UrlParameters) { #>
+<# foreach(var p in allParameters.Where(m => m != null)) { #>
 		/// <param name="<#= p.Name #>"><#= p.Description.ToSummary() #></param>
 <# } #>
 
@@ -153,7 +153,7 @@ namespace <#= Configuration.Namespace#>.Interfaces
 		/// <summary>
 		/// <#= method.Description #>
 		/// </summary>
-<# foreach(var p in method.UrlParameters) {#>
+<# foreach(var p in allParameters.Where(m => m != null)) {#>
 		/// <param name="<#= p.Name #>"><#= p.Description.ToSummary() #></param>
 <# } #>
 		/// <returns></returns>
@@ -472,28 +472,33 @@ namespace <#= Configuration.Namespace#>.Clients
 		public virtual async Task<<#= concreteReturnType #>> <#= method.Name #>Async(<#= parameterList#>)
 		{
 		    var requestUrl = "<#= requestUrl #>";
-			<# if(hasQueryString){  #>
+		
+	<# if(hasQueryString){  #>
 
-				var queryHasParamUrl = "<#= queryHasParamUrl #>";
+			var queryHasParamUrl = "<#= queryHasParamUrl #>";
 
 
-				<# if(!string.IsNullOrEmpty(queryNoParamUrlTpl)){  #>
-					var queryNoParamUrlTpl = "<#= queryNoParamUrlTpl #>";
-					var queryNoParamUrl = Generate<#= method.Name #>QueryString(queryNoParamUrlTpl, <#=parameterNameList#>);
-				<# }else{ #>
-					var queryNoParamUrl = string.Empty;
-				<# } #>
+		<# if(!string.IsNullOrEmpty(queryNoParamUrlTpl)){  #>
+
+			var queryNoParamUrlTpl = "<#= queryNoParamUrlTpl #>";
+			var queryNoParamUrl = Generate<#= method.Name #>QueryString(queryNoParamUrlTpl, <#=parameterNameList#>);
+		
+		<# }else{ #>
+
+			var queryNoParamUrl = string.Empty;
+		
+		<# } #>
         
-				if (string.IsNullOrEmpty(queryHasParamUrl))
-				{
-					requestUrl = requestUrl + "?" + queryNoParamUrl;
-				}
-				else
-				{
-					requestUrl = requestUrl + "?" + queryHasParamUrl + "&" + queryNoParamUrl;
-				}
+			if (string.IsNullOrEmpty(queryHasParamUrl))
+			{
+				requestUrl = requestUrl + "?" + queryNoParamUrl;
+			}
+			else
+			{
+				requestUrl = requestUrl + "?" + queryHasParamUrl + "&" + queryNoParamUrl;
+			}
             
-			<# } #>
+	<# } #>
 
 			var result = await HttpClient.<#=method.Type.ToTitle()#><#= postOrPutOrPatch ? "AsJson" : "" #>Async<#= postOrPutOrPatch && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "" #>(requestUrl <#= postOrPutOrPatch ? bodyParameterString:""#>);
 		
@@ -516,40 +521,61 @@ namespace <#= Configuration.Namespace#>.Clients
 		public virtual async Task<HttpResponseMessage> <#= method.Name #>Async(<#= parameterList#>)
 		{
 		    var requestUrl = "<#= requestUrl #>";
-			<# if(hasQueryString){  #>
 
-				var queryHasParamUrl = "<#= queryHasParamUrl #>";
+	<# if(hasQueryString){  #>
+
+			var queryHasParamUrl = "<#= queryHasParamUrl #>";
 
 
-				<# if(!string.IsNullOrEmpty(queryNoParamUrlTpl)){  #>
-					var queryNoParamUrlTpl = "<#= queryNoParamUrlTpl #>";
-					var queryNoParamUrl = Generate<#= method.Name #>QueryString(queryNoParamUrlTpl, <#=parameterNameList#>);
-				<# }else{ #>
-					var queryNoParamUrl = string.Empty;
-				<# } #>
+		<# if(!string.IsNullOrEmpty(queryNoParamUrlTpl)){  #>
+
+			var queryNoParamUrlTpl = "<#= queryNoParamUrlTpl #>";
+			var queryNoParamUrl = Generate<#= method.Name #>QueryString(queryNoParamUrlTpl, <#=parameterNameList#>);
+		
+		<# }else{ #>
+
+			var queryNoParamUrl = string.Empty;
+		
+		<# } #>
         
-				if (string.IsNullOrEmpty(queryHasParamUrl))
-				{
-					requestUrl = requestUrl + "?" + queryNoParamUrl;
-				}
-				else
-				{
-					requestUrl = requestUrl + "?" + queryHasParamUrl + "&" + queryNoParamUrl;
-				}
+			if (string.IsNullOrEmpty(queryHasParamUrl))
+			{
+				requestUrl = requestUrl + "?" + queryNoParamUrl;
+			}
+			else
+			{
+				requestUrl = requestUrl + "?" + queryHasParamUrl + "&" + queryNoParamUrl;
+			}
             
-			<# } #>
+	<# } #>
 
 			return await HttpClient.<#=method.Type.ToTitle()#><#= postOrPutOrPatch ? "AsJson" : "" #>Async<#= postOrPutOrPatch && method.BodyParameter != null ? "<" + method.BodyParameter.Type + ">" : "" #>(requestUrl <#= postOrPutOrPatch ? bodyParameterString:""#>);
 		}
 
-
 <# } #>
+
+	<# if(hasQueryString && !string.IsNullOrEmpty(queryNoParamUrlTpl)){  #>
+				
+		public virtual string Generate<#= method.Name #>QueryString(string urlQueryString, <#= parameterList#>)
+		{
+			var kvList = Generate<#= method.Name #>KeyValueList( <#=parameterNameList#> );
+            var urlTpl = GenerateQueryStrFromKvList(kvList);
+
+        	return urlTpl;
+		}
+
+		public virtual List<KeyValuePair<string, object>> Generate<#= method.Name #>KeyValueList(<#= parameterList#>)
+		{
+			throw new NotImplementedException();
+		}
+
+	<#}#>
 
 
 		/// <summary>
 		/// <#= method.Description.ToSummary() #>
 		/// </summary>
-<# foreach(var p in method.UrlParameters) { #>
+<# foreach(var p in allParameters.Where(m => m != null)) { #>
 		/// <param name="<#= p.Name #>"><#= p.Description.ToSummary() #></param>
 <# } #>
 		public virtual <#= String.IsNullOrEmpty(concreteReturnType) ? "void" : concreteReturnType #> <#= method.Name #>(<#= parameterList#>)

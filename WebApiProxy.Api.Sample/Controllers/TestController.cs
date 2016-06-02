@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.Web.Http;
+﻿using System.Web.Http;
 using System.Web.Http.Description;
 
 namespace WebApiProxy.Api.Sample.Controllers
@@ -12,37 +6,76 @@ namespace WebApiProxy.Api.Sample.Controllers
     [RoutePrefix("api/test")]
    public class TestController : ApiController
     {
-        [ResponseType(typeof(void))]
-        [Route("case1")]
-        public IHttpActionResult Case1()
+        [HttpGet]
+        [ResponseType(typeof(GenericBase<string>))]
+        [Route("GetFromSimpleArg")]
+        public IHttpActionResult GetFromSimpleArg(string id)
         {
-            return Ok("even the return type is void");
+            return Ok(new GenericBase<string>() {Id = id});
         }
 
-        [ResponseType(typeof(Case2Model))]
-        [Route("case2")]
-        public IHttpActionResult Case2(Case2Model dataFrom)
+        [HttpGet]
+        [ResponseType(typeof(ComplexModel))]
+        [Route("GetFromComplexArg")]
+        public IHttpActionResult GetFromComplexArg([FromUri]ComplexModel dataArg)
         {
-            return Ok();
+            return Ok(dataArg);
         }
 
-        [ResponseType(typeof(Case3Model))]
-        [Route("case3")]
-        public IHttpActionResult Case3(Case3Model dataFrom)
+        [HttpGet]
+        [ResponseType(typeof(NestedModel))]
+        [Route("GetFromMixedArg")]
+        public IHttpActionResult GetFromMixedArg(int id, [FromUri] ComplexModel dataArg)
         {
-            return Ok();
+            return Ok(new NestedModel()
+            {
+                Id = id,
+                ComplexModel = dataArg
+            });
         }
 
 
-        // POST api/values
-        public void Post([FromBody]string value)
+        [HttpPost]
+        [Route("PostFromMixedArg")]
+        public TotalResult PostFromMixedArg(string simpleStr,[FromUri] NestedModel uriNestedArg,[FromBody] ComplexModel bodyComplexArg)
         {
+            /*
+                this will not work in proxy client, because uriNestedArg will not generate 
+                a uri for client to post,but it can be support in proxyTemplate.tt 
+                if nested class[array,list...] is used for uri parameters binding become more common. 
+
+                but this can be request from browser[post uri with body part], it means this Action has no problem.
+             */
+
+
+            return new TotalResult()
+            {
+                SimpleStr = simpleStr,
+                ComplexModel = bodyComplexArg,
+                NestedModel = uriNestedArg
+            };
         }
+
+
+        [HttpPost]
+        [Route("PostFromMixedArg2")]
+        public TotalResult PostFromMixedArg2(string simpleStr, [FromUri]ComplexModel uriComplexArg, [FromBody]NestedModel bodyNestedArg)
+        {
+            return new TotalResult()
+            {
+                SimpleStr = simpleStr,
+                ComplexModel = uriComplexArg,
+                NestedModel = bodyNestedArg
+            };
+        }
+
 
         // PUT api/values/5
         public void Put(int id, [FromBody]string value)
         {
         }
+
+
 
         // DELETE api/values/5
         public void Delete(int id)
@@ -50,15 +83,26 @@ namespace WebApiProxy.Api.Sample.Controllers
         }
     }
 
-    public class Case2Model
+    public class GenericBase<T>
+    {
+        public T Id { get; set; }
+    }
+
+    public class ComplexModel
     {
         public string Name { get; set; }
         public int Age { get; set; }
     }
 
-    public class Case3Model
+    public class NestedModel:GenericBase<int>
     {
-        
+        public ComplexModel ComplexModel { get; set; }
+    }
 
+    public class TotalResult
+    {
+        public string SimpleStr { get; set; }
+        public ComplexModel ComplexModel { get; set; }
+        public NestedModel NestedModel { get; set; }
     }
 }
