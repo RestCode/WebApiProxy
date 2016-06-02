@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>UOKO.ApiProxy.CSharp</id>
+    <id>WebApiProxy.CSharp</id>
     <title>$title$</title>
     <projectUrl>https://github.com/faniereynders/WebApiProxy</projectUrl>
     <version>$version$</version>
@@ -24,7 +24,7 @@
     <file src="bin\$configuration$\*.targets" target="build" />
     <file src="bin\$configuration$\System.Net.Http.Formatting.dll" target="build" />
     <file src="bin\$configuration$\Newtonsoft.Json.dll" target="build" />
-    
+
     <file src="bin\$configuration$\WebApiProxy.config" target="content\WebApiProxy" />
     <file src="bin\$configuration$\WebApiProxy.generated.cs" target="content\WebApiProxy" />
     <file src="bin\$configuration$\webapiproxy.snippet" target="tools" />
