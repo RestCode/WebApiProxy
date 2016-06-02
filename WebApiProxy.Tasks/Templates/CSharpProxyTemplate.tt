@@ -465,9 +465,9 @@ namespace <#= Configuration.Namespace#>.Clients
 		/// <summary>
 		/// <#= method.Description.ToSummary() #>
 		/// </summary>
-	<# foreach(var p in allParameters.Where(m => m != null)) { #>
+<# foreach(var p in allParameters.Where(m => m != null)) { #>
 		/// <param name="<#= p.Name #>"><#= p.Description.ToSummary() #></param>
-	<# } #>
+<# } #>
 		/// <returns></returns>
 		public virtual async Task<<#= concreteReturnType #>> <#= method.Name #>Async(<#= parameterList#>)
 		{
@@ -558,7 +558,7 @@ namespace <#= Configuration.Namespace#>.Clients
 <# if (Configuration.GenerateAsyncReturnTypes && !String.IsNullOrEmpty(concreteReturnType) && concreteReturnType != "void") { #>
 			return <#= method.Name #>Async(<#=parameterNameList#>).Result;
 <# } else { #>
-			var result = Task.Run(() => <#= method.Name #>Async(<#=parameterNameList#>)).Result; 
+			var result = <#= method.Name #>Async(<#=parameterNameList#>).Result; 
 			EnsureSuccess(result);
 <# if (!String.IsNullOrEmpty(concreteReturnType) && concreteReturnType != "void") { #>
 			return result.Content.ReadAsAsync<<#= concreteReturnType #>>().Result;
