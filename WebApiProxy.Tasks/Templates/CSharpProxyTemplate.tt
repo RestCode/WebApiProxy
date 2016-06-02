@@ -209,7 +209,7 @@ namespace <#= Configuration.Namespace#>.Clients
             throw new WebApiProxyResponseException(response);
 		}
 
-		public virtual string GenerateQueryStrFromKvList(List<KeyValuePair<string, object>> kvList)
+		protected virtual string GenerateQueryStrFromKvList(List<KeyValuePair<string, object>> kvList)
 	    {
             var urlTpl = string.Join("&",
                              kvList.Select(item =>
@@ -480,8 +480,7 @@ namespace <#= Configuration.Namespace#>.Clients
 
 		<# if(!string.IsNullOrEmpty(queryNoParamUrlTpl)){  #>
 
-			var queryNoParamUrlTpl = "<#= queryNoParamUrlTpl #>";
-			var queryNoParamUrl = Generate<#= method.Name #>QueryString(queryNoParamUrlTpl, <#=parameterNameList#>);
+			var queryNoParamUrl = Generate<#= method.Name #>QueryString(<#=parameterNameList#>);
 		
 		<# }else{ #>
 
@@ -529,8 +528,7 @@ namespace <#= Configuration.Namespace#>.Clients
 
 		<# if(!string.IsNullOrEmpty(queryNoParamUrlTpl)){  #>
 
-			var queryNoParamUrlTpl = "<#= queryNoParamUrlTpl #>";
-			var queryNoParamUrl = Generate<#= method.Name #>QueryString(queryNoParamUrlTpl, <#=parameterNameList#>);
+			var queryNoParamUrl = Generate<#= method.Name #>QueryString(<#=parameterNameList#>);
 		
 		<# }else{ #>
 
@@ -556,7 +554,7 @@ namespace <#= Configuration.Namespace#>.Clients
 
 	<# if(hasQueryString && !string.IsNullOrEmpty(queryNoParamUrlTpl)){  #>
 				
-		public virtual string Generate<#= method.Name #>QueryString(string urlQueryString, <#= parameterList#>)
+		protected virtual string Generate<#= method.Name #>QueryString(<#= parameterList#>)
 		{
 			var kvList = Generate<#= method.Name #>KeyValueList( <#=parameterNameList#> );
             var urlTpl = GenerateQueryStrFromKvList(kvList);
@@ -564,8 +562,9 @@ namespace <#= Configuration.Namespace#>.Clients
         	return urlTpl;
 		}
 
-		public virtual List<KeyValuePair<string, object>> Generate<#= method.Name #>KeyValueList(<#= parameterList#>)
+		protected virtual List<KeyValuePair<string, object>> Generate<#= method.Name #>KeyValueList(<#= parameterList#>)
 		{
+			// <#=queryNoParamUrlTpl#>
 			throw new NotImplementedException();
 		}
 

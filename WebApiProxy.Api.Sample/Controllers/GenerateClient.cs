@@ -310,7 +310,7 @@ namespace Test.Proxies.Clients
             throw new WebApiProxyResponseException(response);
 		}
 
-		public virtual string GenerateQueryStrFromKvList(List<KeyValuePair<string, object>> kvList)
+		protected virtual string GenerateQueryStrFromKvList(List<KeyValuePair<string, object>> kvList)
 	    {
             var urlTpl = string.Join("&",
                              kvList.Select(item =>
@@ -545,8 +545,7 @@ namespace Test.Proxies.Clients
 
 
 		
-			var queryNoParamUrlTpl = "Name={Name}&Age={Age}";
-			var queryNoParamUrl = GenerateGetFromComplexArgQueryString(queryNoParamUrlTpl, dataArg);
+			var queryNoParamUrl = GenerateGetFromComplexArgQueryString(dataArg);
 		
 		        
 			if (string.IsNullOrEmpty(queryHasParamUrl))
@@ -569,7 +568,7 @@ namespace Test.Proxies.Clients
 
 
 					
-		public virtual string GenerateGetFromComplexArgQueryString(string urlQueryString, ComplexModel dataArg)
+		protected virtual string GenerateGetFromComplexArgQueryString(ComplexModel dataArg)
 		{
 			var kvList = GenerateGetFromComplexArgKeyValueList( dataArg );
             var urlTpl = GenerateQueryStrFromKvList(kvList);
@@ -577,8 +576,9 @@ namespace Test.Proxies.Clients
         	return urlTpl;
 		}
 
-		public virtual List<KeyValuePair<string, object>> GenerateGetFromComplexArgKeyValueList(ComplexModel dataArg)
+		protected virtual List<KeyValuePair<string, object>> GenerateGetFromComplexArgKeyValueList(ComplexModel dataArg)
 		{
+			// Name={Name}&Age={Age}
 			throw new NotImplementedException();
 		}
 
@@ -613,8 +613,7 @@ namespace Test.Proxies.Clients
 
 
 		
-			var queryNoParamUrlTpl = "Name={Name}&Age={Age}";
-			var queryNoParamUrl = GenerateGetFromMixedArgQueryString(queryNoParamUrlTpl, id, dataArg);
+			var queryNoParamUrl = GenerateGetFromMixedArgQueryString(id, dataArg);
 		
 		        
 			if (string.IsNullOrEmpty(queryHasParamUrl))
@@ -637,7 +636,7 @@ namespace Test.Proxies.Clients
 
 
 					
-		public virtual string GenerateGetFromMixedArgQueryString(string urlQueryString, Int32 id,ComplexModel dataArg)
+		protected virtual string GenerateGetFromMixedArgQueryString(Int32 id,ComplexModel dataArg)
 		{
 			var kvList = GenerateGetFromMixedArgKeyValueList( id, dataArg );
             var urlTpl = GenerateQueryStrFromKvList(kvList);
@@ -645,8 +644,9 @@ namespace Test.Proxies.Clients
         	return urlTpl;
 		}
 
-		public virtual List<KeyValuePair<string, object>> GenerateGetFromMixedArgKeyValueList(Int32 id,ComplexModel dataArg)
+		protected virtual List<KeyValuePair<string, object>> GenerateGetFromMixedArgKeyValueList(Int32 id,ComplexModel dataArg)
 		{
+			// Name={Name}&Age={Age}
 			throw new NotImplementedException();
 		}
 
@@ -739,8 +739,7 @@ namespace Test.Proxies.Clients
 
 
 		
-			var queryNoParamUrlTpl = "Name={Name}&Age={Age}";
-			var queryNoParamUrl = GeneratePostFromMixedArg2QueryString(queryNoParamUrlTpl, simpleStr, uriComplexArg, bodyNestedArg);
+			var queryNoParamUrl = GeneratePostFromMixedArg2QueryString(simpleStr, uriComplexArg, bodyNestedArg);
 		
 		        
 			if (string.IsNullOrEmpty(queryHasParamUrl))
@@ -763,7 +762,7 @@ namespace Test.Proxies.Clients
 
 
 					
-		public virtual string GeneratePostFromMixedArg2QueryString(string urlQueryString, String simpleStr,ComplexModel uriComplexArg,NestedModel bodyNestedArg)
+		protected virtual string GeneratePostFromMixedArg2QueryString(String simpleStr,ComplexModel uriComplexArg,NestedModel bodyNestedArg)
 		{
 			var kvList = GeneratePostFromMixedArg2KeyValueList( simpleStr, uriComplexArg, bodyNestedArg );
             var urlTpl = GenerateQueryStrFromKvList(kvList);
@@ -771,8 +770,9 @@ namespace Test.Proxies.Clients
         	return urlTpl;
 		}
 
-		public virtual List<KeyValuePair<string, object>> GeneratePostFromMixedArg2KeyValueList(String simpleStr,ComplexModel uriComplexArg,NestedModel bodyNestedArg)
+		protected virtual List<KeyValuePair<string, object>> GeneratePostFromMixedArg2KeyValueList(String simpleStr,ComplexModel uriComplexArg,NestedModel bodyNestedArg)
 		{
+			// Name={Name}&Age={Age}
 			throw new NotImplementedException();
 		}
 
