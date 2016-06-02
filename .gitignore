@@ -186,3 +186,6 @@ FakesAssemblies/
 
 # ignore generate file for better diff or merge
 WebApiProxy.Tasks/Templates/CSharpProxyTemplate.cs
+
+# vs files
+.vs/
