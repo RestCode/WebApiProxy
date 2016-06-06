@@ -38,7 +38,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\ActionMethodDefinition.cs" />
-    <Compile Include="ConnectionException.cs" />
+    <Compile Include="ConfigFileNotFoundException.cs" />
     <Compile Include="Models\ConstantDefinition.cs" />
     <Compile Include="Models\ControllerDefinition.cs" />
     <Compile Include="ExcludeProxy.cs" />

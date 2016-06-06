@@ -36,7 +36,7 @@ namespace <#= Configuration.Namespace#>
 		/// <summary>
 		/// Web Api Base Address.
 		/// </summary>
-		public static string <#= Configuration.Name #>BaseAddress = "<#= Configuration.Metadata.Host #>";
+		public static string <#= Configuration.Name #>BaseAddress = "<#= MetaData.Host #>";
 	}
 }
 #endregion
@@ -58,7 +58,7 @@ namespace <#= Configuration.Namespace#>.Models
 	}
 
 
-<# foreach(var model in Configuration.Metadata.Models.Where(m => m.Type.Equals("class"))) { #>	
+<# foreach(var model in MetaData.Models.Where(m => m.Type.Equals("class"))) { #>	
 	/// <summary>
 	/// <#= model.Description.ToSummary() #>
 	/// </summary>
@@ -84,7 +84,7 @@ namespace <#= Configuration.Namespace#>.Models
 	}	
 <#}#>
 
-<# foreach(var model in Configuration.Metadata.Models.Where(m => m.Type.Equals("enum"))) { #>	
+<# foreach(var model in MetaData.Models.Where(m => m.Type.Equals("enum"))) { #>	
 	/// <summary>
 	/// <#= model.Description.ToSummary() #>
 	/// </summary>
@@ -111,7 +111,7 @@ namespace <#= Configuration.Namespace#>.Interfaces
 		HttpClient HttpClient { get; }
 	}
 
-<# foreach(var definition in Configuration.Metadata.Definitions) { #>	
+<# foreach(var definition in MetaData.Definitions) { #>	
 	public partial interface I<#=definition.Name#><#=Configuration.ClientSuffix#> : IClientBase
 	{	
 <# foreach(var method in definition.ActionMethods) { 
@@ -308,7 +308,7 @@ namespace <#= Configuration.Namespace#>.Clients
 	/// </summary>
 	public partial class WebApiClients
 	{
-<# foreach(var definition in Configuration.Metadata.Definitions) { #>
+<# foreach(var definition in MetaData.Definitions) { #>
 		public <#=definition.Name#><#= Configuration.ClientSuffix#> <#= definition.Name #> { get; private set; }
 <# } #>
 		
@@ -316,7 +316,7 @@ namespace <#= Configuration.Namespace#>.Clients
         {
             get
             {
-<# foreach(var definition in Configuration.Metadata.Definitions) { #>
+<# foreach(var definition in MetaData.Definitions) { #>
 				yield return <#= definition.Name #>;
 <# } #>
             }
@@ -327,7 +327,7 @@ namespace <#= Configuration.Namespace#>.Clients
             if (baseAddress != null)
                 Configuration.<#= Configuration.Name #>BaseAddress = baseAddress.AbsoluteUri;
 
-<# foreach(var definition in Configuration.Metadata.Definitions) { #>
+<# foreach(var definition in MetaData.Definitions) { #>
 			<#= definition.Name #> = new <#=definition.Name#><#= Configuration.ClientSuffix#>();
 <# } #>
 		}
@@ -359,7 +359,7 @@ namespace <#= Configuration.Namespace#>.Clients
 		}
 	}
 
-<# foreach(var definition in Configuration.Metadata.Definitions) { #>
+<# foreach(var definition in MetaData.Definitions) { #>
 	/// <summary>
 	/// <#= definition.Description.ToSummary() #>
 	/// </summary>

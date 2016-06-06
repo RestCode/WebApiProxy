@@ -25,7 +25,7 @@
     <file src="bin\$configuration$\System.Net.Http.Formatting.dll" target="build" />
     <file src="bin\$configuration$\Newtonsoft.Json.dll" target="build" />
 
-    <file src="bin\$configuration$\WebApiProxy.config" target="content\WebApiProxy" />
+    <file src="bin\$configuration$\WebApiProxy.json" target="content\WebApiProxy" />
     <file src="bin\$configuration$\WebApiProxy.generated.cs" target="content\WebApiProxy" />
     <file src="bin\$configuration$\webapiproxy.snippet" target="tools" />
     <file src="bin\$configuration$\init.ps1" target="tools" />

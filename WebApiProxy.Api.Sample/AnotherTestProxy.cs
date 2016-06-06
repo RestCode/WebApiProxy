@@ -17,10 +17,10 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using Newtonsoft.Json;
-using Test.Proxies.Models;
+using WebApi.Proxies.AnotherTestProxy.Models;
 
 #region Proxies
-namespace Test.Proxies
+namespace WebApi.Proxies.AnotherTestProxy
 {
 	/// <summary>
 	/// Client configuration.
@@ -30,13 +30,13 @@ namespace Test.Proxies
 		/// <summary>
 		/// Web Api Base Address.
 		/// </summary>
-		public static string TestProxyBaseAddress = "http://localhost:12016/";
+		public static string AnotherTestProxyBaseAddress = "http://localhost:12016/";
 	}
 }
 #endregion
 
 #region Models
-namespace Test.Proxies.Models
+namespace WebApi.Proxies.AnotherTestProxy.Models
 {
 
  public class WebApiProxyResponseException : Exception
@@ -138,7 +138,7 @@ namespace Test.Proxies.Models
 #endregion
 
 #region Interfaces
-namespace Test.Proxies.Interfaces
+namespace WebApi.Proxies.AnotherTestProxy.Interfaces
 {
 	public interface IClientBase : IDisposable
 	{
@@ -267,7 +267,7 @@ namespace Test.Proxies.Interfaces
 #endregion
 
 #region Clients
-namespace Test.Proxies.Clients
+namespace WebApi.Proxies.AnotherTestProxy.Clients
 {
 	/// <summary>
 	/// Client base class.
@@ -286,7 +286,7 @@ namespace Test.Proxies.Clients
 		{
 			HttpClient = new HttpClient()
 			{
-				BaseAddress = new Uri(Configuration.TestProxyBaseAddress)
+				BaseAddress = new Uri(Configuration.AnotherTestProxyBaseAddress)
 			};
 
 			SerializationSettings = new JsonSerializerSettings
@@ -345,7 +345,7 @@ namespace Test.Proxies.Clients
 		{
 			HttpClient = new HttpClient(handler, disposeHandler)
 			{
-				BaseAddress = new Uri(Configuration.TestProxyBaseAddress)
+				BaseAddress = new Uri(Configuration.AnotherTestProxyBaseAddress)
 			};
 		}
 
@@ -422,7 +422,7 @@ namespace Test.Proxies.Clients
 		public WebApiClients(Uri baseAddress = null)
 		{
             if (baseAddress != null)
-                Configuration.TestProxyBaseAddress = baseAddress.AbsoluteUri;
+                Configuration.AnotherTestProxyBaseAddress = baseAddress.AbsoluteUri;
 
 			Test = new TestClient();
 		}
