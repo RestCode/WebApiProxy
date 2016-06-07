@@ -4,7 +4,7 @@
     <id>UOKO.ApiProxy.Client</id>
     <title>$title$</title>
     <projectUrl>http://gitlab.uoko.ioc/jiajun/web.api.proxy</projectUrl>
-    <version>2.0.0.0</version>
+    <version>2.0.0.1</version>
     <authors>UOKO-JGO</authors>
     <owners>UOKO-JGO</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -26,7 +26,6 @@
     <file src="bin\$configuration$\Newtonsoft.Json.dll" target="build" />
 
     <file src="bin\$configuration$\WebApiProxy.json" target="content\WebApiProxy" />
-    <file src="bin\$configuration$\WebApiProxy.generated.cs" target="content\WebApiProxy" />
     <file src="bin\$configuration$\webapiproxy.snippet" target="tools" />
     <file src="bin\$configuration$\init.ps1" target="tools" />
     <file src="bin\$configuration$\install.ps1" target="tools" />
