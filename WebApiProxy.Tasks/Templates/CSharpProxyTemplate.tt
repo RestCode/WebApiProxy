@@ -45,19 +45,6 @@ namespace <#= Configuration.Namespace#>
 namespace <#= Configuration.Namespace#>.Models
 {
 
- public class WebApiProxyResponseException : Exception
-  {
-
-    public HttpResponseMessage Response { get; private set; }
-
-
-    public WebApiProxyResponseException(HttpResponseMessage response): base("A " + response.StatusCode + " (" + (int)response.StatusCode + ") http exception occured. See response.")
-		{
-			Response = response;
-		}
-	}
-
-
 <# foreach(var model in MetaData.Models.Where(m => m.Type.Equals("class"))) { #>	
 	/// <summary>
 	/// <#= model.Description.ToSummary() #>
@@ -206,7 +193,7 @@ namespace <#= Configuration.Namespace#>.Clients
 			if (response.IsSuccessStatusCode)				
 				return;
 													
-            throw new WebApiProxyResponseException(response);
+            throw new HttpResponseException(response);
 		}
 
 		protected virtual string GenerateQueryStrFromKvList(List<KeyValuePair<string, object>> kvList)
