@@ -3,10 +3,10 @@
   <metadata>
     <id>UOKO.ApiProxy.Client</id>
     <title>$title$</title>
-    <projectUrl>https://github.com/faniereynders/WebApiProxy</projectUrl>
+    <projectUrl>http://gitlab.uoko.ioc/jiajun/web.api.proxy</projectUrl>
     <version>2.0.0.0</version>
-    <authors>Fanie Reynders</authors>
-    <owners>Fanie Reynders</owners>
+    <authors>UOKO-JGO</authors>
+    <owners>UOKO-JGO</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <releaseNotes></releaseNotes>
