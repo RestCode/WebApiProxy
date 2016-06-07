@@ -193,7 +193,7 @@ namespace <#= Configuration.Namespace#>.Clients
 			if (response.IsSuccessStatusCode)				
 				return;
 													
-            throw new HttpResponseException(response);
+            throw new WebApiProxyResponseException(response);
 		}
 
 		protected virtual string GenerateQueryStrFromKvList(List<KeyValuePair<string, object>> kvList)
