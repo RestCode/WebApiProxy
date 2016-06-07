@@ -13,11 +13,16 @@ namespace WebApiProxy.Tasks.Models
 
         public class ServiceConfig
         {
+            public ServiceConfig()
+            {
+                ClientSuffix = "Client";
+            }
+
             public string ProxyEndpoint { get; set; }
             public string Namespace { get; set; }
             public string Name { get; set; }
 
-            public string ClientSuffix { get; set; } = "Client";
+            public string ClientSuffix { get; set; }
 
             public bool IncludeValidation { get; set; }
             public bool EnsureSuccess { get; set; }
