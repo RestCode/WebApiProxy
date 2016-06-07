@@ -17,7 +17,9 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using Newtonsoft.Json;
+using WebApiProxy.Tasks.Models;
 using WebApi.Proxies.AnotherTestProxy.Models;
+
 
 #region Proxies
 namespace WebApi.Proxies.AnotherTestProxy
@@ -38,19 +40,6 @@ namespace WebApi.Proxies.AnotherTestProxy
 #region Models
 namespace WebApi.Proxies.AnotherTestProxy.Models
 {
-
- public class WebApiProxyResponseException : Exception
-  {
-
-    public HttpResponseMessage Response { get; private set; }
-
-
-    public WebApiProxyResponseException(HttpResponseMessage response): base("A " + response.StatusCode + " (" + (int)response.StatusCode + ") http exception occured. See response.")
-		{
-			Response = response;
-		}
-	}
-
 
 	
 	/// <summary>
