@@ -57,6 +57,7 @@
   <ItemGroup>
     <Compile Include="Infrastructure\CSharpGenerator.cs" />
     <Compile Include="Infrastructure\HttpResponseMessageExtensions.cs" />
+    <Compile Include="Models\WebApiProxyResponseException.cs" />
     <Compile Include="Models\GenerateConfig.cs" />
     <Compile Include="Models\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

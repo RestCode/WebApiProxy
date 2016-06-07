@@ -23,7 +23,9 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using Newtonsoft.Json;
+using WebApiProxy.Tasks.Models;
 using <#= Configuration.Namespace#>.Models;
+
 
 #region Proxies
 namespace <#= Configuration.Namespace#>
