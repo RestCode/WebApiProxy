@@ -80,7 +80,7 @@ namespace WebApiProxy.Server
                                                   }
                               },
                 Models = models,
-                Host = host
+                Host = System.Web.VirtualPathUtility.AppendTrailingSlash(host)
             };
 
             metadata.Definitions = metadata.Definitions.Distinct().OrderBy(d => d.Name);
