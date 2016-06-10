@@ -836,7 +836,7 @@ using ");
 		var postOrPutOrPatch =  method.Type.ToTitle() == "Post" || method.Type.ToTitle() == "Put" || method.Type.ToTitle() == "Patch";
 		var url = ("\"" + method.Url.Replace("{", "\" + ").Replace("}", " + \"") + "\"").Replace(" + \"\"","");
 		
-		allParameters.Where(m => m != null && m.Type == "DateTime")
+		allParameters.Where(m => m != null && (m.Type == "DateTime" || m.Type == "Nullable<DateTime>"))
              		     .ToList()
 		             .ForEach(p => url = url.Replace(" " + p.Name, " " + p.Name + ".ToString(\"o\")"));
             
