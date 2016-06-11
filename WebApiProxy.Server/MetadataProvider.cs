@@ -80,8 +80,8 @@ namespace WebApiProxy.Server
                                                   }
                               },
                 Models = models,
-                Host = host
-            };
+				Host = (null != host && host.Length > 0 && host[host.Length - 1] != '/') ? string.Concat(host, "/") : host
+			};
 
             metadata.Definitions = metadata.Definitions.Distinct().OrderBy(d => d.Name);
             metadata.Models = metadata.Models.Distinct(new ModelDefinitionEqualityComparer()).OrderBy(d => d.Name);
