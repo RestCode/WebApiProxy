@@ -17,5 +17,18 @@ namespace WebApiProxy.Server
             constraints: null,
             handler: new ProxyHandler(config) { InnerHandler = new HttpControllerDispatcher(config) });
         }
-    }
+
+		/// <summary>
+		/// Sets up the proxy route table entries with custom Metadata Provider.
+		/// </summary>
+		public static void RegisterProxyRoutes(this HttpConfiguration config, MetadataProvider customMetadataProvider, string routeTemplate = "api/proxies")
+		{
+			config.Routes.MapHttpRoute(
+			name: "WebApiProxy",
+			routeTemplate: routeTemplate,
+			defaults: new { id = RouteParameter.Optional },
+			constraints: null,
+			handler: new ProxyHandler(config, customMetadataProvider) { InnerHandler = new HttpControllerDispatcher(config) });
+		}
+	}
 }
