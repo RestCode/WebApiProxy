@@ -11,7 +11,7 @@ namespace WebApiProxy.Api.Sample.Controllers
 
             var task = new ProxyGenerationTask()
                        {
-                           Root = Server.MapPath("~")
+                           Root = Server.MapPath("~/ProxyFiles")
             };
             var res = task.Execute();
 
