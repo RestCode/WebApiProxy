@@ -22,8 +22,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{CC09190C
 		Nuget\build-nuget-server.bat = Nuget\build-nuget-server.bat
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiProxy.Api.Sample", "WebApiProxy.Api.Sample\WebApiProxy.Api.Sample.csproj", "{A8E93987-B80A-4EAB-9FF1-C958366FC047}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,10 +40,6 @@ Global
 		{4E5B8C2F-9008-4A17-ABD1-A92E046C6A1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4E5B8C2F-9008-4A17-ABD1-A92E046C6A1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4E5B8C2F-9008-4A17-ABD1-A92E046C6A1E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A8E93987-B80A-4EAB-9FF1-C958366FC047}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A8E93987-B80A-4EAB-9FF1-C958366FC047}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A8E93987-B80A-4EAB-9FF1-C958366FC047}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A8E93987-B80A-4EAB-9FF1-C958366FC047}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
