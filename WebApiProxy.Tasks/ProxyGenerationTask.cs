@@ -1,6 +1,6 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using Microsoft.Build.Framework;
+using Newtonsoft.Json;
 using WebApiProxy.Tasks.Infrastructure;
 using WebApiProxy.Tasks.Models;
 
@@ -8,16 +8,8 @@ namespace WebApiProxy.Tasks
 {
     public class ProxyGenerationTask : ITask
     {
-        private Configuration config;
-
-        [Output]
-        public string Filename { get; set; }
-
         [Output]
         public string Root { get; set; }
-
-        [Output]
-        public string ProjectPath { get; set; }
 
         public IBuildEngine BuildEngine { get; set; }
 
@@ -25,39 +17,45 @@ namespace WebApiProxy.Tasks
 
         public bool Execute()
         {
-            try
+            var oldConfigFile = Path.Combine(Root, Configuration.ConfigFileName);
+            if (File.Exists(oldConfigFile))
             {
-                config = Configuration.Load(Root);
+                var config = Configuration.Load(Root);
 
-                if (config.GenerateOnBuild)
+                GenerateProxyFile(config);
+            }
+            else
+            {
+                var jsonConfigFile = Path.Combine(Root, Configuration.JsonConfigFileName);
+                GenerateConfig jsonConfig;
+
+                using (var sr = new StreamReader(jsonConfigFile))
                 {
-                    var generator = new CSharpGenerator(config);
-                    var source = generator.Generate();
-                    File.WriteAllText(Filename, source);
-                    File.WriteAllText(Configuration.CacheFile, source);
-                    
+                    jsonConfig = JsonConvert.DeserializeObject<GenerateConfig>(sr.ReadToEnd());
                 }
-            }
-            catch (ConnectionException)
-            {
-                tryReadFromCache();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
+
+                var oldConfigs = jsonConfig.TransformToOldConfig();
+                foreach (var config in oldConfigs)
+                {
+                    GenerateProxyFile(config);
+                }
             }
 
             return true;
         }
 
-        private void tryReadFromCache()
+        private void GenerateProxyFile(Configuration config)
         {
-            if (!File.Exists(Configuration.CacheFile))
+            if (!config.GenerateOnBuild)
             {
-                throw new ConnectionException(config.Endpoint);
+                return;
             }
-            var source = File.ReadAllText(Configuration.CacheFile);
-            File.WriteAllText(Filename, source);
+
+            var csFilePath = Path.Combine(Root, config.Name) + ".cs";
+            var generator = new CSharpGenerator(config);
+            var source = generator.Generate();
+            File.WriteAllText(csFilePath, source);
         }
+
     }
 }

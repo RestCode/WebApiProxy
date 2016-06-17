@@ -1,0 +1,18 @@
+﻿{
+    "GenerateOnBuild": true,
+    "GenerateAsyncReturnTypes": true,
+    "Services": [
+        {
+            "ProxyEndpoint": "http://localhost:12016/api/proxies",
+            "Namespace": "WebApi.Proxies",
+            "Name": "TestProxy",
+            "ClientSuffix": "Client"
+        },
+        {
+            "ProxyEndpoint": "http://localhost:12016/api/proxies",
+            "Namespace": "WebApi.Proxies",
+            "Name": "AnotherTestProxy",
+            "ClientSuffix": "Client"
+        }
+    ]
+}

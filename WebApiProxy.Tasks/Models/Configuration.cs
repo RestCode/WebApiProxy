@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
+﻿using System.IO;
 using System.Xml.Serialization;
-using WebApiProxy.Core.Models;
 
 namespace WebApiProxy.Tasks.Models
 {
@@ -14,7 +7,7 @@ namespace WebApiProxy.Tasks.Models
     public class Configuration
     {
         public const string ConfigFileName = "WebApiProxy.config";
-        public const string CacheFile = "WebApiProxy.generated.cache";
+        public const string JsonConfigFileName = "WebApiProxy.json";
 
         private string _clientSuffix = "Client";
         private string _name = "MyWebApiProxy";
@@ -47,8 +40,6 @@ namespace WebApiProxy.Tasks.Models
                 _clientSuffix = value;
             }
         }
-
-        
 
         [XmlAttribute("namespace")]
         public string Namespace
@@ -92,11 +83,6 @@ namespace WebApiProxy.Tasks.Models
             }
         }
 
-        //[XmlAttribute("host")]
-        //public string Host { get; set; }
-
-        [XmlIgnore]
-        public Metadata Metadata { get; set; }
 
         public static Configuration Load(string root)
         {
@@ -107,16 +93,10 @@ namespace WebApiProxy.Tasks.Models
                 throw new ConfigFileNotFoundException(fileName);
             }
 
-            var xml = File.ReadAllText(fileName);
             var serializer = new XmlSerializer(typeof(Configuration), new XmlRootAttribute("proxy"));
             var reader = new StreamReader(fileName);
             var config = (Configuration)serializer.Deserialize(reader);
             reader.Close();
-
-            //if (string.IsNullOrEmpty(config.Host))
-            //{
-            //    config.Host = config.Metadata.Host;
-            //}
 
             return config;
 

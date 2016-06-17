@@ -16,8 +16,8 @@ namespace WebApiProxy.Tasks.Infrastructure
 
         public string Generate()
         {
-            config.Metadata = GetProxy();
-            var template = new CSharpProxyTemplate(config);
+            var metaData = GetProxy();
+            var template = new CSharpProxyTemplate(config,metaData);
             var source = template.TransformText();
             return source;
         }
@@ -25,22 +25,13 @@ namespace WebApiProxy.Tasks.Infrastructure
 
         private Metadata GetProxy()
         {
-            var url = string.Empty;
-
-            try
+            using (var client = new HttpClient())
             {
-                using (var client = new HttpClient())
-                {
-                    client.DefaultRequestHeaders.Add("X-Proxy-Type", "metadata");
-                    var response = client.GetAsync(config.Endpoint).Result;
-                    response.EnsureSuccessStatusCode();
-                    var metadata = response.Content.ReadAsAsync<Metadata>().Result;
-                    return metadata;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
+                client.DefaultRequestHeaders.Add("X-Proxy-Type", "metadata");
+                var response = client.GetAsync(config.Endpoint).Result;
+                response.EnsureSuccessStatusCode();
+                var metadata = response.Content.ReadAsAsync<Metadata>().Result;
+                return metadata;
             }
         }
     }
