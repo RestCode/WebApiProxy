@@ -31,6 +31,12 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>WebApiProxy.Tasks.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Build" />
     <Reference Include="Microsoft.Build.Framework" />
@@ -113,6 +119,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="WebApiProxy.Tasks.snk" />
     <None Include="WebApiProxyCSharp.psm1">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

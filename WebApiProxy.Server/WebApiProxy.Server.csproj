@@ -31,6 +31,12 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>WebApiProxy.Server.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="DocsByReflection, Version=1.0.8.0, Culture=neutral, PublicKeyToken=64d1e8338525e7be, processorArchitecture=MSIL">
       <HintPath>..\packages\DocsByReflection.1.0.11\lib\net40\DocsByReflection.dll</HintPath>
@@ -81,6 +87,7 @@
     <None Include="WebApiProxy.Server.nuspec">
       <SubType>Designer</SubType>
     </None>
+    <None Include="WebApiProxy.Server.snk" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
