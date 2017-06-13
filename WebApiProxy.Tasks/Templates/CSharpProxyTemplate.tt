@@ -212,13 +212,13 @@ namespace <#= Configuration.Namespace#>.Clients
 		{
 			return System.Net.WebUtility.UrlEncode(value.ToString());
 		}
-		
+
 		/// <summary>
 		/// Encode the input parameter as a string
 		/// </summary>
 		protected string EncodeParam(DateTime value) 
 		{
-			return System.Net.WebUtility.UrlEncode(value.ToString("s"));
+			return System.Net.WebUtility.UrlEncode(value.ToString("o"));
 		}
 		
 		/// <summary>
@@ -226,7 +226,7 @@ namespace <#= Configuration.Namespace#>.Clients
 		/// </summary>
 		protected string EncodeParam(DateTimeOffset value)
 		{
-			return System.Net.WebUtility.UrlEncode(value.ToString("s"));
+			return System.Net.WebUtility.UrlEncode(value.ToString("o"));
 		}
 		
 		/// <summary>
@@ -366,11 +366,11 @@ namespace <#= Configuration.Namespace#>.Clients
 
 		var postOrPutOrPatch =  method.Type.ToTitle() == "Post" || method.Type.ToTitle() == "Put" || method.Type.ToTitle() == "Patch";
 		var url = ("\"" + method.Url.Replace("{", "\" + ").Replace("}", " + \"") + "\"").Replace(" + \"\"","");
-		
-		allParameters.Where(m => m != null && (m.Type == "DateTime" || m.Type == "Nullable<DateTime>"))
+
+		allParameters.Where(m => m != null)
 		             .ToList()
-		             .ForEach(p => url = url.Replace(" " + p.Name, " " + p.Name + ".ToString(\"o\")"));
-		             
+		             .ForEach(p => url = url.Replace(" " + p.Name, string.Format(" EncodeParam({0})", p.Name)));
+		
 #>
 		/// <summary>
 		/// <#= method.Description.ToSummary() #>
