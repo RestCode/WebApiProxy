@@ -225,7 +225,14 @@ namespace WebApiProxy.Server
                 var properties = classToDef.IsGenericType
                                      ? classToDef.GetGenericTypeDefinition().GetProperties()
                                      : classToDef.GetProperties();
-            
+
+		// remove if properties or their types has got ExcludeProxy Attribute (or dummy name)
+		properties = properties.Where(x =>
+                !x.CustomAttributes.Any(z => z.AttributeType.Name.Contains("ExcludeProxy")) && // Property
+                !x.PropertyType.CustomAttributes.Any(y => y.AttributeType.Name.Contains("ExcludeProxy")) // Type
+					     ).ToArray(); // Clear and Nice :)
+
+		    
                 model.Properties = from property in properties
                                    select new ModelProperty
                                           {
