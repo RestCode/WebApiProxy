@@ -140,9 +140,9 @@ namespace <#= Configuration.Namespace#>.Interfaces
 
 <# if (Configuration.GenerateAsyncReturnTypes == false || String.IsNullOrEmpty(concreteReturnType)) { #>
 		/// <returns></returns>
-		Task<HttpResponseMessage> <#= method.Name #>Async(<#= parameterList#><#= parameterList.Any() ? ", " : "" #>CancellationToken cancellationToken);
+		Task<HttpResponseMessage> <#= method.Name #>Async(<#= parameterList#><#= parameterList.Any() ? ", " : "" #>CancellationToken cancellationToken = default(CancellationToken));
 <# } else { #>
-		Task<<#= concreteReturnType #>> <#= method.Name #>Async(<#= parameterList#><#= parameterList.Any() ? ", " : "" #>CancellationToken cancellationToken);
+		Task<<#= concreteReturnType #>> <#= method.Name #>Async(<#= parameterList#><#= parameterList.Any() ? ", " : "" #>CancellationToken cancellationToken = default(CancellationToken));
 <# } #>
 
 <# foreach(var p in method.UrlParameters) {#>
