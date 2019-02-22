@@ -210,7 +210,7 @@ namespace <#= Configuration.Namespace#>.Clients
 		/// </summary>
 		protected string EncodeParam<T>(T value) 
 		{
-			return System.Net.WebUtility.UrlEncode(value.ToString());
+			return System.Net.WebUtility.UrlEncode(value?.ToString());
 		}
 
 		/// <summary>
